@@ -1,44 +1,30 @@
 import React from "react";
 import PropTypes from "prop-types";
-import { withStyles } from "@material-ui/core/styles";
-import Drawer from "@material-ui/core/Drawer";
-import AppBar from "@material-ui/core/AppBar";
-import Toolbar from "@material-ui/core/Toolbar";
-import List from "@material-ui/core/List";
-import Typography from "@material-ui/core/Typography";
-import IconButton from "@material-ui/core/IconButton";
-import Hidden from "@material-ui/core/Hidden";
-import MenuIcon from "@material-ui/icons/Menu";
-import ListItem from "@material-ui/core/ListItem";
-import ListItemIcon from "@material-ui/core/ListItemIcon";
-import ListItemText from "@material-ui/core/ListItemText";
-import AccessTime from "@material-ui/icons/AccessTime";
-import AccountCircle from "@material-ui/icons/AccountCircle";
-import Transactions from "./Transactions";
 import TransactionModal from "./TransactionModal";
-import base from "../base";
 
 import styled, { css } from "styled-components/native";
-import { Button } from "@morpheus-ui/core";
+import { Button, Text } from "@morpheus-ui/core";
+import { PlusSymbol } from "@morpheus-ui/icons";
+import screenSize from "../hocs/ScreenSize";
+import applyContext from "../hocs/Context";
 
-const drawerWidth = 240;
-
-const Container = styled.View`
+const Container = screenSize(styled.View`
   width: 250px;
   height: 100%;
-  background-color: ${props => props.theme.lightGray};
+  background-color: ${props => props.theme.gray};
   display: flex;
   flex-direction: row;
+
   ${props =>
     props.screenWidth <= 900 &&
     css`
       width: 150px;
     `};
-`;
+`);
 
-const SidebarContainer = styled.View`
+const SidebarContainer = screenSize(styled.View`
   width: 100%;
-  background-color: ${props => props.theme.lightGray};
+  background-color: ${props => props.theme.gray};
   ${props =>
     props.screenWidth <= 900 &&
     css`
@@ -50,15 +36,45 @@ const SidebarContainer = styled.View`
     css`
       width: 0;
     `};
+`);
+
+const NavItem = styled.View`
+  width: 100%;
+  diplay: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  margin: ${props => props.theme.spacing} 0;
+`;
+
+const Triangle = styled.View`
+  width: 0;
+  height: 0;
+  left: 0;
+  border-top: 12px solid transparent;
+  border-bottom: 12px solid transparent;
+  border-left: 12px solid ${props => props.theme.paymentGreen};
+  ${props =>
+    !props.active &&
+    css`
+      border-left: 12px solid transparent;
+    `}
+`;
+
+const NavTextContainer = styled.TouchableOpacity`
+  margin-left: 20px;
+`;
+
+const ButtonContainer = styled.View`
+  padding: ${props => props.theme.spacing};
+  margin: 0 auto;
 `;
 
 class ResponsiveDrawer extends React.Component {
   state = {
     mobileOpen: false,
-    web3: this.props.web3,
     transactionModalOpen: false,
-    accounts: [],
-    network: null
+    activeNav: "activity"
   };
 
   handleDrawerToggle = () => {
@@ -71,40 +87,6 @@ class ResponsiveDrawer extends React.Component {
 
   handleCloseTrandactionModal = () => {
     this.setState({ transactionModalOpen: false });
-  };
-
-  sendTransaction = (recipient, comment, amount) => {
-    console.log("this.state: ", this.state);
-    if (this.state.network !== "ropsten") {
-      alert(`Please connect to ropsten testnet to use this dApp.`);
-      return;
-    }
-    if (!this.props.web3.utils.isAddress(recipient)) {
-      alert(
-        `Recipient was not a valid Ethereum address. Please try creating your transaction again.`
-      );
-      return;
-    }
-
-    const weiAmount = this.props.web3.utils.toWei(amount);
-    this.setState({
-      recipient: recipient,
-      comment: comment,
-      transactionAmount: amount,
-      weiAmount
-    });
-
-    this.props.web3.eth
-      .sendTransaction({
-        from: `${this.state.accounts[0]}`,
-        to: `${recipient}`,
-        value: weiAmount
-      })
-      .once("transactionHash", this.printTransactionHash)
-      .once("receipt", this.printReceipt)
-      .on("confirmation", this.printConfNumber)
-      .on("error", this.logError)
-      .then(this.receiptWasMined);
   };
 
   printTransactionHash = transactionHash => {
@@ -124,152 +106,49 @@ class ResponsiveDrawer extends React.Component {
     console.error("ERROR: ", error);
   }
 
-  receiptWasMined = receipt => {
-    console.log("The receipt has been mined! ", receipt);
-    // will be fired once the receipt is mined
-
-    this.props.web3.eth.getBlock(receipt.blockNumber).then(block => {
-      console.log(
-        `account_transactions/${this.state.accounts[0]}/${this.state.network}/${
-          this.state.transactionHash
-        }`
-      );
-      base
-        .post(
-          `account_transactions/${this.state.accounts[0]}/${
-            this.state.network
-          }/${this.state.transactionHash}`,
-          {
-            data: {
-              comment: this.state.comment,
-              value: this.state.weiAmount,
-              timestamp: block.timestamp,
-              receipt
-            }
-          }
-        )
-        .catch(err => {
-          console.error("ERROR: ", err);
-        });
-    });
-  };
-
-  getBlockchainData = async () => {
-    try {
-      // Use web3 to get the user's accounts.
-      const accounts = await this.props.web3.eth.getAccounts();
-      const network = await this.props.web3.eth.net.getNetworkType();
-
-      // Set accounts and network to the state
-      if (
-        !this.state.accounts ||
-        !this.state.network ||
-        this.state.accounts[0] !== accounts[0] ||
-        this.state.network !== network
-      ) {
-        this.setState({ accounts, network });
-      }
-    } catch (error) {
-      // Catch any errors for any of the above operations.
-      alert(
-        `Failed to load web3 or accounts. Check that metamask is unlocked or console for details.`
-      );
-      console.log(error);
-    }
-  };
-
   render() {
-    const { classes, theme, web3 } = this.props;
+    const { web3 } = this.props;
 
     if (web3) {
-      this.getBlockchainData();
+      this.props.getBlockchainData();
     } else {
       return null;
     }
 
     const drawer = (
-      <div>
-        <div>
-          <div>
-            <List>
-              <ListItem button key="Activity">
-                <ListItemIcon>
-                  <AccessTime />
-                </ListItemIcon>
-                <ListItemText>Activity</ListItemText>
-              </ListItem>
-              <ListItem button key="Settings">
-                <ListItemIcon>
-                  <AccountCircle />
-                </ListItemIcon>
-                <ListItemText>Settings</ListItemText>
-              </ListItem>
-            </List>
-            <div>
-              <Button
-                onPress={this.handleOpenTrandactionModal}
-                variant="outlined"
-                title="new"
-              />
-              <TransactionModal
-                web3={this.state.web3}
-                transactionModalOpen={this.state.transactionModalOpen}
-                handleTransactionModalClose={this.handleCloseTrandactionModal}
-                handleTransactionSend={this.sendTransaction}
-              />
-            </div>
-          </div>
-        </div>
-      </div>
+      <>
+        <ButtonContainer>
+          <Button
+            onPress={this.handleOpenTrandactionModal}
+            variant="outlined"
+            title="NEW TRANSFER"
+            Icon={PlusSymbol}
+          />
+        </ButtonContainer>
+        <NavItem>
+          <Triangle active={this.state.activeNav === "activity"} />
+          <NavTextContainer>
+            <Text variant="h3">{"Activity"}</Text>
+          </NavTextContainer>
+        </NavItem>
+        <NavItem>
+          <Triangle active={this.state.activeNav === "settings"} />
+          <NavTextContainer>
+            <Text variant="h3">{"Settings"}</Text>
+          </NavTextContainer>
+        </NavItem>
+        <TransactionModal
+          web3={web3}
+          transactionModalOpen={this.state.transactionModalOpen}
+          handleTransactionModalClose={this.handleCloseTrandactionModal}
+          handleTransactionSend={this.props.sendTransaction}
+        />
+      </>
     );
 
     return (
       <Container>
-        <SidebarContainer>
-          <div>
-            <AppBar position="fixed">
-              <Toolbar>
-                <IconButton
-                  color="inherit"
-                  aria-label="Open drawer"
-                  onClick={this.handleDrawerToggle}
-                >
-                  <MenuIcon />
-                </IconButton>
-                <Typography variant="h6" color="inherit" noWrap>
-                  Paymo
-                </Typography>
-              </Toolbar>
-            </AppBar>
-            <nav>
-              {/* The implementation can be swap with js to avoid SEO duplication of links. */}
-              <Hidden smUp implementation="css">
-                <Drawer
-                  variant="temporary"
-                  open={this.state.mobileOpen}
-                  onClose={this.handleDrawerToggle}
-                  ModalProps={{
-                    keepMounted: true // Better open performance on mobile.
-                  }}
-                >
-                  {drawer}
-                </Drawer>
-              </Hidden>
-              <Hidden xsDown implementation="css">
-                <Drawer variant="permanent" open>
-                  {drawer}
-                </Drawer>
-              </Hidden>
-            </nav>
-            <main>
-              <div />
-              <Transactions
-                account={this.state.accounts[0]}
-                network={this.state.network}
-              />
-            </main>
-          </div>
-        </SidebarContainer>
+        <SidebarContainer>{drawer}</SidebarContainer>
       </Container>
     );
   }
@@ -280,4 +159,4 @@ ResponsiveDrawer.propTypes = {
   theme: PropTypes.object.isRequired
 };
 
-export default ResponsiveDrawer;
+export default applyContext(ResponsiveDrawer);
