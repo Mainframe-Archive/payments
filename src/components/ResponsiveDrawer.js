@@ -1,88 +1,64 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { withStyles } from '@material-ui/core/styles';
-import Drawer from '@material-ui/core/Drawer';
-import AppBar from '@material-ui/core/AppBar';
-import Toolbar from '@material-ui/core/Toolbar';
-import List from '@material-ui/core/List';
-import Typography from '@material-ui/core/Typography';
-import IconButton from '@material-ui/core/IconButton';
-import Hidden from '@material-ui/core/Hidden';
-import MenuIcon from '@material-ui/icons/Menu';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
-import ListItemText from '@material-ui/core/ListItemText';
-import AccessTime from '@material-ui/icons/AccessTime';
-import AccountCircle from '@material-ui/icons/AccountCircle';
-import Transactions from './Transactions';
-import TransactionModal from './TransactionModal';
-import base from '../base';
-import Button from "@material-ui/core/Button/Button";
+import React from "react";
+import PropTypes from "prop-types";
+import { withStyles } from "@material-ui/core/styles";
+import Drawer from "@material-ui/core/Drawer";
+import AppBar from "@material-ui/core/AppBar";
+import Toolbar from "@material-ui/core/Toolbar";
+import List from "@material-ui/core/List";
+import Typography from "@material-ui/core/Typography";
+import IconButton from "@material-ui/core/IconButton";
+import Hidden from "@material-ui/core/Hidden";
+import MenuIcon from "@material-ui/icons/Menu";
+import ListItem from "@material-ui/core/ListItem";
+import ListItemIcon from "@material-ui/core/ListItemIcon";
+import ListItemText from "@material-ui/core/ListItemText";
+import AccessTime from "@material-ui/icons/AccessTime";
+import AccountCircle from "@material-ui/icons/AccountCircle";
+import Transactions from "./Transactions";
+import TransactionModal from "./TransactionModal";
+import base from "../base";
+
+import styled, { css } from "styled-components/native";
+import { Button } from "@morpheus-ui/core";
 
 const drawerWidth = 240;
-const styles = theme => ({
-  root: {
-    display: 'flex',
-  },
-  drawer: {
-    [theme.breakpoints.up('sm')]: {
-      width: drawerWidth,
-      flexShrink: 0,
-    },
-  },
-  appBar: {
-    marginLeft: drawerWidth,
-    [theme.breakpoints.up('sm')]: {
-      width: `calc(100% - ${drawerWidth}px)`,
-    },
-  },
-  button: {
-    backgroundColor: theme.palette.complementary.main,
-    color: theme.palette.complementary.contrastText,
-  },
-  menuButton: {
-    marginRight: 20,
-    [theme.breakpoints.up('sm')]: {
-      display: 'none',
-    },
-  },
-  toolbar: theme.mixins.toolbar,
-  drawerPaper: {
-    width: drawerWidth,
-    backgroundColor: theme.palette.primary.main
-  },
-  content: {
-    flexGrow: 1,
-    padding: theme.spacing.unit * 3,
-  },
-  vertContainer: {
-    display: 'table',
-    height: '100%',
-    position: 'absolute',
-    overflow: 'hidden',
-    width: '100%',
-  },
-  vertHelper: {
-    display: 'table-cell',
-    verticalAlign: 'middle',
-  },
-  vertList: {
-    margin: '0 auto',
-  },
-  horizontalCenter: {
-    margin: '15% auto',
-    width: '50%',
-  },
-});
+
+const Container = styled.View`
+  width: 250px;
+  height: 100%;
+  background-color: ${props => props.theme.lightGray};
+  display: flex;
+  flex-direction: row;
+  ${props =>
+    props.screenWidth <= 900 &&
+    css`
+      width: 150px;
+    `};
+`;
+
+const SidebarContainer = styled.View`
+  width: 100%;
+  background-color: ${props => props.theme.lightGray};
+  ${props =>
+    props.screenWidth <= 900 &&
+    css`
+      padding: 0px;
+      width: 90%;
+    `};
+  ${props =>
+    props.screenWidth <= 700 &&
+    css`
+      width: 0;
+    `};
+`;
 
 class ResponsiveDrawer extends React.Component {
-
   state = {
     mobileOpen: false,
     web3: this.props.web3,
     transactionModalOpen: false,
     accounts: [],
-    network: null,
+    network: null
   };
 
   handleDrawerToggle = () => {
@@ -98,66 +74,83 @@ class ResponsiveDrawer extends React.Component {
   };
 
   sendTransaction = (recipient, comment, amount) => {
-    console.log('this.state: ', this.state);
-    if (this.state.network !== 'ropsten' ) {
-      alert(
-        `Please connect to ropsten testnet to use this dApp.`
-      );
+    console.log("this.state: ", this.state);
+    if (this.state.network !== "ropsten") {
+      alert(`Please connect to ropsten testnet to use this dApp.`);
       return;
     }
     if (!this.props.web3.utils.isAddress(recipient)) {
-      alert(`Recipient was not a valid Ethereum address. Please try creating your transaction again.`);
+      alert(
+        `Recipient was not a valid Ethereum address. Please try creating your transaction again.`
+      );
       return;
     }
 
     const weiAmount = this.props.web3.utils.toWei(amount);
-    this.setState({recipient: recipient, comment: comment, transactionAmount: amount, weiAmount});
+    this.setState({
+      recipient: recipient,
+      comment: comment,
+      transactionAmount: amount,
+      weiAmount
+    });
 
-    this.props.web3.eth.sendTransaction({
-      from: `${this.state.accounts[0]}`,
-      to: `${recipient}`,
-      value: weiAmount
-    })
-      .once('transactionHash', this.printTransactionHash)
-      .once('receipt', this.printReceipt)
-      .on('confirmation', this.printConfNumber)
-      .on('error', this.logError)
+    this.props.web3.eth
+      .sendTransaction({
+        from: `${this.state.accounts[0]}`,
+        to: `${recipient}`,
+        value: weiAmount
+      })
+      .once("transactionHash", this.printTransactionHash)
+      .once("receipt", this.printReceipt)
+      .on("confirmation", this.printConfNumber)
+      .on("error", this.logError)
       .then(this.receiptWasMined);
   };
 
-  printTransactionHash = (transactionHash) => {
-    console.log('transactionHash: ', transactionHash);
+  printTransactionHash = transactionHash => {
+    console.log("transactionHash: ", transactionHash);
     this.setState({ transactionHash, transactionModalOpen: false });
   };
 
   printReceipt(receipt) {
-    console.log('receipt: ', receipt);
+    console.log("receipt: ", receipt);
   }
 
-  printConfNumber(confNumber, receipt){
-    console.log('confNumber: ', confNumber, receipt);
+  printConfNumber(confNumber, receipt) {
+    console.log("confNumber: ", confNumber, receipt);
   }
 
-  logError(error){
-    console.error('ERROR: ', error);
+  logError(error) {
+    console.error("ERROR: ", error);
   }
 
-  receiptWasMined = (receipt) => {
-    console.log('The receipt has been mined! ', receipt);
+  receiptWasMined = receipt => {
+    console.log("The receipt has been mined! ", receipt);
     // will be fired once the receipt is mined
 
-    this.props.web3.eth.getBlock(receipt.blockNumber).then((block) => {
-      console.log(`account_transactions/${this.state.accounts[0]}/${this.state.network}/${this.state.transactionHash}`);
-      base.post(`account_transactions/${this.state.accounts[0]}/${this.state.network}/${this.state.transactionHash}`, {
-        data: {
-          comment: this.state.comment,
-          value: this.state.weiAmount,
-          timestamp: block.timestamp,
-          receipt
-        }
-      }).catch(err => {
-        console.error('ERROR: ', err);
-      })
+    this.props.web3.eth.getBlock(receipt.blockNumber).then(block => {
+      console.log(
+        `account_transactions/${this.state.accounts[0]}/${this.state.network}/${
+          this.state.transactionHash
+        }`
+      );
+      base
+        .post(
+          `account_transactions/${this.state.accounts[0]}/${
+            this.state.network
+          }/${this.state.transactionHash}`,
+          {
+            data: {
+              comment: this.state.comment,
+              value: this.state.weiAmount,
+              timestamp: block.timestamp,
+              receipt
+            }
+          }
+        )
+        .catch(err => {
+          console.error("ERROR: ", err);
+        });
     });
   };
 
@@ -168,8 +161,13 @@ class ResponsiveDrawer extends React.Component {
       const network = await this.props.web3.eth.net.getNetworkType();
 
       // Set accounts and network to the state
-      if (!this.state.accounts || !this.state.network || this.state.accounts[0] !== accounts[0] || this.state.network !== network) {
-        this.setState({ accounts, network } );
+      if (
+        !this.state.accounts ||
+        !this.state.network ||
+        this.state.accounts[0] !== accounts[0] ||
+        this.state.network !== network
+      ) {
+        this.setState({ accounts, network });
       }
     } catch (error) {
       // Catch any errors for any of the above operations.
@@ -191,22 +189,28 @@ class ResponsiveDrawer extends React.Component {
 
     const drawer = (
       <div>
-        <div className={classes.vertContainer}>
-          <div className={classes.vertHelper}>
-            <List className={classes.vertList}>
+        <div>
+          <div>
+            <List>
               <ListItem button key="Activity">
-                <ListItemIcon><AccessTime /></ListItemIcon>
+                <ListItemIcon>
+                  <AccessTime />
+                </ListItemIcon>
                 <ListItemText>Activity</ListItemText>
               </ListItem>
               <ListItem button key="Settings">
-                <ListItemIcon><AccountCircle /></ListItemIcon>
+                <ListItemIcon>
+                  <AccountCircle />
+                </ListItemIcon>
                 <ListItemText>Settings</ListItemText>
               </ListItem>
             </List>
-            <div className={classes.horizontalCenter}>
-              <Button onClick={this.handleOpenTrandactionModal} variant="contained" size="large" className={classes.button}>
-                New
-              </Button>
+            <div>
+              <Button
+                onPress={this.handleOpenTrandactionModal}
+                variant="outlined"
+                title="new"
+              />
               <TransactionModal
                 web3={this.state.web3}
                 transactionModalOpen={this.state.transactionModalOpen}
@@ -220,64 +224,60 @@ class ResponsiveDrawer extends React.Component {
     );
 
     return (
-      <div className={classes.root}>
-        <AppBar position="fixed" className={classes.appBar}>
-          <Toolbar>
-            <IconButton
-              color="inherit"
-              aria-label="Open drawer"
-              onClick={this.handleDrawerToggle}
-              className={classes.menuButton}
-            >
-              <MenuIcon />
-            </IconButton>
-            <Typography variant="h6" color="inherit" noWrap>
-              Paymo
-            </Typography>
-          </Toolbar>
-        </AppBar>
-        <nav className={classes.drawer}>
-          {/* The implementation can be swap with js to avoid SEO duplication of links. */}
-          <Hidden smUp implementation="css">
-            <Drawer
-              variant="temporary"
-              anchor={theme.direction === 'rtl' ? 'right' : 'left'}
-              open={this.state.mobileOpen}
-              onClose={this.handleDrawerToggle}
-              classes={{
-                paper: classes.drawerPaper,
-              }}
-              ModalProps={{
-                keepMounted: true, // Better open performance on mobile.
-              }}
-            >
-              {drawer}
-            </Drawer>
-          </Hidden>
-          <Hidden xsDown implementation="css">
-            <Drawer
-              classes={{
-                paper: classes.drawerPaper,
-              }}
-              variant="permanent"
-              open
-            >
-              {drawer}
-            </Drawer>
-          </Hidden>
-        </nav>
-        <main className={classes.content}>
-          <div className={classes.toolbar} />
-          <Transactions account={this.state.accounts[0]} network={this.state.network}/>
-        </main>
-      </div>
+      <Container>
+        <SidebarContainer>
+          <div>
+            <AppBar position="fixed">
+              <Toolbar>
+                <IconButton
+                  color="inherit"
+                  aria-label="Open drawer"
+                  onClick={this.handleDrawerToggle}
+                >
+                  <MenuIcon />
+                </IconButton>
+                <Typography variant="h6" color="inherit" noWrap>
+                  Paymo
+                </Typography>
+              </Toolbar>
+            </AppBar>
+            <nav>
+              {/* The implementation can be swap with js to avoid SEO duplication of links. */}
+              <Hidden smUp implementation="css">
+                <Drawer
+                  variant="temporary"
+                  open={this.state.mobileOpen}
+                  onClose={this.handleDrawerToggle}
+                  ModalProps={{
+                    keepMounted: true // Better open performance on mobile.
+                  }}
+                >
+                  {drawer}
+                </Drawer>
+              </Hidden>
+              <Hidden xsDown implementation="css">
+                <Drawer variant="permanent" open>
+                  {drawer}
+                </Drawer>
+              </Hidden>
+            </nav>
+            <main>
+              <div />
+              <Transactions
+                account={this.state.accounts[0]}
+                network={this.state.network}
+              />
+            </main>
+          </div>
+        </SidebarContainer>
+      </Container>
     );
   }
 }
 
 ResponsiveDrawer.propTypes = {
   classes: PropTypes.object.isRequired,
-  theme: PropTypes.object.isRequired,
+  theme: PropTypes.object.isRequired
 };
 
-export default withStyles(styles, { withTheme: true })(ResponsiveDrawer);
+export default ResponsiveDrawer;
