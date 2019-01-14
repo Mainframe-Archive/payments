@@ -1,23 +1,23 @@
 // @flow
 
-import React, { createContext } from "react";
+import React, { createContext } from 'react'
 
 export type PaymentsContext = {
   accounts: ?Array<string>,
-  network: ?String
-};
+  network: ?String,
+}
 
 const DEFAULT_CONTEXT = {
   accounts: [],
-  network: null
-};
+  network: null,
+}
 
-export const { Consumer, Provider } = createContext(DEFAULT_CONTEXT);
+export const { Consumer, Provider } = createContext(DEFAULT_CONTEXT)
 
 export default (Component: any) => {
   return (props: Object) => (
     <Consumer>
       {(value: PaymentsContext) => <Component {...props} {...value} />}
     </Consumer>
-  );
-};
+  )
+}
