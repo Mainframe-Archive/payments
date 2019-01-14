@@ -1,7 +1,7 @@
-import React from 'react'
-import styled, { css } from 'styled-components/native'
-import Transactions from './Transactions'
-import applyContext from '../hocs/Context'
+import React from 'react';
+import styled, { css } from 'styled-components/native';
+import Transactions from './Transactions';
+import applyContext from '../hocs/Context';
 
 const Container = styled.View`
   flex: 1;
@@ -15,7 +15,7 @@ const Container = styled.View`
     css`
       width: 150px;
     `};
-`
+`;
 
 const TransactionsContainer = styled.View`
   width: 100%;
@@ -25,7 +25,7 @@ const TransactionsContainer = styled.View`
       padding: 0px;
       width: 90%;
     `};
-`
+`;
 
 class MainContainer extends React.Component {
   render() {
@@ -38,8 +38,8 @@ class MainContainer extends React.Component {
           />
         </TransactionsContainer>
       </Container>
-    )
+    );
   }
 }
 
-export default applyContext(MainContainer)
+export default applyContext(MainContainer);

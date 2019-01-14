@@ -3,7 +3,7 @@ const colors = {
   gray: '#F9F9F9',
   paymentGreen: '#8EDA11',
   black: '#000',
-}
+};
 
 export default {
   Button: {
@@ -35,4 +35,4 @@ export default {
     ...colors,
     spacing: '20px',
   },
-}
+};
