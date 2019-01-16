@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import TransactionModal from './TransactionModal';
 
 import styled, { css } from 'styled-components/native';
@@ -153,10 +152,5 @@ class ResponsiveDrawer extends React.Component {
     );
   }
 }
-
-ResponsiveDrawer.propTypes = {
-  classes: PropTypes.object.isRequired,
-  theme: PropTypes.object.isRequired,
-};
 
 export default applyContext(ResponsiveDrawer);
