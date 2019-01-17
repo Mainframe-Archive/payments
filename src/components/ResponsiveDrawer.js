@@ -88,7 +88,14 @@ class ResponsiveDrawer extends React.Component {
   };
 
   render() {
-    const { web3 } = this.props;
+    const {
+      web3,
+      getBlockchainData,
+      transactionModalOpen,
+      handleCloseTransactionModal,
+      handleOpenTransactionModal,
+      sendTransaction,
+    } = this.props;
 
     if (web3) {
       this.props.getBlockchainData();
@@ -99,7 +106,7 @@ class ResponsiveDrawer extends React.Component {
       <>
         <ButtonContainer>
           <Button
-            onPress={this.props.handleOpenTransactionModal}
+            onPress={handleOpenTransactionModal}
             variant="outlined"
             title="NEW TRANSFER"
             Icon={PlusSymbol}
@@ -131,9 +138,9 @@ class ResponsiveDrawer extends React.Component {
         </NavItem>
         <TransactionModal
           web3={web3}
-          transactionModalOpen={this.props.transactionModalOpen}
-          handleTransactionModalClose={this.props.handleCloseTransactionModal}
-          handleTransactionSend={this.props.sendTransaction}
+          transactionModalOpen={transactionModalOpen}
+          handleTransactionModalClose={handleCloseTransactionModal}
+          handleTransactionSend={sendTransaction}
         />
       </>
     );
@@ -145,8 +152,13 @@ class ResponsiveDrawer extends React.Component {
     );
   }
 }
+
 ResponsiveDrawer.propTypes = {
-  sendTransaction: PropTypes.func.isRequired,
   getBlockchainData: PropTypes.func.isRequired,
+  transactionModalOpen: PropTypes.bool.isRequired,
+  handleCloseTransactionModal: PropTypes.func.isRequired,
+  handleOpenTransactionModal: PropTypes.func.isRequired,
+  sendTransaction: PropTypes.func.isRequired,
 };
+
 export default applyContext(ResponsiveDrawer);
