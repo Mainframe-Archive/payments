@@ -19,6 +19,7 @@ const Container = styled.View`
 
 const TransactionsContainer = styled.View`
   width: 100%;
+  overflow: scroll;
   ${props =>
     props.screenWidth <= 900 &&
     css`

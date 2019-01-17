@@ -147,6 +147,9 @@ class App extends Component {
   };
 
   render() {
+    console.log(this.state.accounts);
+    console.log(this.state.network);
+
     return (
       <ThemeProvider theme={theme}>
         <Provider
