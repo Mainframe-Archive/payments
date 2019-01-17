@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import TransactionModal from './TransactionModal';
 
 import styled, { css } from 'styled-components/native';
@@ -43,7 +44,7 @@ const NavItem = styled.View`
   flex-direction: row;
   justify-content: flex-start;
   align-items: center;
-  margin: ${props => props.theme.spacing} 0;
+  margin: 10px 0;
 `;
 
 const Triangle = styled.View`
@@ -72,7 +73,6 @@ const ButtonContainer = styled.View`
 class ResponsiveDrawer extends React.Component {
   state = {
     mobileOpen: false,
-    transactionModalOpen: false,
     activeNav: 'activity',
   };
 
@@ -80,30 +80,12 @@ class ResponsiveDrawer extends React.Component {
     this.setState(state => ({ mobileOpen: !state.mobileOpen }));
   };
 
-  handleOpenTrandactionModal = () => {
-    this.setState({ transactionModalOpen: true });
+  updateActiveNav = whichNav => {
+    this.setState(prevState => ({
+      activeNav:
+        prevState.activeNav === whichNav ? prevState.activeNav : whichNav,
+    }));
   };
-
-  handleCloseTrandactionModal = () => {
-    this.setState({ transactionModalOpen: false });
-  };
-
-  printTransactionHash = transactionHash => {
-    console.log('transactionHash: ', transactionHash);
-    this.setState({ transactionHash, transactionModalOpen: false });
-  };
-
-  printReceipt(receipt) {
-    console.log('receipt: ', receipt);
-  }
-
-  printConfNumber(confNumber, receipt) {
-    console.log('confNumber: ', confNumber, receipt);
-  }
-
-  logError(error) {
-    console.error('ERROR: ', error);
-  }
 
   render() {
     const { web3 } = this.props;
@@ -113,12 +95,11 @@ class ResponsiveDrawer extends React.Component {
     } else {
       return null;
     }
-
     const drawer = (
       <>
         <ButtonContainer>
           <Button
-            onPress={this.handleOpenTrandactionModal}
+            onPress={this.props.handleOpenTransactionModal}
             variant="outlined"
             title="NEW TRANSFER"
             Icon={PlusSymbol}
@@ -126,20 +107,32 @@ class ResponsiveDrawer extends React.Component {
         </ButtonContainer>
         <NavItem>
           <Triangle active={this.state.activeNav === 'activity'} />
-          <NavTextContainer>
-            <Text variant="h3">{'Activity'}</Text>
+          <NavTextContainer onPress={() => this.updateActiveNav('activity')}>
+            <Text
+              variant={
+                this.state.activeNav === 'activity' ? 'h3' : ['h3', 'faded']
+              }
+            >
+              {'Activity'}
+            </Text>
           </NavTextContainer>
         </NavItem>
         <NavItem>
           <Triangle active={this.state.activeNav === 'settings'} />
-          <NavTextContainer>
-            <Text variant="h3">{'Settings'}</Text>
+          <NavTextContainer onPress={() => this.updateActiveNav('settings')}>
+            <Text
+              variant={
+                this.state.activeNav === 'settings' ? 'h3' : ['h3', 'faded']
+              }
+            >
+              {'Settings'}
+            </Text>
           </NavTextContainer>
         </NavItem>
         <TransactionModal
           web3={web3}
-          transactionModalOpen={this.state.transactionModalOpen}
-          handleTransactionModalClose={this.handleCloseTrandactionModal}
+          transactionModalOpen={this.props.transactionModalOpen}
+          handleTransactionModalClose={this.props.handleCloseTransactionModal}
           handleTransactionSend={this.props.sendTransaction}
         />
       </>
@@ -152,5 +145,8 @@ class ResponsiveDrawer extends React.Component {
     );
   }
 }
-
+ResponsiveDrawer.propTypes = {
+  sendTransaction: PropTypes.func.isRequired,
+  getBlockchainData: PropTypes.func.isRequired,
+};
 export default applyContext(ResponsiveDrawer);

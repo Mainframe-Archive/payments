@@ -2,6 +2,7 @@ const colors = {
   white: '#fff',
   gray: '#F9F9F9',
   paymentGreen: '#8EDA11',
+  darkGray: '#818181',
   black: '#000',
 };
 
@@ -28,6 +29,7 @@ export default {
       color: colors.black,
       fontWeight: 700,
     },
+    faded: { color: colors.darkGray },
   },
 
   // Special property used as styles where `styled-components` ThemeProvider would be used
