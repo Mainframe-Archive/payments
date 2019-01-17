@@ -40,17 +40,17 @@ const DateContainer = styled.View`
   padding-bottom: 8px;
 `;
 
+let rowId = 0;
+function createData(identifier, avatar, comment, date, time, value) {
+  rowId += 1;
+  return { rowId, identifier, avatar, comment, date, time, value };
+}
+
 function condenseAddress(address) {
   const len = 4;
   return (
     address.slice(0, len + 2) + '...' + address.slice(-len, address.length)
   );
-}
-
-let rowId = 0;
-function createData(identifier, avatar, comment, date, time, value) {
-  rowId += 1;
-  return { rowId, identifier, avatar, comment, date, time, value };
 }
 
 class SimpleTable extends React.Component {
