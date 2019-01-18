@@ -85,17 +85,16 @@ class App extends Component {
               myaccount === e.from ||
               myaccount === e.to
             ) {
-              const weiAmount = this.state.web3.utils.toWei(e.gasPrice, 'Gwei');
               console.log(e);
-              console.log(block);
+              console.log(block.hash);
               base.post(
                 `account_transactions/${this.state.accounts[0]}/${
                   this.state.network
-                }/${this.state.transactionHash}`,
+                }/${block.hash}`,
                 {
                   data: {
-                    comment: 'received from ether faucet',
-                    value: weiAmount,
+                    comment: 'received',
+                    value: e.value,
                     timestamp: block.timestamp,
                     receipt: { to: e.to, from: e.from },
                   },
@@ -120,7 +119,7 @@ class App extends Component {
         this.state.accounts[0] !== accounts[0] ||
         this.state.network !== network
       ) {
-        this.getTransactionsByAccount(accounts[0], 4850000, 4851345);
+        this.getTransactionsByAccount(accounts[0], 4850000, 4851886);
         this.setState({ accounts, network });
       }
     } catch (error) {
@@ -176,8 +175,6 @@ class App extends Component {
     }
 
     const weiAmount = this.state.web3.utils.toWei(amount);
-    console.log(amount);
-    console.log(weiAmount);
     this.setState({
       recipient: recipient,
       comment: comment,

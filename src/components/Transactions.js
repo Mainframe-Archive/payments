@@ -86,6 +86,7 @@ class SimpleTable extends React.Component {
                 const ethAmount = utils.fromWei(transaction.value);
                 const date = this.formattedDate(transaction.timestamp * 1000);
                 const time = this.formattedTime(transaction.timestamp * 1000);
+                console.log(transaction);
                 if (rows[date]) {
                   rows[date] = [
                     ...rows[date],
