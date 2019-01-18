@@ -77,12 +77,17 @@ class SimpleTable extends React.Component {
             asArray: true,
             then(transactionData) {
               let rows = {};
+              transactionData.sort((a, b) => {
+                if (a.timestamp > b.timestamp) return -1;
+                else if (b.timestamp > a.timestamp) return 1;
+                else return 0;
+              });
               transactionData.forEach((transaction, index) => {
                 const ethAmount = utils.fromWei(transaction.value);
                 const date = this.formattedDate(transaction.timestamp * 1000);
                 const time = this.formattedTime(transaction.timestamp * 1000);
                 if (rows[date]) {
-                  const temp = [
+                  rows[date] = [
                     ...rows[date],
                     createData(
                       transaction.receipt.to,
@@ -93,12 +98,6 @@ class SimpleTable extends React.Component {
                       ethAmount,
                     ),
                   ];
-                  temp.sort((a, b) => {
-                    if (a.time > b.time) return -1;
-                    else if (a.time < b.time) return 1;
-                    else return 0;
-                  });
-                  rows[date] = temp;
                 } else {
                   rows[date] = [
                     createData(
