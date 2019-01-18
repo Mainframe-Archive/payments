@@ -98,7 +98,7 @@ class ResponsiveDrawer extends React.Component {
     } = this.props;
 
     if (web3) {
-      this.props.getBlockchainData();
+      getBlockchainData();
     } else {
       return null;
     }

@@ -40,15 +40,20 @@ const Root = styled.View`
 `;
 
 class App extends Component {
-  state = { web3: null, accounts: null, transactionModalOpen: false };
+  state = {
+    web3: null,
+    accounts: null,
+    network: null,
+    transactionModalOpen: false,
+  };
 
   componentDidMount = async () => {
     try {
       // Get network provider and web3 instance.
       const web3 = await getWeb3();
-
       // Set web3 to the state
       this.setState({ web3 });
+      this.getBlockchainData();
     } catch (error) {
       // Catch any errors for any of the above operations.
       alert(
@@ -58,12 +63,56 @@ class App extends Component {
     }
   };
 
+  getTransactionsByAccount = (myaccount, startBlockNumber, endBlockNumber) => {
+    console.log(
+      'Searching for transactions to/from account "' +
+        myaccount +
+        '" within blocks ' +
+        startBlockNumber +
+        ' and ' +
+        endBlockNumber,
+    );
+
+    for (var i = startBlockNumber; i <= endBlockNumber; i++) {
+      if (i % 1000 === 0) {
+        console.log('Searching block ' + i);
+      }
+      this.state.web3.eth.getBlock(i, true).then(block => {
+        if (block !== null && block.transactions !== null) {
+          block.transactions.forEach(e => {
+            if (
+              myaccount === '*' ||
+              myaccount === e.from ||
+              myaccount === e.to
+            ) {
+              const weiAmount = this.state.web3.utils.toWei(e.gasPrice, 'Gwei');
+              console.log(e);
+              console.log(block);
+              base.post(
+                `account_transactions/${this.state.accounts[0]}/${
+                  this.state.network
+                }/${this.state.transactionHash}`,
+                {
+                  data: {
+                    comment: 'received from ether faucet',
+                    value: weiAmount,
+                    timestamp: block.timestamp,
+                    receipt: { to: e.to, from: e.from },
+                  },
+                },
+              );
+            }
+          });
+        }
+      });
+    }
+  };
+
   getBlockchainData = async () => {
     try {
       // Use web3 to get the user's accounts.
       const accounts = await this.state.web3.eth.getAccounts();
       const network = await this.state.web3.eth.net.getNetworkType();
-
       // Set accounts and network to the state
       if (
         !this.state.accounts ||
@@ -71,6 +120,7 @@ class App extends Component {
         this.state.accounts[0] !== accounts[0] ||
         this.state.network !== network
       ) {
+        this.getTransactionsByAccount(accounts[0], 4850000, 4851345);
         this.setState({ accounts, network });
       }
     } catch (error) {
@@ -126,6 +176,8 @@ class App extends Component {
     }
 
     const weiAmount = this.state.web3.utils.toWei(amount);
+    console.log(amount);
+    console.log(weiAmount);
     this.setState({
       recipient: recipient,
       comment: comment,
@@ -178,7 +230,6 @@ class App extends Component {
           value={{
             ...this.state,
             getBlockchainData: this.getBlockchainData,
-            receiptWasMined: this.receiptWasMine,
             sendTransaction: this.sendTransaction,
             handleOpenTransactionModal: this.handleOpenTransactionModal,
             handleCloseTransactionModal: this.handleCloseTransactionModal,
