@@ -76,21 +76,43 @@ class SimpleTable extends React.Component {
             context: this,
             asArray: true,
             then(transactionData) {
-              let rows = [];
+              let rows = {};
               transactionData.forEach((transaction, index) => {
                 const ethAmount = utils.fromWei(transaction.value);
-                rows.push(
-                  createData(
-                    transaction.receipt.to,
-                    '',
-                    transaction.comment,
-                    this.formattedDate(transaction.timestamp * 1000),
-                    this.formattedTime(transaction.timestamp * 1000),
-                    ethAmount,
-                  ),
-                );
+                const date = this.formattedDate(transaction.timestamp * 1000);
+                const time = this.formattedTime(transaction.timestamp * 1000);
+                if (rows[date]) {
+                  const temp = [
+                    ...rows[date],
+                    createData(
+                      transaction.receipt.to,
+                      '',
+                      transaction.comment,
+                      date,
+                      time,
+                      ethAmount,
+                    ),
+                  ];
+                  temp.sort((a, b) => {
+                    if (a.time > b.time) return -1;
+                    else if (a.time < b.time) return 1;
+                    else return 0;
+                  });
+                  rows[date] = temp;
+                } else {
+                  rows[date] = [
+                    createData(
+                      transaction.receipt.to,
+                      '',
+                      transaction.comment,
+                      date,
+                      time,
+                      ethAmount,
+                    ),
+                  ];
+                }
               });
-              this.setState({ rows: this.sortRowData(rows) });
+              this.setState({ rows: rows });
             },
           },
         );
@@ -99,24 +121,6 @@ class SimpleTable extends React.Component {
         console.error(error);
       }
     }
-  };
-
-  sortRowData = rows => {
-    const sortedRows = {};
-    rows.forEach(row => {
-      if (sortedRows[row.date] !== undefined) {
-        const temp = [...sortedRows[row.date], row];
-        temp.sort((a, b) => {
-          if (a.time > b.time) return -1;
-          else if (a.time < b.time) return 1;
-          else return 0;
-        });
-        sortedRows[row.date] = temp;
-      } else {
-        sortedRows[row.date] = [row];
-      }
-    });
-    return Object.entries(sortedRows);
   };
 
   formattedDate(timestamp) {
@@ -153,9 +157,9 @@ class SimpleTable extends React.Component {
   render() {
     return (
       <>
-        {this.state.rows.map(keyValuePair => {
-          const date = keyValuePair[0];
-          const rows = keyValuePair[1];
+        {Object.keys(this.state.rows).map(key => {
+          const date = key;
+          const rows = this.state.rows[key];
           return (
             <TableContainer>
               <DateContainer>
