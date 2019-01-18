@@ -76,12 +76,12 @@ class SimpleTable extends React.Component {
             context: this,
             asArray: true,
             then(transactionData) {
-              let rows = {};
               transactionData.sort((a, b) => {
                 if (a.timestamp > b.timestamp) return -1;
                 else if (b.timestamp > a.timestamp) return 1;
                 else return 0;
               });
+              let rows = {};
               transactionData.forEach((transaction, index) => {
                 const ethAmount = utils.fromWei(transaction.value);
                 const date = this.formattedDate(transaction.timestamp * 1000);
