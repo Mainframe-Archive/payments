@@ -9,7 +9,7 @@ import { ThemeProvider } from '@morpheus-ui/core';
 import { Provider } from './hocs/Context';
 import theme from './theme';
 import styled from 'styled-components/native';
-import base from './base';
+import base, { db } from './base';
 
 const temptheme = createMuiTheme({
   typography: {
@@ -63,50 +63,6 @@ class App extends Component {
     }
   };
 
-  getTransactionsByAccount = (myaccount, startBlockNumber, endBlockNumber) => {
-    console.log(
-      'Searching for transactions to/from account "' +
-        myaccount +
-        '" within blocks ' +
-        startBlockNumber +
-        ' and ' +
-        endBlockNumber,
-    );
-
-    for (var i = startBlockNumber; i <= endBlockNumber; i++) {
-      if (i % 1000 === 0) {
-        console.log('Searching block ' + i);
-      }
-      this.state.web3.eth.getBlock(i, true).then(block => {
-        if (block !== null && block.transactions !== null) {
-          block.transactions.forEach(e => {
-            if (
-              myaccount === '*' ||
-              myaccount === e.from ||
-              myaccount === e.to
-            ) {
-              console.log(e);
-              console.log(block);
-              base.post(
-                `account_transactions/${this.state.accounts[0]}/${
-                  this.state.network
-                }/${e.hash}`,
-                {
-                  data: {
-                    comment: '',
-                    value: e.value,
-                    timestamp: block.timestamp,
-                    receipt: { to: e.to, from: e.from },
-                  },
-                },
-              );
-            }
-          });
-        }
-      });
-    }
-  };
-
   getBlockchainData = async () => {
     try {
       // Use web3 to get the user's accounts.
@@ -119,7 +75,6 @@ class App extends Component {
         this.state.accounts[0] !== accounts[0] ||
         this.state.network !== network
       ) {
-        this.getTransactionsByAccount(accounts[0], 4850000, 4875886);
         this.setState({ accounts, network });
       }
     } catch (error) {
@@ -134,7 +89,8 @@ class App extends Component {
   receiptWasMined = receipt => {
     console.log('The receipt has been mined! ', receipt);
     // will be fired once the receipt is mined
-
+    console.log(receipt.to);
+    console.log(this.state.accounts[0]);
     this.state.web3.eth.getBlock(receipt.blockNumber).then(block => {
       console.log(
         `account_transactions/${this.state.accounts[0]}/${this.state.network}/${
@@ -157,6 +113,28 @@ class App extends Component {
         )
         .catch(err => {
           console.error('ERROR: ', err);
+        });
+      db.ref(`account_transactions`)
+        .once('value')
+        .then(snapshot => {
+          const accounts = snapshot.val();
+          console.log(accounts);
+          if (accounts[this.state.recipient]) {
+            console.log('made it');
+            base.post(
+              `account_transactions/${this.state.recipient}/${
+                this.state.network
+              }/${this.state.transactionHash}`,
+              {
+                data: {
+                  comment: this.state.comment,
+                  value: this.state.weiAmount,
+                  timestamp: block.timestamp,
+                  receipt,
+                },
+              },
+            );
+          }
         });
     });
   };

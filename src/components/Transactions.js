@@ -41,9 +41,9 @@ const DateContainer = styled.View`
 `;
 
 let rowId = 0;
-function createData(identifier, avatar, comment, date, time, value) {
+function createData(receipt, avatar, comment, date, time, value) {
   rowId += 1;
-  return { rowId, identifier, avatar, comment, date, time, value };
+  return { rowId, receipt, avatar, comment, date, time, value };
 }
 
 function condenseAddress(address) {
@@ -86,30 +86,18 @@ class SimpleTable extends React.Component {
                 const ethAmount = utils.fromWei(transaction.value);
                 const date = this.formattedDate(transaction.timestamp * 1000);
                 const time = this.formattedTime(transaction.timestamp * 1000);
-                console.log(transaction);
+                const transactionData = createData(
+                  transaction.receipt,
+                  '',
+                  transaction.comment,
+                  date,
+                  time,
+                  ethAmount,
+                );
                 if (rows[date]) {
-                  rows[date] = [
-                    ...rows[date],
-                    createData(
-                      transaction.receipt.to,
-                      '',
-                      transaction.comment,
-                      date,
-                      time,
-                      ethAmount,
-                    ),
-                  ];
+                  rows[date] = [...rows[date], transactionData];
                 } else {
-                  rows[date] = [
-                    createData(
-                      transaction.receipt.to,
-                      '',
-                      transaction.comment,
-                      date,
-                      time,
-                      ethAmount,
-                    ),
-                  ];
+                  rows[date] = [transactionData];
                 }
               });
               this.setState({ rows: rows });
@@ -168,12 +156,11 @@ class SimpleTable extends React.Component {
               {rows.map((row, index) => {
                 let sent = true;
                 this.props.accounts.forEach(account => {
-                  console.log(account);
-                  console.log(row.identifier);
-                  if (account === row.identifier) {
+                  if (account.toLowerCase() === row.receipt.to.toLowerCase()) {
                     sent = false;
                   }
                 });
+                const identifier = sent ? row.receipt.to : row.receipt.from;
                 return (
                   <TransactionContainer
                     onMouseEnter={() => this.enterHover(row.rowId)}
@@ -199,9 +186,9 @@ class SimpleTable extends React.Component {
                         </TimeContainer>
                       </Column>
                       <Column lg={2} md={3} sm={12}>
-                        <CopyToClipboard text={row.identifier}>
+                        <CopyToClipboard text={identifier}>
                           <Button
-                            title={condenseAddress(row.identifier)}
+                            title={condenseAddress(identifier)}
                             variant={['no-border', 'textLike']}
                             onPress={() => this.onAddressCopy(row.rowId)}
                           />
