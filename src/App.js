@@ -51,6 +51,7 @@ class App extends Component {
     try {
       // Get network provider and web3 instance.
       const web3 = await getWeb3();
+
       // Set web3 to the state
       this.setState({ web3 });
     } catch (error) {
@@ -67,6 +68,7 @@ class App extends Component {
       // Use web3 to get the user's accounts.
       const accounts = await this.state.web3.eth.getAccounts();
       const network = await this.state.web3.eth.net.getNetworkType();
+
       // Set accounts and network to the state
       if (
         !this.state.accounts ||
@@ -84,32 +86,27 @@ class App extends Component {
       console.log(error);
     }
 
-    // make sure account has been initialized on firebase
-    // so that paymo knows that this is a paymo account
-    db.ref(`account_transactions`)
-      .once('value')
-      .then(snapshot => {
-        const accounts = snapshot.val();
-        if (accounts[this.state.accounts[0]]) {
-          console.log('this account exists');
-        } else {
-          console.log('this account does not exist');
-          base.post(
-            `account_transactions/${this.state.accounts[0]}/${
-              this.state.network
-            }`,
-            {
-              data: '',
-            },
-          );
-        }
-        // });
-      });
+    // Make sure account has been initialized on firebase
+    // so that paymo knows this is a paymo account
+    db.ref(`account_transactions`).on('value', snapshot => {
+      const accounts = snapshot.val();
+      if (!accounts[this.state.accounts[0]]) {
+        base.post(
+          `account_transactions/${this.state.accounts[0]}/${
+            this.state.network
+          }`,
+          {
+            data: '',
+          },
+        );
+      }
+    });
   };
 
   receiptWasMined = receipt => {
     console.log('The receipt has been mined! ', receipt);
     // will be fired once the receipt is mined
+
     this.state.web3.eth.getBlock(receipt.blockNumber).then(block => {
       console.log(
         `account_transactions/${this.state.accounts[0]}/${this.state.network}/${
@@ -132,20 +129,20 @@ class App extends Component {
         .catch(err => {
           console.error('ERROR: ', err);
         });
-      db.ref(`account_transactions`)
-        .once('value')
-        .then(snapshot => {
-          const accounts = snapshot.val();
-          console.log(accounts);
-          if (accounts[this.state.recipient]) {
-            base.post(
-              `account_transactions/${this.state.recipient}/${
-                this.state.network
-              }/${this.state.transactionHash}`,
-              { data: transactionData },
-            );
-          }
-        });
+
+      // if account exists in firebase (is a paymo account)
+      // add transaction data to other user's data
+      db.ref(`account_transactions/`).on('value', snapshot => {
+        const accounts = snapshot.val();
+        if (accounts[this.state.recipient]) {
+          base.post(
+            `account_transactions/${this.state.recipient}/${
+              this.state.network
+            }/${this.state.transactionHash}`,
+            { data: transactionData },
+          );
+        }
+      });
     });
   };
 
