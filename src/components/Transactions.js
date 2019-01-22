@@ -155,11 +155,12 @@ class SimpleTable extends React.Component {
               </DateContainer>
               {rows.map((row, index) => {
                 let sent = true;
-                this.props.accounts.forEach(account => {
-                  if (account.toLowerCase() === row.receipt.to.toLowerCase()) {
-                    sent = false;
-                  }
-                });
+                if (
+                  this.props.accounts[0].toLowerCase() ===
+                  row.receipt.to.toLowerCase()
+                ) {
+                  sent = false;
+                }
                 const identifier = sent ? row.receipt.to : row.receipt.from;
                 return (
                   <TransactionContainer

@@ -53,7 +53,6 @@ class App extends Component {
       const web3 = await getWeb3();
       // Set web3 to the state
       this.setState({ web3 });
-      this.getBlockchainData();
     } catch (error) {
       // Catch any errors for any of the above operations.
       alert(
@@ -84,32 +83,51 @@ class App extends Component {
       );
       console.log(error);
     }
+
+    // make sure account has been initialized on firebase
+    // so that paymo knows that this is a paymo account
+    db.ref(`account_transactions`)
+      .once('value')
+      .then(snapshot => {
+        const accounts = snapshot.val();
+        if (accounts[this.state.accounts[0]]) {
+          console.log('this account exists');
+        } else {
+          console.log('this account does not exist');
+          base.post(
+            `account_transactions/${this.state.accounts[0]}/${
+              this.state.network
+            }`,
+            {
+              data: '',
+            },
+          );
+        }
+        // });
+      });
   };
 
   receiptWasMined = receipt => {
     console.log('The receipt has been mined! ', receipt);
     // will be fired once the receipt is mined
-    console.log(receipt.to);
-    console.log(this.state.accounts[0]);
     this.state.web3.eth.getBlock(receipt.blockNumber).then(block => {
       console.log(
         `account_transactions/${this.state.accounts[0]}/${this.state.network}/${
           this.state.transactionHash
         }`,
       );
+      const transactionData = {
+        comment: this.state.comment,
+        value: this.state.weiAmount,
+        timestamp: block.timestamp,
+        receipt,
+      };
       base
         .post(
           `account_transactions/${this.state.accounts[0]}/${
             this.state.network
           }/${this.state.transactionHash}`,
-          {
-            data: {
-              comment: this.state.comment,
-              value: this.state.weiAmount,
-              timestamp: block.timestamp,
-              receipt,
-            },
-          },
+          { data: transactionData },
         )
         .catch(err => {
           console.error('ERROR: ', err);
@@ -120,19 +138,11 @@ class App extends Component {
           const accounts = snapshot.val();
           console.log(accounts);
           if (accounts[this.state.recipient]) {
-            console.log('made it');
             base.post(
               `account_transactions/${this.state.recipient}/${
                 this.state.network
               }/${this.state.transactionHash}`,
-              {
-                data: {
-                  comment: this.state.comment,
-                  value: this.state.weiAmount,
-                  timestamp: block.timestamp,
-                  receipt,
-                },
-              },
+              { data: transactionData },
             );
           }
         });
