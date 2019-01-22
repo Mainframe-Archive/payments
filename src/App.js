@@ -86,14 +86,14 @@ class App extends Component {
               myaccount === e.to
             ) {
               console.log(e);
-              console.log(block.hash);
+              console.log(block);
               base.post(
                 `account_transactions/${this.state.accounts[0]}/${
                   this.state.network
-                }/${block.hash}`,
+                }/${e.hash}`,
                 {
                   data: {
-                    comment: 'received',
+                    comment: '',
                     value: e.value,
                     timestamp: block.timestamp,
                     receipt: { to: e.to, from: e.from },
@@ -119,7 +119,7 @@ class App extends Component {
         this.state.accounts[0] !== accounts[0] ||
         this.state.network !== network
       ) {
-        this.getTransactionsByAccount(accounts[0], 4850000, 4851886);
+        this.getTransactionsByAccount(accounts[0], 4850000, 4875886);
         this.setState({ accounts, network });
       }
     } catch (error) {

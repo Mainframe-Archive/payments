@@ -168,6 +168,8 @@ class SimpleTable extends React.Component {
               {rows.map((row, index) => {
                 let sent = true;
                 this.props.accounts.forEach(account => {
+                  console.log(account);
+                  console.log(row.identifier);
                   if (account === row.identifier) {
                     sent = false;
                   }
