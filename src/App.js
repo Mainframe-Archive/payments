@@ -40,7 +40,7 @@ const Root = styled.View`
 `;
 
 class App extends Component {
-  state = { web3: null, accounts: null };
+  state = { web3: null, accounts: null, transactionModalOpen: false };
 
   componentDidMount = async () => {
     try {
@@ -146,6 +146,31 @@ class App extends Component {
       .then(this.receiptWasMined);
   };
 
+  handleOpenTransactionModal = () => {
+    this.setState({ transactionModalOpen: true });
+  };
+
+  handleCloseTransactionModal = () => {
+    this.setState({ transactionModalOpen: false });
+  };
+
+  printTransactionHash = transactionHash => {
+    console.log('transactionHash: ', transactionHash);
+    this.setState({ transactionHash, transactionModalOpen: false });
+  };
+
+  printReceipt(receipt) {
+    console.log('receipt: ', receipt);
+  }
+
+  printConfNumber(confNumber, receipt) {
+    console.log('confNumber: ', confNumber, receipt);
+  }
+
+  logError(error) {
+    console.error('ERROR: ', error);
+  }
+
   render() {
     return (
       <ThemeProvider theme={theme}>
@@ -155,13 +180,15 @@ class App extends Component {
             getBlockchainData: this.getBlockchainData,
             receiptWasMined: this.receiptWasMine,
             sendTransaction: this.sendTransaction,
+            handleOpenTransactionModal: this.handleOpenTransactionModal,
+            handleCloseTransactionModal: this.handleCloseTransactionModal,
           }}
         >
           <MuiThemeProvider theme={temptheme}>
             <CssBaseline />
             <LoginModal active={this.state.web3 == null} />
             <Root>
-              <ResponsiveDrawer web3={this.state.web3} />
+              <ResponsiveDrawer />
               <MainContainer />
             </Root>
           </MuiThemeProvider>
