@@ -2,6 +2,7 @@ const colors = {
   white: '#fff',
   gray: '#F9F9F9',
   paymentGreen: '#8EDA11',
+  borderGray: '#F1F0F0',
   black: '#000',
 };
 
@@ -17,6 +18,14 @@ export default {
       iconHoverColor: colors.black,
       titleHoverColor: colors.black,
     },
+    textLike: {
+      borderColor: colors.paymentGreen,
+      titleColor: colors.black,
+
+      borderHoverColor: colors.paymentGreen,
+      titleHoverColor: colors.paymentGreen,
+      backgroundHoverColor: 'transparent',
+    },
   },
   Text: {
     default: {
@@ -27,6 +36,12 @@ export default {
       fontSize: 16,
       color: colors.black,
       fontWeight: 700,
+    },
+    green: {
+      color: colors.paymentGreen,
+    },
+    small: {
+      fontSize: 12,
     },
   },
 
