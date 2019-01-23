@@ -44,6 +44,7 @@ class App extends Component {
     accounts: null,
     network: null,
     transactionModalOpen: false,
+    initialState: false,
   };
 
   componentDidMount = async () => {
@@ -174,6 +175,14 @@ class App extends Component {
     this.setState({ transactionHash, transactionModalOpen: false });
   };
 
+  setInitialStateTrue = () => {
+    this.setState({ initialState: true });
+  };
+
+  setInitialStateFalse = () => {
+    this.setState({ initialState: false });
+  };
+
   printReceipt(receipt) {
     console.log('receipt: ', receipt);
   }
@@ -192,6 +201,8 @@ class App extends Component {
         <Provider
           value={{
             ...this.state,
+            setInitialStateTrue: this.setInitialStateTrue,
+            setInitialStateFalse: this.setInitialStateFalse,
             getBlockchainData: this.getBlockchainData,
             sendTransaction: this.sendTransaction,
             handleOpenTransactionModal: this.handleOpenTransactionModal,

@@ -2,6 +2,8 @@ import React from 'react';
 import styled, { css } from 'styled-components/native';
 import Transactions from './Transactions';
 import TransactionModal from './TransactionModal';
+import InitialState from './InitialState';
+
 import applyContext from '../hocs/Context';
 
 const Container = styled.View`
@@ -35,7 +37,9 @@ class MainContainer extends React.Component {
     return (
       <Container>
         <TransactionsContainer>
-          {this.props.transactionModalOpen ? (
+          {this.props.initialState ? (
+            <InitialState />
+          ) : this.props.transactionModalOpen ? (
             <TransactionModal />
           ) : (
             <Transactions
