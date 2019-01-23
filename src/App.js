@@ -77,7 +77,29 @@ class App extends Component {
         this.state.accounts[0] !== accounts[0] ||
         this.state.network !== network
       ) {
-        this.setState({ accounts, network });
+        // Make sure account has been initialized on firebase
+        // so that paymo knows this is a paymo account
+        db.ref(`account_transactions`).on('value', snapshot => {
+          const fbAccounts = snapshot.val();
+          if (
+            !fbAccounts[accounts[0]] ||
+            fbAccounts[accounts[0]].ropsten === ''
+          ) {
+            base.post(
+              `account_transactions/${this.state.accounts[0]}/${
+                this.state.network
+              }`,
+              {
+                data: '',
+              },
+            );
+          }
+        });
+
+        this.setState({
+          accounts,
+          network,
+        });
       }
     } catch (error) {
       // Catch any errors for any of the above operations.
@@ -86,23 +108,6 @@ class App extends Component {
       );
       console.log(error);
     }
-
-    // Make sure account has been initialized on firebase
-    // so that paymo knows this is a paymo account
-    db.ref(`account_transactions`).on('value', snapshot => {
-      const accounts = snapshot.val();
-      if (!accounts[this.state.accounts[0]]) {
-        this.setState({ initialState: true });
-        base.post(
-          `account_transactions/${this.state.accounts[0]}/${
-            this.state.network
-          }`,
-          {
-            data: '',
-          },
-        );
-      }
-    });
   };
 
   receiptWasMined = receipt => {
@@ -197,6 +202,14 @@ class App extends Component {
     this.setState({ transactionHash, transactionModalOpen: false });
   };
 
+  setInitialStateTrue = () => {
+    this.setState({ initialState: true });
+  };
+
+  setInitialStateFalse = () => {
+    this.setState({ initialState: false });
+  };
+
   printReceipt(receipt) {
     console.log('receipt: ', receipt);
   }
@@ -215,6 +228,8 @@ class App extends Component {
         <Provider
           value={{
             ...this.state,
+            setInitialStateTrue: this.setInitialStateTrue,
+            setInitialStateFalse: this.setInitialStateFalse,
             getBlockchainData: this.getBlockchainData,
             sendTransaction: this.sendTransaction,
             handleOpenTransactionModal: this.handleOpenTransactionModal,

@@ -27,6 +27,14 @@ export default {
       titleHoverColor: colors.paymentGreen,
       backgroundHoverColor: 'transparent',
     },
+    borderless: {
+      borderColor: 'transparent',
+
+      borderHoverColor: 'transparent',
+      titleHoverColor: colors.black,
+      backgroundHoverColor: 'transparent',
+      iconHoverColor: colors.black,
+    },
   },
   Text: {
     default: {

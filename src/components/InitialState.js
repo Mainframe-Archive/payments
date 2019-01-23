@@ -3,10 +3,10 @@ import styled, { css } from 'styled-components/native';
 import Transactions from './Transactions';
 import applyContext from '../hocs/Context';
 import { Row, Column, Button, Text } from '@morpheus-ui/core';
-import { PlusSymbol } from '@morpheus-ui/icons';
+import { CircleArrowRight } from '@morpheus-ui/icons';
 
 const Container = styled.View`
-  padding: ${props => props.theme.spacing};
+  padding: 40px;
   ${props =>
     props.screenWidth <= 900 &&
     css`
@@ -14,20 +14,29 @@ const Container = styled.View`
     `};
 `;
 
+const Description = styled.View`
+  margin-top: 10px;
+  margin-bottom: ${props => props.theme.spacing};
+  width: 50%;
+`;
+
 class InitialState extends React.Component {
   render() {
     return (
       <Container>
         <Text variant="h2">{'Welcome!'}</Text>
-        <Text>
-          {
-            'Make your first transfer to start using the Mainframe Payments app. Lorem ipsum dolor sit amet, consectetur.'
-          }
-        </Text>
+        <Description>
+          <Text>
+            {
+              'Make your first transfer to start using the Mainframe Payments app. Lorem ipsum dolor sit amet, consectetur.'
+            }
+          </Text>
+        </Description>
         <Button
-          title="new transfer"
-          variant={['no-border']}
-          Icon={PlusSymbol}
+          title="NEW TRANSFER"
+          variant={['borderless']}
+          Icon={CircleArrowRight}
+          onPress={this.props.handleOpenTransactionModal}
         />
       </Container>
     );

@@ -76,31 +76,36 @@ class SimpleTable extends React.Component {
             context: this,
             asArray: true,
             then(transactionData) {
-              transactionData.sort((a, b) => {
-                if (a.timestamp > b.timestamp) return -1;
-                else if (b.timestamp > a.timestamp) return 1;
-                else return 0;
-              });
-              let rows = {};
-              transactionData.forEach((transaction, index) => {
-                const ethAmount = utils.fromWei(transaction.value);
-                const date = this.formattedDate(transaction.timestamp * 1000);
-                const time = this.formattedTime(transaction.timestamp * 1000);
-                const transactionData = createData(
-                  transaction.receipt,
-                  '',
-                  transaction.comment,
-                  date,
-                  time,
-                  ethAmount,
-                );
-                if (rows[date]) {
-                  rows[date] = [...rows[date], transactionData];
-                } else {
-                  rows[date] = [transactionData];
-                }
-              });
-              this.setState({ rows: rows });
+              if (transactionData.length === 0) {
+                this.props.setInitialStateTrue();
+              } else {
+                this.props.setInitialStateFalse();
+                transactionData.sort((a, b) => {
+                  if (a.timestamp > b.timestamp) return -1;
+                  else if (b.timestamp > a.timestamp) return 1;
+                  else return 0;
+                });
+                let rows = {};
+                transactionData.forEach((transaction, index) => {
+                  const ethAmount = utils.fromWei(transaction.value);
+                  const date = this.formattedDate(transaction.timestamp * 1000);
+                  const time = this.formattedTime(transaction.timestamp * 1000);
+                  const transactionData = createData(
+                    transaction.receipt,
+                    '',
+                    transaction.comment,
+                    date,
+                    time,
+                    ethAmount,
+                  );
+                  if (rows[date]) {
+                    rows[date] = [...rows[date], transactionData];
+                  } else {
+                    rows[date] = [transactionData];
+                  }
+                });
+                this.setState({ rows: rows });
+              }
             },
           },
         );
