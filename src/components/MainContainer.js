@@ -32,7 +32,6 @@ const TransactionsContainer = styled.View`
 
 class MainContainer extends React.Component {
   render() {
-    console.log(this.props.initialState);
     return (
       <Container>
         <TransactionsContainer>

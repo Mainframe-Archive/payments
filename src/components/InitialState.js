@@ -1,8 +1,7 @@
 import React from 'react';
 import styled, { css } from 'styled-components/native';
-import Transactions from './Transactions';
 import applyContext from '../hocs/Context';
-import { Row, Column, Button, Text } from '@morpheus-ui/core';
+import { Button, Text } from '@morpheus-ui/core';
 import { CircleArrowRight } from '@morpheus-ui/icons';
 
 const Container = styled.View`
