@@ -77,10 +77,7 @@ class App extends Component {
         this.state.accounts[0] !== accounts[0] ||
         this.state.network !== network
       ) {
-        this.setState({
-          accounts,
-          network,
-        });
+        this.setState({ accounts, network });
       }
     } catch (error) {
       // Catch any errors for any of the above operations.
