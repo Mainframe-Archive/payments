@@ -40,7 +40,12 @@ const Root = styled.View`
 `;
 
 class App extends Component {
-  state = { web3: null, accounts: null, transactionModalOpen: false };
+  state = {
+    web3: null,
+    accounts: null,
+    network: null,
+    transactionModalOpen: false,
+  };
 
   componentDidMount = async () => {
     try {
@@ -92,19 +97,30 @@ class App extends Component {
           this.state.transactionHash
         }`,
       );
+      const transactionData = {
+        comment: this.state.comment,
+        value: this.state.weiAmount,
+        timestamp: block.timestamp,
+        receipt,
+      };
       base
         .post(
           `account_transactions/${this.state.accounts[0]}/${
             this.state.network
           }/${this.state.transactionHash}`,
-          {
-            data: {
-              comment: this.state.comment,
-              value: this.state.weiAmount,
-              timestamp: block.timestamp,
-              receipt,
-            },
-          },
+          { data: transactionData },
+        )
+        .catch(err => {
+          console.error('ERROR: ', err);
+        });
+
+      // add transaction data to recipient's history
+      base
+        .post(
+          `account_transactions/${this.state.recipient}/${this.state.network}/${
+            this.state.transactionHash
+          }`,
+          { data: transactionData },
         )
         .catch(err => {
           console.error('ERROR: ', err);
@@ -178,7 +194,6 @@ class App extends Component {
           value={{
             ...this.state,
             getBlockchainData: this.getBlockchainData,
-            receiptWasMined: this.receiptWasMine,
             sendTransaction: this.sendTransaction,
             handleOpenTransactionModal: this.handleOpenTransactionModal,
             handleCloseTransactionModal: this.handleCloseTransactionModal,
