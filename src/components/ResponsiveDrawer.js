@@ -81,10 +81,9 @@ class ResponsiveDrawer extends React.Component {
   };
 
   updateActiveNav = whichNav => {
-    this.setState(prevState => ({
-      activeNav:
-        prevState.activeNav === whichNav ? prevState.activeNav : whichNav,
-    }));
+    this.setState({
+      activeNav: whichNav,
+    });
   };
 
   render() {
