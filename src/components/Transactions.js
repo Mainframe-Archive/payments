@@ -155,13 +155,10 @@ class SimpleTable extends React.Component {
               </DateContainer>
               {rows.map((row, index) => {
                 let sent = true;
-                if (
-                  this.props.accounts[0].toLowerCase() ===
-                  row.receipt.to.toLowerCase()
-                ) {
+                if (this.props.accounts[0].toLowerCase() === row.receipt.to) {
                   sent = false;
                 }
-                const identifier = sent ? row.receipt.to : row.receipt.from;
+                const otherAddress = sent ? row.receipt.to : row.receipt.from;
                 return (
                   <TransactionContainer
                     onMouseEnter={() => this.enterHover(row.rowId)}
@@ -172,11 +169,9 @@ class SimpleTable extends React.Component {
                     <Row size={12} variant="no-border">
                       <Column lg={1} md={1} sm={12}>
                         <Image
-                          source={
-                            sent
-                              ? require('../img/sent.svg')
-                              : require('../img/received.svg')
-                          }
+                          source={require(`../img/${
+                            sent ? 'sent' : 'received'
+                          }.svg`)}
                           style={{ width: 30, height: 30 }}
                         />
                       </Column>
@@ -187,9 +182,9 @@ class SimpleTable extends React.Component {
                         </TimeContainer>
                       </Column>
                       <Column lg={2} md={3} sm={12}>
-                        <CopyToClipboard text={identifier}>
+                        <CopyToClipboard text={otherAddress}>
                           <Button
-                            title={condenseAddress(identifier)}
+                            title={condenseAddress(otherAddress)}
                             variant={['no-border', 'textLike']}
                             onPress={() => this.onAddressCopy(row.rowId)}
                           />

@@ -76,6 +76,17 @@ class App extends Component {
         this.state.accounts[0] !== accounts[0] ||
         this.state.network !== network
       ) {
+        // Make sure account has been initialized on firebase
+        // so that paymo knows this is a paymo account
+        db.ref(`account_transactions`).on('value', snapshot => {
+          const accounts = snapshot.val();
+          if (!accounts[accounts[0]]) {
+            base.post(`account_transactions/${accounts[0]}/${network}`, {
+              data: '',
+            });
+          }
+        });
+
         this.setState({ accounts, network });
       }
     } catch (error) {
@@ -85,22 +96,6 @@ class App extends Component {
       );
       console.log(error);
     }
-
-    // Make sure account has been initialized on firebase
-    // so that paymo knows this is a paymo account
-    db.ref(`account_transactions`).on('value', snapshot => {
-      const accounts = snapshot.val();
-      if (!accounts[this.state.accounts[0]]) {
-        base.post(
-          `account_transactions/${this.state.accounts[0]}/${
-            this.state.network
-          }`,
-          {
-            data: '',
-          },
-        );
-      }
-    });
   };
 
   receiptWasMined = receipt => {
