@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
-import CssBaseline from '@material-ui/core/CssBaseline';
 import ResponsiveDrawer from './components/ResponsiveDrawer';
 import MainContainer from './components/MainContainer';
 import LoginModal from './components/LoginModal';
@@ -200,7 +199,6 @@ class App extends Component {
           }}
         >
           <MuiThemeProvider theme={temptheme}>
-            <CssBaseline />
             <LoginModal active={this.state.web3 == null} />
             <Root>
               <ResponsiveDrawer />

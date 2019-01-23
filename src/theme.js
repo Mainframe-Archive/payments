@@ -27,6 +27,11 @@ export default {
       titleHoverColor: colors.paymentGreen,
       backgroundHoverColor: 'transparent',
     },
+    close: {
+      iconColor: colors.darkGray,
+      iconHoverColor: colors.paymentGreen,
+      backgroundHoverColor: 'transparent',
+    },
   },
   Text: {
     default: {
@@ -38,12 +43,15 @@ export default {
       color: colors.black,
       fontWeight: 700,
     },
-    faded: { color: colors.darkGray },
+    faded: { color: colors.darkGray, fontWeight: 500 },
     green: {
       color: colors.paymentGreen,
     },
     small: {
       fontSize: 12,
+    },
+    modalTitle: {
+      fontSize: 18,
     },
   },
 

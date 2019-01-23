@@ -1,6 +1,7 @@
 import React from 'react';
 import styled, { css } from 'styled-components/native';
 import Transactions from './Transactions';
+import TransactionModal from './TransactionModal';
 import applyContext from '../hocs/Context';
 
 const Container = styled.View`
@@ -30,13 +31,18 @@ const TransactionsContainer = styled.View`
 
 class MainContainer extends React.Component {
   render() {
+    console.log(this.props.transactionModalOpen);
     return (
       <Container>
         <TransactionsContainer>
-          <Transactions
-            account={this.props.accounts && this.props.accounts[0]}
-            network={this.props.network && this.props.network}
-          />
+          {this.props.transactionModalOpen ? (
+            <TransactionModal />
+          ) : (
+            <Transactions
+              account={this.props.accounts && this.props.accounts[0]}
+              network={this.props.network && this.props.network}
+            />
+          )}
         </TransactionsContainer>
       </Container>
     );

@@ -1,6 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import TransactionModal from './TransactionModal';
 
 import styled, { css } from 'styled-components/native';
 import { Button, Text } from '@morpheus-ui/core';
@@ -133,12 +132,6 @@ class ResponsiveDrawer extends React.Component {
             </Text>
           </NavTextContainer>
         </NavItem>
-        <TransactionModal
-          web3={web3}
-          transactionModalOpen={transactionModalOpen}
-          handleTransactionModalClose={handleCloseTransactionModal}
-          handleTransactionSend={sendTransaction}
-        />
       </>
     );
 
