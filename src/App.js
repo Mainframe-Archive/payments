@@ -79,9 +79,9 @@ class App extends Component {
         // Make sure account has been initialized on firebase
         // so that paymo knows this is a paymo account
         db.ref(`account_transactions`).on('value', snapshot => {
-          const accounts = snapshot.val();
-          if (!accounts[accounts[0]]) {
-            base.post(`account_transactions/${accounts[0]}/${network}`, {
+          const fbAccounts = snapshot.val();
+          if (!fbAccounts[accounts[0]]) {
+            base.post(`account_transactions/${fbAccounts[0]}/${network}`, {
               data: '',
             });
           }

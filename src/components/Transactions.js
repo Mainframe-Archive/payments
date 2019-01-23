@@ -169,9 +169,11 @@ class SimpleTable extends React.Component {
                     <Row size={12} variant="no-border">
                       <Column lg={1} md={1} sm={12}>
                         <Image
-                          source={require(`../img/${
-                            sent ? 'sent' : 'received'
-                          }.svg`)}
+                          source={
+                            sent
+                              ? require('../img/sent.svg')
+                              : require('../img/received.svg')
+                          }
                           style={{ width: 30, height: 30 }}
                         />
                       </Column>
