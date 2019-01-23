@@ -77,25 +77,6 @@ class App extends Component {
         this.state.accounts[0] !== accounts[0] ||
         this.state.network !== network
       ) {
-        // Make sure account has been initialized on firebase
-        // so that paymo knows this is a paymo account
-        db.ref(`account_transactions`).on('value', snapshot => {
-          const fbAccounts = snapshot.val();
-          if (
-            !fbAccounts[accounts[0]] ||
-            fbAccounts[accounts[0]].ropsten === ''
-          ) {
-            base.post(
-              `account_transactions/${this.state.accounts[0]}/${
-                this.state.network
-              }`,
-              {
-                data: '',
-              },
-            );
-          }
-        });
-
         this.setState({
           accounts,
           network,
