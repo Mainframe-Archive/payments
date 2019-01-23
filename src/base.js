@@ -10,7 +10,7 @@ const app = firebase.initializeApp({
   projectId: config.projectId,
 });
 
-export let db = firebase.database(app);
+let db = firebase.database(app);
 let base = Rebase.createClass(db);
 
 export default base;

@@ -9,7 +9,7 @@ import { ThemeProvider } from '@morpheus-ui/core';
 import { Provider } from './hocs/Context';
 import theme from './theme';
 import styled from 'styled-components/native';
-import base, { db } from './base';
+import base from './base';
 
 const temptheme = createMuiTheme({
   typography: {
@@ -114,7 +114,7 @@ class App extends Component {
           console.error('ERROR: ', err);
         });
 
-      // add transaction data to other user's data
+      // add transaction data to recipient's history
       base
         .post(
           `account_transactions/${this.state.recipient}/${this.state.network}/${
