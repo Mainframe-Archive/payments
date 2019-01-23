@@ -45,6 +45,7 @@ class App extends Component {
     accounts: null,
     network: null,
     transactionModalOpen: false,
+    initialState: false,
   };
 
   componentDidMount = async () => {
@@ -91,6 +92,7 @@ class App extends Component {
     db.ref(`account_transactions`).on('value', snapshot => {
       const accounts = snapshot.val();
       if (!accounts[this.state.accounts[0]]) {
+        this.setState({ initialState: true });
         base.post(
           `account_transactions/${this.state.accounts[0]}/${
             this.state.network
@@ -144,6 +146,8 @@ class App extends Component {
         }
       });
     });
+
+    this.setState({ initialState: false });
   };
 
   sendTransaction = (recipient, comment, amount) => {
