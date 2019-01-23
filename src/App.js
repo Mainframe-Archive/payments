@@ -151,8 +151,6 @@ class App extends Component {
         }
       });
     });
-
-    this.setState({ initialState: false });
   };
 
   sendTransaction = (recipient, comment, amount) => {
