@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 52.6 (67491) - http://www.bohemiancoding.com/sketch -->
+    <title>Group 10</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <polygon id="path-1" points="0 0.0033 23.9969 0.0033 23.9969 24 0 24"></polygon>
+    </defs>
+    <g id="Explorations-2" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Artboard-Copy-3" transform="translate(-267.000000, -168.000000)">
+            <g id="Group-10" transform="translate(267.000000, 167.000000)">
+                <g id="Group-3" transform="translate(0.000000, 0.996700)">
+                    <mask id="mask-2" fill="white">
+                        <use xlink:href="#path-1"></use>
+                    </mask>
+                    <g id="Clip-2"></g>
+                    <path d="M12.0029,0.0033 C5.3679,0.0033 -0.0001,5.3713 -0.0001,11.9973 L-0.0001,12.0063 C0.0089,18.6323 5.3679,24.0003 12.0029,24.0003 C18.6289,24.0003 23.9969,18.6233 23.9969,11.9973 C23.9969,5.3713 18.6289,0.0033 12.0029,0.0033 M12.0029,1.0033 C18.0649,1.0033 22.9969,5.9353 22.9969,11.9973 C22.9969,18.0643 18.0649,23.0003 12.0029,23.0003 C5.9439,23.0003 1.0079,18.0673 0.9999,11.9973 C0.9999,5.9353 5.9359,1.0033 12.0029,1.0033" id="Fill-1" fill="#000000" mask="url(#mask-2)"></path>
+                </g>
+                <polyline id="Stroke-4" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" points="11.9985 8.271 11.9985 15.271 15.4985 11.771"></polyline>
+                <path d="M11.9985,15.271 L8.4985,11.771" id="Stroke-6" stroke="#000000" stroke-linecap="round" stroke-linejoin="round"></path>
+                <path d="M9,17.7256 L15,17.7256" id="Stroke-8" stroke="#000000" stroke-linecap="round" stroke-linejoin="round"></path>
+            </g>
+        </g>
+    </g>
+</svg>
