@@ -9,7 +9,7 @@ import { ThemeProvider } from '@morpheus-ui/core';
 import { Provider } from './hocs/Context';
 import theme from './theme';
 import styled from 'styled-components/native';
-import base, { db } from './base';
+import base from './base';
 
 const temptheme = createMuiTheme({
   typography: {
@@ -137,19 +137,17 @@ class App extends Component {
           console.error('ERROR: ', err);
         });
 
-      // if account exists in firebase (is a paymo account)
-      // add transaction data to other user's data
-      db.ref(`account_transactions/`).on('value', snapshot => {
-        const accounts = snapshot.val();
-        if (accounts[this.state.recipient]) {
-          base.post(
-            `account_transactions/${this.state.recipient}/${
-              this.state.network
-            }/${this.state.transactionHash}`,
-            { data: transactionData },
-          );
-        }
-      });
+      // add transaction data to recipient's history
+      base
+        .post(
+          `account_transactions/${this.state.recipient}/${this.state.network}/${
+            this.state.transactionHash
+          }`,
+          { data: transactionData },
+        )
+        .catch(err => {
+          console.error('ERROR: ', err);
+        });
     });
   };
 
