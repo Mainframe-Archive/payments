@@ -43,7 +43,7 @@ class App extends Component {
     web3: null,
     accounts: null,
     network: null,
-    transactionModalOpen: false,
+    transactionModalOpen: true,
     initialState: false,
   };
 
@@ -128,7 +128,7 @@ class App extends Component {
     });
   };
 
-  sendTransaction = (recipient, comment, amount) => {
+  sendTransaction = (recipient, comment, amount, currency) => {
     console.log('this.state: ', this.state);
     if (this.state.network !== 'ropsten') {
       alert(`Please connect to ropsten testnet to use this dApp.`);

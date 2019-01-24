@@ -33,14 +33,11 @@ const TransactionsContainer = styled.View`
 
 class MainContainer extends React.Component {
   render() {
-    console.log(this.props.transactionModalOpen);
     return (
       <Container>
         <TransactionsContainer>
           {this.props.initialState ? (
             <InitialState />
-          ) : this.props.transactionModalOpen ? (
-            <TransactionModal />
           ) : (
             <Transactions
               account={this.props.accounts && this.props.accounts[0]}

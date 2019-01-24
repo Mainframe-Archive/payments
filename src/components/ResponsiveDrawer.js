@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import styled, { css } from 'styled-components/native';
 import { Button, Text } from '@morpheus-ui/core';
 import { PlusSymbol } from '@morpheus-ui/icons';
+import TransactionModal from './TransactionModal';
 import screenSize from '../hocs/ScreenSize';
 import applyContext from '../hocs/Context';
 
@@ -103,7 +104,7 @@ class ResponsiveDrawer extends React.Component {
         <ButtonContainer>
           <Button
             onPress={handleOpenTransactionModal}
-            variant="outlined"
+            variant={['green', 'hover-shadow']}
             title="NEW TRANSFER"
             Icon={PlusSymbol}
           />
@@ -132,6 +133,7 @@ class ResponsiveDrawer extends React.Component {
             </Text>
           </NavTextContainer>
         </NavItem>
+        <TransactionModal />
       </>
     );
 

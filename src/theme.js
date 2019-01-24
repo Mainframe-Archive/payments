@@ -4,6 +4,7 @@ const colors = {
   paymentGreen: '#8EDA11',
   darkGray: '#818181',
   borderGray: '#F1F0F0',
+  textGray: '232323',
   black: '#000',
 };
 
@@ -13,8 +14,11 @@ export default {
       borderColor: colors.paymentGreen,
       titleColor: colors.paymentGreen,
       iconColor: colors.paymentGreen,
+      backgroundColor: 'transparent',
+      iconBackgroundColor: 'transparent',
 
       borderHoverColor: colors.paymentGreen,
+      iconHoverBackgroundColor: 'transparent',
       backgroundHoverColor: colors.paymentGreen,
       iconHoverColor: colors.black,
       titleHoverColor: colors.black,
@@ -29,7 +33,7 @@ export default {
     },
     close: {
       iconColor: colors.darkGray,
-      iconHoverColor: colors.paymentGreen,
+      iconHoverColor: colors.black,
       backgroundHoverColor: 'transparent',
     },
     borderless: {
@@ -39,6 +43,24 @@ export default {
       titleHoverColor: colors.black,
       backgroundHoverColor: 'transparent',
       iconHoverColor: colors.black,
+    },
+    cancel: {
+      borderColor: 'transparent',
+      titleColor: colors.darkGray,
+
+      borderHoverColor: 'transparent',
+      titleHoverColor: colors.black,
+      backgroundHoverColor: 'transparent',
+      iconHoverColor: colors.black,
+    },
+    green: {
+      titleColor: colors.white,
+      iconColor: colors.white,
+      backgroundColor: colors.paymentGreen,
+
+      titleHoverColor: colors.white,
+      iconHoverColor: colors.white,
+      fontWeight: 'normal',
     },
   },
   Text: {
@@ -60,6 +82,28 @@ export default {
     },
     modalTitle: {
       fontSize: 18,
+    },
+  },
+  TextField: {
+    filled: {
+      backgroundColor: colors.gray,
+      backgroundActiveColor: colors.white,
+
+      borderColor: colors.gray,
+      borderActiveColor: colors.gray,
+
+      activeShadow: true,
+    },
+    disabled: {
+      backgroundDisabledColor: colors.gray,
+    },
+  },
+  DropDown: {
+    filled: {
+      backgroundColor: colors.gray,
+      borderColor: colors.gray,
+      menuItemSelectedTextColor: colors.textGray,
+      menuItemTextColor: colors.darkGray,
     },
   },
 
