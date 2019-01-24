@@ -1,10 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import TransactionModal from './TransactionModal';
 
 import styled, { css } from 'styled-components/native';
 import { Button, Text } from '@morpheus-ui/core';
 import { PlusSymbol } from '@morpheus-ui/icons';
-import TransactionModal from './TransactionModal';
 import screenSize from '../hocs/ScreenSize';
 import applyContext from '../hocs/Context';
 

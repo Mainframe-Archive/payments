@@ -173,7 +173,7 @@ class App extends Component {
   };
 
   handleCloseTransactionModal = () => {
-    this.setState({ transactionModalOpen: false });
+    this.setState({ transactionModalOpen: false, toggleCongratsScreen: false });
   };
 
   printTransactionHash = transactionHash => {

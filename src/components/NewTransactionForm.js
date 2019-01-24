@@ -74,8 +74,12 @@ class NewTransactionForm extends React.Component {
 }
 
 NewTransactionForm.propTypes = {
-  classes: PropTypes.object.isRequired,
-  active: PropTypes.bool.isRequired,
+  account: PropTypes.string.isRequired,
+  to: PropTypes.string.isRequired,
+  note: PropTypes.string.isRequired,
+  amount: PropTypes.number.isRequired,
+  currency: PropTypes.string.isRequired,
+  handleChange: PropTypes.func.isRequired,
 };
 
 export default NewTransactionForm;

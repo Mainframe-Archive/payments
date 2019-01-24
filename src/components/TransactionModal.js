@@ -84,17 +84,73 @@ class TransactionModal extends React.Component {
     );
   };
 
-  closeModal = () => {
+  closeModalAndReset = () => {
     this.setState({ to: '', for: '', amount: '', currency: 'MFT' });
     this.props.handleCloseTransactionModal();
   };
 
+  whichScreen = (toggleCongratsScreen, loading) => {
+    // if congrats screen should display
+    if (toggleCongratsScreen === true) {
+      return (
+        <CongratsScreen
+          to={this.state.to}
+          amount={this.state.amount}
+          currency={this.state.currency}
+          closeTransactionModal={this.closeModalAndReset}
+        />
+      );
+    }
+    // if loading screen should display
+    else if (loading === true) {
+      return (
+        <LoadingContainer>
+          <CircularProgress />
+        </LoadingContainer>
+      );
+    }
+    // otherwise, display new transaction form
+    else {
+      return (
+        <>
+          <NewTransactionForm
+            account={this.props.accounts && this.props.accounts[0]}
+            handleChange={this.handleChange}
+            to={this.state.to}
+            note={this.state.for}
+            amount={this.state.amount}
+            currency={this.state.currency}
+          />
+          <ButtonContainer>
+            <Row size={12}>
+              <Column size={6}>
+                <Button
+                  onPress={this.handleClose}
+                  title="CANCEL"
+                  variant="cancel"
+                />
+              </Column>
+              <Column size={6}>
+                <Button
+                  onPress={this.handlePay}
+                  title="PAY"
+                  variant={['filled', 'green', 'hover-shadow']}
+                />
+              </Column>
+            </Row>
+          </ButtonContainer>
+        </>
+      );
+    }
+  };
+
   render() {
+    const { transactionModalOpen, toggleCongratsScreen, loading } = this.props;
     return (
       <Modal
         aria-labelledby="simple-modal-title"
         aria-describedby="simple-modal-description"
-        open={this.props.transactionModalOpen}
+        open={transactionModalOpen}
         onClose={this.handleClose}
       >
         <ModalContainer>
@@ -112,53 +168,17 @@ class TransactionModal extends React.Component {
               />
             </CloseButtonContainer>
           </TitleContainer>
-          {this.props.toggleCongratsScreen ? (
-            <CongratsScreen
-              to={this.state.to}
-              amount={this.state.amount}
-              currency={this.state.currency}
-              closeTransactionModal={this.closeModal}
-            />
-          ) : this.props.loading ? (
-            <LoadingContainer>
-              <CircularProgress />
-            </LoadingContainer>
-          ) : (
-            <>
-              <NewTransactionForm
-                account={this.props.accounts && this.props.accounts[0]}
-                handleChange={this.handleChange}
-                to={this.state.to}
-                note={this.state.for}
-                amount={this.state.amount}
-                currency={this.state.currency}
-              />
-              <ButtonContainer>
-                <Row size={12}>
-                  <Column size={6}>
-                    <Button
-                      onPress={this.handleClose}
-                      title="CANCEL"
-                      variant="cancel"
-                    />
-                  </Column>
-                  <Column size={6}>
-                    <Button
-                      onPress={this.handlePay}
-                      title="PAY"
-                      variant={['filled', 'green', 'hover-shadow']}
-                    />
-                  </Column>
-                </Row>
-              </ButtonContainer>
-            </>
-          )}
+          {this.whichScreen(toggleCongratsScreen, loading)}
         </ModalContainer>
       </Modal>
     );
   }
 }
 
-TransactionModal.propTypes = {};
+TransactionModal.propTypes = {
+  transactionModalOpen: PropTypes.bool.isRequired,
+  toggleCongratsScreen: PropTypes.bool.isRequired,
+  loading: PropTypes.bool.isRequired,
+};
 
 export default applyContext(TransactionModal);

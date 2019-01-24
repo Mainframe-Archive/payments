@@ -55,4 +55,11 @@ class CongratsScreen extends React.Component {
   }
 }
 
+CongratsScreen.propTypes = {
+  to: PropTypes.string.isRequired,
+  amount: PropTypes.number.isRequired,
+  currency: PropTypes.string.isRequired,
+  closeTransactionModal: PropTypes.bool.isRequired,
+};
+
 export default CongratsScreen;

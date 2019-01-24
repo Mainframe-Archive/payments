@@ -26,7 +26,7 @@ export default {
     textLike: {
       borderColor: colors.paymentGreen,
       titleColor: colors.black,
-
+      titlePadding: 0,
       borderHoverColor: colors.paymentGreen,
       titleHoverColor: colors.paymentGreen,
       backgroundHoverColor: 'transparent',
@@ -54,12 +54,12 @@ export default {
       iconHoverColor: colors.black,
     },
     green: {
-      titleColor: colors.white,
-      iconColor: colors.white,
+      titleColor: colors.gray,
+      iconColor: colors.gray,
       backgroundColor: colors.paymentGreen,
 
-      titleHoverColor: colors.white,
-      iconHoverColor: colors.white,
+      titleHoverColor: colors.gray,
+      iconHoverColor: colors.gray,
       fontWeight: 'normal',
     },
   },
