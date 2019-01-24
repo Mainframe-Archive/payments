@@ -1,7 +1,6 @@
 import React from 'react';
 import styled, { css } from 'styled-components/native';
 import Transactions from './Transactions';
-import TransactionModal from './TransactionModal';
 import InitialState from './InitialState';
 
 import applyContext from '../hocs/Context';

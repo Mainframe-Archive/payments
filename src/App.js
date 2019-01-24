@@ -43,7 +43,9 @@ class App extends Component {
     web3: null,
     accounts: null,
     network: null,
-    transactionModalOpen: true,
+    transactionModalOpen: false,
+    loading: false,
+    toggleCongratsScreen: false,
     initialState: false,
   };
 
@@ -126,6 +128,9 @@ class App extends Component {
           console.error('ERROR: ', err);
         });
     });
+
+    // trigger congrats screen & stop loading screen
+    this.setState({ toggleCongratsScreen: true, loading: false });
   };
 
   sendTransaction = (recipient, comment, amount, currency) => {
@@ -147,6 +152,7 @@ class App extends Component {
       comment: comment,
       transactionAmount: amount,
       weiAmount,
+      loading: true,
     });
 
     this.state.web3.eth
@@ -172,7 +178,7 @@ class App extends Component {
 
   printTransactionHash = transactionHash => {
     console.log('transactionHash: ', transactionHash);
-    this.setState({ transactionHash, transactionModalOpen: false });
+    this.setState({ transactionHash });
   };
 
   setInitialStateTrue = () => {

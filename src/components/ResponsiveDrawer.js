@@ -85,14 +85,7 @@ class ResponsiveDrawer extends React.Component {
   };
 
   render() {
-    const {
-      web3,
-      getBlockchainData,
-      transactionModalOpen,
-      handleCloseTransactionModal,
-      handleOpenTransactionModal,
-      sendTransaction,
-    } = this.props;
+    const { web3, getBlockchainData, handleOpenTransactionModal } = this.props;
 
     if (web3) {
       getBlockchainData();

@@ -78,7 +78,7 @@ export default {
       color: colors.paymentGreen,
     },
     small: {
-      fontSize: 12,
+      fontSize: 11,
     },
     modalTitle: {
       fontSize: 18,
