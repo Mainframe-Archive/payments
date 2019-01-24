@@ -44,6 +44,7 @@ class NewTransactionForm extends React.Component {
               options={['MFT', 'ETH']}
               checkedLabel={currency}
               defaultValue={currency}
+              errorMessage="Invalid ETH address"
               onChange={handleChange('currency')}
               variant="filled"
             />

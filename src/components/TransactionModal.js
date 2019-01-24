@@ -9,6 +9,7 @@ import Modal from '@material-ui/core/Modal';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import { Column, Row, Text, Button } from '@morpheus-ui/core';
 import { Close } from '@morpheus-ui/icons';
+import { Form } from '@morpheus-ui/forms';
 import styled, { css } from 'styled-components/native';
 
 const ModalContainer = styled.View`
@@ -113,14 +114,16 @@ class TransactionModal extends React.Component {
     else {
       return (
         <>
-          <NewTransactionForm
-            account={this.props.accounts && this.props.accounts[0]}
-            handleChange={this.handleChange}
-            to={this.state.to}
-            note={this.state.for}
-            amount={this.state.amount}
-            currency={this.state.currency}
-          />
+          <Form>
+            <NewTransactionForm
+              account={this.props.accounts && this.props.accounts[0]}
+              handleChange={this.handleChange}
+              to={this.state.to}
+              note={this.state.for}
+              amount={this.state.amount}
+              currency={this.state.currency}
+            />
+          </Form>
           <ButtonContainer>
             <Row size={12}>
               <Column size={6}>
