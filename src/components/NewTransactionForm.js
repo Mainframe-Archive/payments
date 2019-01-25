@@ -95,7 +95,7 @@ class NewTransactionForm extends React.Component {
             </Column>
             <Column size={6}>
               <Button
-                type="submit"
+                submit
                 onPress={handlePay}
                 title="PAY"
                 variant={['filled', 'green', 'hover-shadow']}
