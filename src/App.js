@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
-import CssBaseline from '@material-ui/core/CssBaseline';
 import ResponsiveDrawer from './components/ResponsiveDrawer';
 import MainContainer from './components/MainContainer';
 import LoginModal from './components/LoginModal';
@@ -45,6 +44,8 @@ class App extends Component {
     accounts: null,
     network: null,
     transactionModalOpen: false,
+    loading: false,
+    toggleCongratsScreen: false,
     initialState: false,
   };
 
@@ -127,9 +128,12 @@ class App extends Component {
           console.error('ERROR: ', err);
         });
     });
+
+    // trigger congrats screen & stop loading screen
+    this.setState({ toggleCongratsScreen: true, loading: false });
   };
 
-  sendTransaction = (recipient, comment, amount) => {
+  sendTransaction = (recipient, comment, amount, currency) => {
     console.log('this.state: ', this.state);
     if (this.state.network !== 'ropsten') {
       alert(`Please connect to ropsten testnet to use this dApp.`);
@@ -148,6 +152,7 @@ class App extends Component {
       comment: comment,
       transactionAmount: amount,
       weiAmount,
+      loading: true,
     });
 
     this.state.web3.eth
@@ -168,12 +173,12 @@ class App extends Component {
   };
 
   handleCloseTransactionModal = () => {
-    this.setState({ transactionModalOpen: false });
+    this.setState({ transactionModalOpen: false, toggleCongratsScreen: false });
   };
 
   printTransactionHash = transactionHash => {
     console.log('transactionHash: ', transactionHash);
-    this.setState({ transactionHash, transactionModalOpen: false });
+    this.setState({ transactionHash });
   };
 
   setInitialStateTrue = () => {
@@ -211,7 +216,6 @@ class App extends Component {
           }}
         >
           <MuiThemeProvider theme={temptheme}>
-            <CssBaseline />
             <LoginModal active={this.state.web3 == null} />
             <Root>
               <ResponsiveDrawer />

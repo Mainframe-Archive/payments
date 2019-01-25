@@ -85,14 +85,7 @@ class ResponsiveDrawer extends React.Component {
   };
 
   render() {
-    const {
-      web3,
-      getBlockchainData,
-      transactionModalOpen,
-      handleCloseTransactionModal,
-      handleOpenTransactionModal,
-      sendTransaction,
-    } = this.props;
+    const { web3, getBlockchainData, handleOpenTransactionModal } = this.props;
 
     if (web3) {
       getBlockchainData();
@@ -104,7 +97,7 @@ class ResponsiveDrawer extends React.Component {
         <ButtonContainer>
           <Button
             onPress={handleOpenTransactionModal}
-            variant="outlined"
+            variant={['green', 'hover-shadow']}
             title="NEW TRANSFER"
             Icon={PlusSymbol}
           />
@@ -133,12 +126,7 @@ class ResponsiveDrawer extends React.Component {
             </Text>
           </NavTextContainer>
         </NavItem>
-        <TransactionModal
-          web3={web3}
-          transactionModalOpen={transactionModalOpen}
-          handleTransactionModalClose={handleCloseTransactionModal}
-          handleTransactionSend={sendTransaction}
-        />
+        <TransactionModal />
       </>
     );
 
