@@ -6,8 +6,9 @@ import LoginModal from './components/LoginModal';
 import getWeb3 from './components/util/getWeb3';
 import { ThemeProvider } from '@morpheus-ui/core';
 import { Provider } from './hocs/Context';
+import screenSize from './hocs/ScreenSize';
 import theme from './theme';
-import styled from 'styled-components/native';
+import styled, { css } from 'styled-components/native';
 import base from './base';
 
 const temptheme = createMuiTheme({
@@ -31,12 +32,17 @@ const temptheme = createMuiTheme({
   },
 });
 
-const Root = styled.View`
+const Root = screenSize(styled.View`
   width: 100vw;
   height: 100vh;
   flex: 1;
   flex-direction: row;
-`;
+  ${props =>
+    props.screenWidth <= 900 &&
+    css`
+      flex-direction: column;
+    `};
+`);
 
 class App extends Component {
   state = {

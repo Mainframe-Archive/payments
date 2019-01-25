@@ -8,6 +8,10 @@ import { PlusSymbol } from '@morpheus-ui/icons';
 import screenSize from '../hocs/ScreenSize';
 import applyContext from '../hocs/Context';
 
+const PositionContainer = styled.View`
+  position: relative;
+`;
+
 const Container = screenSize(styled.View`
   width: 250px;
   height: 100%;
@@ -18,7 +22,12 @@ const Container = screenSize(styled.View`
   ${props =>
     props.screenWidth <= 900 &&
     css`
-      width: 150px;
+      width: 100%;
+      height: 50px;
+      display: block;
+      top: 0;
+      left: 0;
+      right: 0;
     `};
 `);
 
@@ -28,13 +37,7 @@ const SidebarContainer = screenSize(styled.View`
   ${props =>
     props.screenWidth <= 900 &&
     css`
-      padding: 0px;
-      width: 90%;
-    `};
-  ${props =>
-    props.screenWidth <= 700 &&
-    css`
-      width: 0;
+      display: none;
     `};
 `);
 
@@ -131,9 +134,11 @@ class ResponsiveDrawer extends React.Component {
     );
 
     return (
-      <Container>
-        <SidebarContainer>{drawer}</SidebarContainer>
-      </Container>
+      <PositionContainer>
+        <Container>
+          <SidebarContainer>{drawer}</SidebarContainer>
+        </Container>
+      </PositionContainer>
     );
   }
 }
