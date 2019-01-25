@@ -1,16 +1,15 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import applyContext from '../hocs/Context';
-import screenSize from '../hocs/ScreenSize';
 import NewTransactionForm from './NewTransactionForm';
 import CongratsScreen from './Congrats';
 
 import Modal from '@material-ui/core/Modal';
 import CircularProgress from '@material-ui/core/CircularProgress';
-import { Column, Row, Text, Button } from '@morpheus-ui/core';
+import { Row, Text, Button } from '@morpheus-ui/core';
 import { Close } from '@morpheus-ui/icons';
 import { Form } from '@morpheus-ui/forms';
-import styled, { css } from 'styled-components/native';
+import styled from 'styled-components/native';
 
 const ModalContainer = styled.View`
   width: 100%;

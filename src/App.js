@@ -145,27 +145,33 @@ class App extends Component {
       );
       return;
     }
+    this.state.web3.eth.getBalance(this.state.accounts[0]).then(resolved => {
+      if (this.state.web3.utils.fromWei(resolved, 'ether') < amount) {
+        this.setState({ loading: false });
+        alert('Insufficient balance');
+      } else {
+        const weiAmount = this.state.web3.utils.toWei(amount);
+        this.setState({
+          recipient: recipient,
+          comment: comment,
+          transactionAmount: amount,
+          weiAmount,
+          loading: true,
+        });
 
-    const weiAmount = this.state.web3.utils.toWei(amount);
-    this.setState({
-      recipient: recipient,
-      comment: comment,
-      transactionAmount: amount,
-      weiAmount,
-      loading: true,
+        this.state.web3.eth
+          .sendTransaction({
+            from: `${this.state.accounts[0]}`,
+            to: `${recipient}`,
+            value: weiAmount,
+          })
+          .once('transactionHash', this.printTransactionHash)
+          .once('receipt', this.printReceipt)
+          .on('confirmation', this.printConfNumber)
+          .on('error', this.logError)
+          .then(this.receiptWasMined);
+      }
     });
-
-    this.state.web3.eth
-      .sendTransaction({
-        from: `${this.state.accounts[0]}`,
-        to: `${recipient}`,
-        value: weiAmount,
-      })
-      .once('transactionHash', this.printTransactionHash)
-      .once('receipt', this.printReceipt)
-      .on('confirmation', this.printConfNumber)
-      .on('error', this.logError)
-      .then(this.receiptWasMined);
   };
 
   handleOpenTransactionModal = () => {
