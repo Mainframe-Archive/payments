@@ -50,16 +50,6 @@ const LoadingContainer = styled.View`
   margin-left: -25px;
 `;
 
-const ButtonContainer = screenSize(styled.View`
-  margin: 0 auto;
-  min-width: 300px;
-  ${props =>
-    props.screenWidth <= 350 &&
-    css`
-      min-width: 200px;
-    `};
-`);
-
 class TransactionModal extends React.Component {
   state = {
     amount: '',
@@ -114,34 +104,18 @@ class TransactionModal extends React.Component {
     else {
       return (
         <>
-          <Form>
+          <Form onSubmit={this.handlePay}>
             <NewTransactionForm
               account={this.props.accounts && this.props.accounts[0]}
               handleChange={this.handleChange}
+              handleClose={this.handleClose}
+              handlePay={this.handlePay}
               to={this.state.to}
               note={this.state.for}
               amount={this.state.amount}
               currency={this.state.currency}
             />
           </Form>
-          <ButtonContainer>
-            <Row size={12}>
-              <Column size={6}>
-                <Button
-                  onPress={this.handleClose}
-                  title="CANCEL"
-                  variant="cancel"
-                />
-              </Column>
-              <Column size={6}>
-                <Button
-                  onPress={this.handlePay}
-                  title="PAY"
-                  variant={['filled', 'green', 'hover-shadow']}
-                />
-              </Column>
-            </Row>
-          </ButtonContainer>
         </>
       );
     }
