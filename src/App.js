@@ -105,23 +105,18 @@ class App extends Component {
           this.state.transactionHash
         }`,
       );
+      const simpleReceipt = {
+        to: receipt.to,
+        from: receipt.from,
+      };
+
       const transactionData = {
         comment: this.state.comment,
         value: this.state.weiAmount,
         timestamp: block.timestamp,
-        receipt,
+        receipt: simpleReceipt,
       };
-      console.log(transactionData);
-      console.log(this.state.accounts[0]);
-      console.log(this.state.network);
-      console.log(this.state.transactionHash);
-      JSON.parse(
-        JSON.stringify(
-          `account_transactions/${this.state.accounts[0]}/${
-            this.state.network
-          }/${this.state.transactionHash}`,
-        ),
-      );
+
       base
         .post(
           `account_transactions/${this.state.accounts[0]}/${
@@ -134,9 +129,12 @@ class App extends Component {
         });
 
       // add transaction data to recipient's history
+      const recipient = this.state.web3.utils.toChecksumAddress(
+        this.state.recipient,
+      );
       base
         .post(
-          `account_transactions/${this.state.recipient}/${this.state.network}/${
+          `account_transactions/${recipient}/${this.state.network}/${
             this.state.transactionHash
           }`,
           { data: transactionData },
