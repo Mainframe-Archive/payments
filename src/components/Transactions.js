@@ -7,7 +7,6 @@ import { utils } from 'web3';
 import { Image } from 'react-native-web';
 import { Row, Column, Button, Text } from '@morpheus-ui/core';
 import applyContext from '../hocs/Context';
-import screenSize from '../hocs/ScreenSize';
 import styled, { css } from 'styled-components/native';
 
 const TableContainer = styled.View`
@@ -15,7 +14,7 @@ const TableContainer = styled.View`
   margin-bottom: ${props => props.theme.spacing};
 `;
 
-const TransactionContainer = screenSize(styled.View`
+const TransactionContainer = styled.View`
   border: 1px solid ${props => props.theme.borderGray};
   border-bottom: 0px;
   padding: ${props => props.theme.spacing};
@@ -31,12 +30,7 @@ const TransactionContainer = screenSize(styled.View`
     css`
       border-bottom: 1px solid ${props => props.theme.borderGray};
     `}
-    ${props =>
-      props.screenWidth <= 900 &&
-      css`
-        text-align: center;
-      `};
-`);
+`;
 
 const TimeContainer = styled.View`
   padding-top: 3px;
@@ -44,6 +38,11 @@ const TimeContainer = styled.View`
 
 const DateContainer = styled.View`
   padding-bottom: 8px;
+`;
+
+const MobileFloatCenter = styled.View`
+  display: block:
+  margin: 0 auto;
 `;
 
 let rowId = 0;
@@ -178,23 +177,25 @@ class SimpleTable extends React.Component {
                     lastChild={index === rows.length - 1}
                   >
                     <Row size={12} variant="no-border">
-                      <Column lg={1} md={1} sm={12}>
-                        <Image
-                          source={
-                            sent
-                              ? require('../img/sent.svg')
-                              : require('../img/received.svg')
-                          }
-                          style={{ width: 30, height: 30 }}
-                        />
+                      <Column lg={1} md={1} sm={3}>
+                        <MobileFloatCenter>
+                          <Image
+                            source={
+                              sent
+                                ? require('../img/sent.svg')
+                                : require('../img/received.svg')
+                            }
+                            style={{ width: 30, height: 30 }}
+                          />
+                        </MobileFloatCenter>
                       </Column>
-                      <Column lg={1} md={1} sm={12}>
+                      <Column lg={1} md={1} sm={3}>
                         <Text>{sent ? 'Sent' : 'Received'}</Text>
                         <TimeContainer>
                           <Text variant="faded">{row.time}</Text>
                         </TimeContainer>
                       </Column>
-                      <Column lg={2} md={3} sm={12}>
+                      <Column lg={2} md={3} sm={6}>
                         <CopyToClipboard text={otherAddress}>
                           <Button
                             title={condenseAddress(otherAddress)}
@@ -207,13 +208,16 @@ class SimpleTable extends React.Component {
                             'copied to clipboard'}
                         </Text>
                       </Column>
-                      <Column lg={6} md={5} sm={12}>
+                      <Column lg={6} md={5} smHidden>
                         <Text>{row.comment}</Text>
                       </Column>
-                      <Column lg={2} md={2} sm={12}>
+                      <Column lg={2} md={2} sm={9} smOffset={3} mdOffset={0}>
                         <Text variant={sent ? '' : 'green'}>
                           {sent ? '-' + row.value : '+' + row.value} Eth
                         </Text>
+                      </Column>
+                      <Column mdHidden lgHidden sm={9} smOffset={3}>
+                        <Text>{row.comment}</Text>
                       </Column>
                     </Row>
                   </TransactionContainer>
