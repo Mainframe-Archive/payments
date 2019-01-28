@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import screenSize from '../hocs/ScreenSize';
-import { Column, Row, TextField, DropDown } from '@morpheus-ui/core';
+import { Column, Row, TextField, DropDown, Button } from '@morpheus-ui/core';
 import styled, { css } from 'styled-components/native';
 
 const FormContainer = screenSize(styled.View`
@@ -14,9 +14,28 @@ const FormContainer = screenSize(styled.View`
     `};
 `);
 
+const ButtonContainer = screenSize(styled.View`
+  margin: 0 auto;
+  min-width: 210px;
+  ${props =>
+    props.screenWidth <= 350 &&
+    css`
+      min-width: 200px;
+    `};
+`);
+
 class NewTransactionForm extends React.Component {
   render() {
-    const { account, to, note, amount, currency, handleChange } = this.props;
+    const {
+      account,
+      to,
+      note,
+      amount,
+      currency,
+      handleChange,
+      handleClose,
+      handlePay,
+    } = this.props;
     return (
       <FormContainer>
         <Row size={12}>
@@ -31,7 +50,7 @@ class NewTransactionForm extends React.Component {
           </Column>
           <Column size={12}>
             <TextField
-              label="To"
+              label={to ? '' : 'To'}
               name="to"
               onChange={handleChange('to')}
               value={to}
@@ -51,7 +70,7 @@ class NewTransactionForm extends React.Component {
           </Column>
           <Column lg={10} md={10} sm={9}>
             <TextField
-              label="Amount"
+              label={amount ? '' : 'Amount'}
               name="amount"
               value={amount}
               onChange={handleChange('amount')}
@@ -61,7 +80,7 @@ class NewTransactionForm extends React.Component {
           </Column>
           <Column size={12}>
             <TextField
-              label="Notes (optional)"
+              label={note ? '' : 'Notes'}
               name="notes"
               value={note}
               onChange={handleChange('for')}
@@ -69,6 +88,25 @@ class NewTransactionForm extends React.Component {
             />
           </Column>
         </Row>
+        <ButtonContainer>
+          <Row size={12}>
+            <Column size={6}>
+              <Button
+                onPress={handleClose}
+                title="CANCEL"
+                variant={['cancel', 'size100']}
+              />
+            </Column>
+            <Column size={6}>
+              <Button
+                submit
+                onPress={handlePay}
+                title="PAY"
+                variant={['filled', 'green', 'hover-shadow', 'size100']}
+              />
+            </Column>
+          </Row>
+        </ButtonContainer>
       </FormContainer>
     );
   }

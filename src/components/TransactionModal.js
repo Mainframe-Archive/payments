@@ -1,16 +1,15 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import applyContext from '../hocs/Context';
-import screenSize from '../hocs/ScreenSize';
 import NewTransactionForm from './NewTransactionForm';
 import CongratsScreen from './Congrats';
 
 import Modal from '@material-ui/core/Modal';
 import CircularProgress from '@material-ui/core/CircularProgress';
-import { Column, Row, Text, Button } from '@morpheus-ui/core';
+import { Row, Text, Button } from '@morpheus-ui/core';
 import { Close } from '@morpheus-ui/icons';
 import { Form } from '@morpheus-ui/forms';
-import styled, { css } from 'styled-components/native';
+import styled from 'styled-components/native';
 
 const ModalContainer = styled.View`
   width: 100%;
@@ -49,16 +48,6 @@ const LoadingContainer = styled.View`
   left: 50%;
   margin-left: -25px;
 `;
-
-const ButtonContainer = screenSize(styled.View`
-  margin: 0 auto;
-  min-width: 210px;
-  ${props =>
-    props.screenWidth <= 350 &&
-    css`
-      min-width: 200px;
-    `};
-`);
 
 class TransactionModal extends React.Component {
   state = {
@@ -114,34 +103,18 @@ class TransactionModal extends React.Component {
     else {
       return (
         <>
-          <Form>
+          <Form onSubmit={this.handlePay}>
             <NewTransactionForm
               account={this.props.accounts && this.props.accounts[0]}
               handleChange={this.handleChange}
+              handleClose={this.handleClose}
+              handlePay={this.handlePay}
               to={this.state.to}
               note={this.state.for}
               amount={this.state.amount}
               currency={this.state.currency}
             />
           </Form>
-          <ButtonContainer>
-            <Row size={12}>
-              <Column size={6}>
-                <Button
-                  onPress={this.handleClose}
-                  title="CANCEL"
-                  variant={['cancel', 'size100']}
-                />
-              </Column>
-              <Column size={6}>
-                <Button
-                  onPress={this.handlePay}
-                  title="PAY"
-                  variant={['filled', 'green', 'hover-shadow', 'size100']}
-                />
-              </Column>
-            </Row>
-          </ButtonContainer>
         </>
       );
     }
