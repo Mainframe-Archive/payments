@@ -44,6 +44,10 @@ export default {
       backgroundHoverColor: 'transparent',
       iconHoverColor: colors.black,
     },
+    borderlessMobile: {
+      iconHoverColor: colors.paymentGreen,
+      titlePadding: 0,
+    },
     cancel: {
       borderColor: 'transparent',
       titleColor: colors.darkGray,

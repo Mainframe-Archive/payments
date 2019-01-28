@@ -12,7 +12,12 @@ const Container = styled.View`
   flex-direction: row;
   padding: ${props => props.theme.spacing};
 
-  ${props => props.screenWidth <= 900 && css``};
+  ${props =>
+    props.screenWidth <= 900 &&
+    css`
+      z-index: 0;
+      position: relative;
+    `};
 `;
 
 const TransactionsContainer = styled.View`

@@ -28,6 +28,11 @@ const Container = screenSize(styled.View`
       top: 0;
       left: 0;
       right: 0;
+      ${props =>
+        props.open &&
+        css`
+          height: 100vh;
+        `};
     `};
 `);
 
@@ -36,21 +41,39 @@ const SidebarContainer = screenSize(styled.View`
   background-color: ${props => props.theme.gray};
   ${props =>
     props.screenWidth <= 900 &&
+    !props.open &&
     css`
       display: none;
     `};
+  ${props =>
+    props.screenWidth <= 900 &&
+    props.open &&
+    css`
+      position: fixed;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1000;
+      margin-top: 40px;
+    `};
 `);
 
-const NavItem = styled.View`
+const NavItem = screenSize(styled.View`
   width: 100%;
   diplay: flex;
   flex-direction: row;
   justify-content: flex-start;
   align-items: center;
   margin: 10px 0;
-`;
+  ${props =>
+    props.screenWidth <= 900 &&
+    css`
+      justify-content: center;
+    `}
+`);
 
-const Triangle = styled.View`
+const Triangle = screenSize(styled.View`
   width: 0;
   height: 0;
   left: 0;
@@ -62,16 +85,42 @@ const Triangle = styled.View`
     css`
       border-left: 12px solid transparent;
     `}
-`;
+  ${props =>
+    props.screenWidth <= 900 &&
+    css`
+      display: none;
+    `}
+`);
 
-const NavTextContainer = styled.TouchableOpacity`
+const NavTextContainer = screenSize(styled.TouchableOpacity`
   margin-left: 20px;
-`;
+  ${props =>
+    props.screenWidth <= 900 &&
+    css`
+      margin-left: 0;
+    `}
+`);
 
 const ButtonContainer = styled.View`
   padding: ${props => props.theme.spacing};
   margin: 0 auto;
 `;
+
+const ResponsiveButton = screenSize(styled.View`
+  display: none;
+  ${props =>
+    props.screenWidth <= 900 &&
+    css`
+      display: block;
+      position: absolute;
+      right: 0;
+    `};
+  ${props =>
+    props.open &&
+    css`
+      transform: rotate(45deg);
+    `};
+`);
 
 class ResponsiveDrawer extends React.Component {
   state = {
@@ -135,8 +184,17 @@ class ResponsiveDrawer extends React.Component {
 
     return (
       <PositionContainer>
-        <Container>
-          <SidebarContainer>{drawer}</SidebarContainer>
+        <Container open={this.state.mobileOpen}>
+          <ResponsiveButton open={this.state.mobileOpen}>
+            <Button
+              onPress={this.handleDrawerToggle}
+              variant={['borderless', 'borderlessMobile']}
+              Icon={PlusSymbol}
+            />
+          </ResponsiveButton>
+          <SidebarContainer open={this.state.mobileOpen}>
+            {drawer}
+          </SidebarContainer>
         </Container>
       </PositionContainer>
     );
