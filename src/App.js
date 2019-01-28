@@ -111,6 +111,17 @@ class App extends Component {
         timestamp: block.timestamp,
         receipt,
       };
+      console.log(transactionData);
+      console.log(this.state.accounts[0]);
+      console.log(this.state.network);
+      console.log(this.state.transactionHash);
+      JSON.parse(
+        JSON.stringify(
+          `account_transactions/${this.state.accounts[0]}/${
+            this.state.network
+          }/${this.state.transactionHash}`,
+        ),
+      );
       base
         .post(
           `account_transactions/${this.state.accounts[0]}/${
