@@ -52,7 +52,7 @@ const LoadingContainer = styled.View`
 
 const ButtonContainer = screenSize(styled.View`
   margin: 0 auto;
-  min-width: 300px;
+  min-width: 210px;
   ${props =>
     props.screenWidth <= 350 &&
     css`
@@ -130,14 +130,14 @@ class TransactionModal extends React.Component {
                 <Button
                   onPress={this.handleClose}
                   title="CANCEL"
-                  variant="cancel"
+                  variant={['cancel', 'size100']}
                 />
               </Column>
               <Column size={6}>
                 <Button
                   onPress={this.handlePay}
                   title="PAY"
-                  variant={['filled', 'green', 'hover-shadow']}
+                  variant={['filled', 'green', 'hover-shadow', 'size100']}
                 />
               </Column>
             </Row>

@@ -44,6 +44,10 @@ export default {
       backgroundHoverColor: 'transparent',
       iconHoverColor: colors.black,
     },
+    borderlessMobile: {
+      iconHoverColor: colors.paymentGreen,
+      titlePadding: 0,
+    },
     cancel: {
       borderColor: 'transparent',
       titleColor: colors.darkGray,
@@ -61,6 +65,12 @@ export default {
       titleHoverColor: colors.gray,
       iconHoverColor: colors.gray,
       fontWeight: 'normal',
+    },
+    size190: {
+      minWidth: 190,
+    },
+    size100: {
+      minWidth: 100,
     },
   },
   Text: {
@@ -96,6 +106,11 @@ export default {
     },
     disabled: {
       backgroundDisabledColor: colors.gray,
+    },
+    disabledLabel: {
+      textDisabledColor: colors.darkGray,
+      labelWithContentColor: colors.darkGray,
+      labelDisabledWithContentColor: colors.darkGray,
     },
   },
   DropDown: {

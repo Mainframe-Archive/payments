@@ -1,23 +1,31 @@
 import React from 'react';
 import styled, { css } from 'styled-components/native';
+
 import applyContext from '../hocs/Context';
+import screenSize from '../hocs/ScreenSize';
 import { Button, Text } from '@morpheus-ui/core';
 import { CircleArrowRight } from '@morpheus-ui/icons';
 
-const Container = styled.View`
+const Container = screenSize(styled.View`
   padding: 40px;
+  width: 500px;
   ${props =>
     props.screenWidth <= 900 &&
     css`
-      width: 150px;
+      width: 400px;
     `};
-`;
+  ${props =>
+    props.screenWidth <= 600 &&
+    css`
+      width: 100%;
+    `};
+`);
 
-const Description = styled.View`
+const Description = screenSize(styled.View`
   margin-top: 10px;
   margin-bottom: ${props => props.theme.spacing};
-  width: 50%;
-`;
+  width: 100%;
+`);
 
 class InitialState extends React.Component {
   render() {

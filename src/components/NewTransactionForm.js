@@ -35,7 +35,7 @@ class NewTransactionForm extends React.Component {
               name="to"
               onChange={handleChange('to')}
               value={to}
-              variant={['outlined', 'filled']}
+              variant={['outlined', 'filled', 'disabledLabel']}
               required
             />
           </Column>
@@ -46,7 +46,7 @@ class NewTransactionForm extends React.Component {
               defaultValue={currency}
               errorMessage="Invalid ETH address"
               onChange={handleChange('currency')}
-              variant="filled"
+              variant={['filled', 'disabledLabel']}
             />
           </Column>
           <Column lg={10} md={10} sm={9}>
@@ -55,7 +55,7 @@ class NewTransactionForm extends React.Component {
               name="amount"
               value={amount}
               onChange={handleChange('amount')}
-              variant={['outlined', 'filled']}
+              variant={['outlined', 'filled', 'disabledLabel']}
               required
             />
           </Column>
@@ -65,7 +65,7 @@ class NewTransactionForm extends React.Component {
               name="notes"
               value={note}
               onChange={handleChange('for')}
-              variant={['outlined', 'filled']}
+              variant={['outlined', 'filled', 'disabledLabel']}
             />
           </Column>
         </Row>
