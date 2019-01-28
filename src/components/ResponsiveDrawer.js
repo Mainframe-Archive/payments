@@ -54,7 +54,6 @@ const SidebarContainer = screenSize(styled.View`
       top: 0;
       width: 100%;
       height: 100%;
-      z-index: 1000;
       margin-top: 90px;
     `};
 `);
