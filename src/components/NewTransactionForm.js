@@ -46,7 +46,7 @@ class NewTransactionForm extends React.Component {
               defaultValue={currency}
               errorMessage="Invalid ETH address"
               onChange={handleChange('currency')}
-              variant={['filled', , 'disabledLabel']}
+              variant={['filled', 'disabledLabel']}
             />
           </Column>
           <Column lg={10} md={10} sm={9}>
