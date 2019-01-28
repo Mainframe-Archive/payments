@@ -92,7 +92,9 @@ class SimpleTable extends React.Component {
                 });
                 let rows = {};
                 transactionData.forEach((transaction, index) => {
-                  const ethAmount = utils.fromWei(transaction.value);
+                  const ethAmount = this.state.web3.utils.fromWei(
+                    transaction.value,
+                  );
                   const date = this.formattedDate(transaction.timestamp * 1000);
                   const time = this.formattedTime(transaction.timestamp * 1000);
                   const transactionData = createData(

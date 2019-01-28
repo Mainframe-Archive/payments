@@ -52,7 +52,7 @@ const LoadingContainer = styled.View`
 
 const ButtonContainer = screenSize(styled.View`
   margin: 0 auto;
-  min-width: 300px;
+  min-width: 210px;
   ${props =>
     props.screenWidth <= 350 &&
     css`

@@ -107,6 +107,11 @@ export default {
     disabled: {
       backgroundDisabledColor: colors.gray,
     },
+    disabledLabel: {
+      textDisabledColor: colors.darkGray,
+      labelWithContentColor: colors.darkGray,
+      labelDisabledWithContentColor: colors.darkGray,
+    },
   },
   DropDown: {
     filled: {
