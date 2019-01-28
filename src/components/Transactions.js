@@ -3,7 +3,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import base from '../base';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
-import { utils } from 'web3';
 import { Image } from 'react-native-web';
 import { Row, Column, Button, Text } from '@morpheus-ui/core';
 import applyContext from '../hocs/Context';
@@ -92,7 +91,9 @@ class SimpleTable extends React.Component {
                 });
                 let rows = {};
                 transactionData.forEach((transaction, index) => {
-                  const ethAmount = utils.fromWei(transaction.value);
+                  const ethAmount = this.props.web3.utils.fromWei(
+                    transaction.value,
+                  );
                   const date = this.formattedDate(transaction.timestamp * 1000);
                   const time = this.formattedTime(transaction.timestamp * 1000);
                   const transactionData = createData(

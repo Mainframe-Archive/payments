@@ -1,5 +1,5 @@
 import React from 'react';
-import styled, { css } from 'styled-components/native';
+import styled from 'styled-components/native';
 import Transactions from './Transactions';
 import InitialState from './InitialState';
 
@@ -28,7 +28,6 @@ class MainContainer extends React.Component {
           ) : (
             <Transactions
               account={this.props.accounts && this.props.accounts[0]}
-              network={this.props.network && this.props.network}
             />
           )}
         </TransactionsContainer>
