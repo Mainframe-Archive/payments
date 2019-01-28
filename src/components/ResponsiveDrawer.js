@@ -8,6 +8,10 @@ import { PlusSymbol } from '@morpheus-ui/icons';
 import screenSize from '../hocs/ScreenSize';
 import applyContext from '../hocs/Context';
 
+const PositionContainer = styled.View`
+  position: relative;
+`;
+
 const Container = screenSize(styled.View`
   width: 250px;
   height: 100%;
@@ -18,7 +22,17 @@ const Container = screenSize(styled.View`
   ${props =>
     props.screenWidth <= 900 &&
     css`
-      width: 150px;
+      width: 100%;
+      height: 70px;
+      display: block;
+      top: 0;
+      left: 0;
+      right: 0;
+      ${props =>
+        props.open &&
+        css`
+          height: 100vh;
+        `};
     `};
 `);
 
@@ -27,27 +41,38 @@ const SidebarContainer = screenSize(styled.View`
   background-color: ${props => props.theme.gray};
   ${props =>
     props.screenWidth <= 900 &&
+    !props.open &&
     css`
-      padding: 0px;
-      width: 90%;
+      display: none;
     `};
   ${props =>
-    props.screenWidth <= 700 &&
+    props.screenWidth <= 900 &&
+    props.open &&
     css`
-      width: 0;
+      position: fixed;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      margin-top: 90px;
     `};
 `);
 
-const NavItem = styled.View`
+const NavItem = screenSize(styled.View`
   width: 100%;
   diplay: flex;
   flex-direction: row;
   justify-content: flex-start;
   align-items: center;
   margin: 10px 0;
-`;
+  ${props =>
+    props.screenWidth <= 900 &&
+    css`
+      justify-content: center;
+    `}
+`);
 
-const Triangle = styled.View`
+const Triangle = screenSize(styled.View`
   width: 0;
   height: 0;
   left: 0;
@@ -59,16 +84,68 @@ const Triangle = styled.View`
     css`
       border-left: 12px solid transparent;
     `}
-`;
+  ${props =>
+    props.screenWidth <= 900 &&
+    css`
+      display: none;
+    `}
+`);
 
-const NavTextContainer = styled.TouchableOpacity`
+const NavTextContainer = screenSize(styled.TouchableOpacity`
   margin-left: 20px;
-`;
+  ${props =>
+    props.screenWidth <= 900 &&
+    css`
+      margin-left: 0;
+    `}
+`);
 
 const ButtonContainer = styled.View`
   padding: ${props => props.theme.spacing};
   margin: 0 auto;
+  ${props =>
+    props.open &&
+    css`
+      display: none;
+    `}
 `;
+
+const ResponsiveButton = screenSize(styled.View`
+  display: none;
+  ${props =>
+    props.screenWidth <= 900 &&
+    css`
+      display: block;
+      padding: 16px;
+    `};
+`);
+
+const AbsoluteButton = screenSize(styled.View`
+  display: none;
+  ${props =>
+    props.screenWidth <= 900 &&
+    css`
+      display: block;
+      position: absolute;
+      right: 0;
+      top: 13px;
+    `};
+  ${props =>
+    props.open &&
+    css`
+      transform: rotate(45deg);
+    `};
+`);
+
+const MobileTransferButton = screenSize(styled.View`
+  display: none;
+  ${props =>
+    props.screenWidth <= 900 &&
+    css`
+      display: flex;
+      align-items: center;
+    `};
+`);
 
 class ResponsiveDrawer extends React.Component {
   state = {
@@ -94,10 +171,10 @@ class ResponsiveDrawer extends React.Component {
     }
     const drawer = (
       <>
-        <ButtonContainer>
+        <ButtonContainer open={this.state.mobileOpen}>
           <Button
             onPress={handleOpenTransactionModal}
-            variant={['green', 'hover-shadow']}
+            variant={['green', 'hover-shadow', 'size190']}
             title="NEW TRANSFER"
             Icon={PlusSymbol}
           />
@@ -131,9 +208,29 @@ class ResponsiveDrawer extends React.Component {
     );
 
     return (
-      <Container>
-        <SidebarContainer>{drawer}</SidebarContainer>
-      </Container>
+      <PositionContainer>
+        <Container open={this.state.mobileOpen}>
+          <ResponsiveButton>
+            <MobileTransferButton>
+              <Button
+                onPress={handleOpenTransactionModal}
+                variant={['green', 'hover-shadow']}
+                title="NEW TRANSFER"
+              />
+            </MobileTransferButton>
+            <AbsoluteButton open={this.state.mobileOpen}>
+              <Button
+                onPress={this.handleDrawerToggle}
+                variant={['borderless', 'borderlessMobile']}
+                Icon={PlusSymbol}
+              />
+            </AbsoluteButton>
+          </ResponsiveButton>
+          <SidebarContainer open={this.state.mobileOpen}>
+            {drawer}
+          </SidebarContainer>
+        </Container>
+      </PositionContainer>
     );
   }
 }

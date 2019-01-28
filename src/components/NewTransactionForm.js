@@ -16,7 +16,7 @@ const FormContainer = screenSize(styled.View`
 
 const ButtonContainer = screenSize(styled.View`
   margin: 0 auto;
-  min-width: 300px;
+  min-width: 210px;
   ${props =>
     props.screenWidth <= 350 &&
     css`
@@ -54,7 +54,7 @@ class NewTransactionForm extends React.Component {
               name="to"
               onChange={handleChange('to')}
               value={to}
-              variant={['outlined', 'filled']}
+              variant={['outlined', 'filled', 'disabledLabel']}
               required
             />
           </Column>
@@ -65,7 +65,7 @@ class NewTransactionForm extends React.Component {
               defaultValue={currency}
               errorMessage="Invalid ETH address"
               onChange={handleChange('currency')}
-              variant="filled"
+              variant={['filled', 'disabledLabel']}
             />
           </Column>
           <Column lg={10} md={10} sm={9}>
@@ -74,7 +74,7 @@ class NewTransactionForm extends React.Component {
               name="amount"
               value={amount}
               onChange={handleChange('amount')}
-              variant={['outlined', 'filled']}
+              variant={['outlined', 'filled', 'disabledLabel']}
               required
             />
           </Column>
@@ -84,21 +84,25 @@ class NewTransactionForm extends React.Component {
               name="notes"
               value={note}
               onChange={handleChange('for')}
-              variant={['outlined', 'filled']}
+              variant={['outlined', 'filled', 'disabledLabel']}
             />
           </Column>
         </Row>
         <ButtonContainer>
           <Row size={12}>
             <Column size={6}>
-              <Button onPress={handleClose} title="CANCEL" variant="cancel" />
+              <Button
+                onPress={handleClose}
+                title="CANCEL"
+                variant={['cancel', 'size100']}
+              />
             </Column>
             <Column size={6}>
               <Button
                 submit
                 onPress={handlePay}
                 title="PAY"
-                variant={['filled', 'green', 'hover-shadow']}
+                variant={['filled', 'green', 'hover-shadow', 'size100']}
               />
             </Column>
           </Row>

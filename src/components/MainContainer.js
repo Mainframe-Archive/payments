@@ -11,23 +11,11 @@ const Container = styled.View`
   display: flex;
   flex-direction: row;
   padding: ${props => props.theme.spacing};
-
-  ${props =>
-    props.screenWidth <= 900 &&
-    css`
-      width: 150px;
-    `};
 `;
 
 const TransactionsContainer = styled.View`
   width: 100%;
   overflow: scroll;
-  ${props =>
-    props.screenWidth <= 900 &&
-    css`
-      padding: 0px;
-      width: 90%;
-    `};
 `;
 
 class MainContainer extends React.Component {
