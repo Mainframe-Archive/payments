@@ -23,7 +23,7 @@ const Container = screenSize(styled.View`
     props.screenWidth <= 900 &&
     css`
       width: 100%;
-      height: 50px;
+      height: 70px;
       display: block;
       top: 0;
       left: 0;
@@ -55,7 +55,7 @@ const SidebarContainer = screenSize(styled.View`
       width: 100%;
       height: 100%;
       z-index: 1000;
-      margin-top: 40px;
+      margin-top: 90px;
     `};
 `);
 
@@ -104,6 +104,11 @@ const NavTextContainer = screenSize(styled.TouchableOpacity`
 const ButtonContainer = styled.View`
   padding: ${props => props.theme.spacing};
   margin: 0 auto;
+  ${props =>
+    props.open &&
+    css`
+      display: none;
+    `}
 `;
 
 const ResponsiveButton = screenSize(styled.View`
@@ -112,13 +117,34 @@ const ResponsiveButton = screenSize(styled.View`
     props.screenWidth <= 900 &&
     css`
       display: block;
+      padding: 16px;
+    `};
+`);
+
+const AbsoluteButton = screenSize(styled.View`
+  display: none;
+  ${props =>
+    props.screenWidth <= 900 &&
+    css`
+      display: block;
       position: absolute;
       right: 0;
+      top: 13px;
     `};
   ${props =>
     props.open &&
     css`
       transform: rotate(45deg);
+    `};
+`);
+
+const MobileTransferButton = screenSize(styled.View`
+  display: none;
+  ${props =>
+    props.screenWidth <= 900 &&
+    css`
+      display: flex;
+      align-items: center;
     `};
 `);
 
@@ -146,7 +172,7 @@ class ResponsiveDrawer extends React.Component {
     }
     const drawer = (
       <>
-        <ButtonContainer>
+        <ButtonContainer open={this.state.mobileOpen}>
           <Button
             onPress={handleOpenTransactionModal}
             variant={['green', 'hover-shadow']}
@@ -185,12 +211,21 @@ class ResponsiveDrawer extends React.Component {
     return (
       <PositionContainer>
         <Container open={this.state.mobileOpen}>
-          <ResponsiveButton open={this.state.mobileOpen}>
-            <Button
-              onPress={this.handleDrawerToggle}
-              variant={['borderless', 'borderlessMobile']}
-              Icon={PlusSymbol}
-            />
+          <ResponsiveButton>
+            <MobileTransferButton>
+              <Button
+                onPress={handleOpenTransactionModal}
+                variant={['green', 'hover-shadow']}
+                title="NEW TRANSFER"
+              />
+            </MobileTransferButton>
+            <AbsoluteButton open={this.state.mobileOpen}>
+              <Button
+                onPress={this.handleDrawerToggle}
+                variant={['borderless', 'borderlessMobile']}
+                Icon={PlusSymbol}
+              />
+            </AbsoluteButton>
           </ResponsiveButton>
           <SidebarContainer open={this.state.mobileOpen}>
             {drawer}

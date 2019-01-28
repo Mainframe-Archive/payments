@@ -7,6 +7,7 @@ import { utils } from 'web3';
 import { Image } from 'react-native-web';
 import { Row, Column, Button, Text } from '@morpheus-ui/core';
 import applyContext from '../hocs/Context';
+import screenSize from '../hocs/ScreenSize';
 import styled, { css } from 'styled-components/native';
 
 const TableContainer = styled.View`
@@ -14,7 +15,7 @@ const TableContainer = styled.View`
   margin-bottom: ${props => props.theme.spacing};
 `;
 
-const TransactionContainer = styled.View`
+const TransactionContainer = screenSize(styled.View`
   border: 1px solid ${props => props.theme.borderGray};
   border-bottom: 0px;
   padding: ${props => props.theme.spacing};
@@ -30,7 +31,12 @@ const TransactionContainer = styled.View`
     css`
       border-bottom: 1px solid ${props => props.theme.borderGray};
     `}
-`;
+    ${props =>
+      props.screenWidth <= 900 &&
+      css`
+        text-align: center;
+      `};
+`);
 
 const TimeContainer = styled.View`
   padding-top: 3px;
