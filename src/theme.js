@@ -66,6 +66,12 @@ export default {
       iconHoverColor: colors.gray,
       fontWeight: 'normal',
     },
+    size190: {
+      minWidth: 190,
+    },
+    size100: {
+      minWidth: 100,
+    },
   },
   Text: {
     default: {

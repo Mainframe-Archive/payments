@@ -130,14 +130,14 @@ class TransactionModal extends React.Component {
                 <Button
                   onPress={this.handleClose}
                   title="CANCEL"
-                  variant="cancel"
+                  variant={['cancel', 'size100']}
                 />
               </Column>
               <Column size={6}>
                 <Button
                   onPress={this.handlePay}
                   title="PAY"
-                  variant={['filled', 'green', 'hover-shadow']}
+                  variant={['filled', 'green', 'hover-shadow', 'size100']}
                 />
               </Column>
             </Row>
