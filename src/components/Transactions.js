@@ -73,7 +73,7 @@ class SimpleTable extends React.Component {
         console.log(
           `account_transactions/${this.props.account}/${this.props.network}`,
         );
-
+        console.log(base);
         base.listenTo(
           `account_transactions/${this.props.account}/${this.props.network}`,
           {

@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import MainframeSDK from '@mainframe/sdk';
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 import ResponsiveDrawer from './components/ResponsiveDrawer';
 import MainContainer from './components/MainContainer';
@@ -56,6 +57,10 @@ class App extends Component {
   };
 
   componentDidMount = async () => {
+    const sdk = new MainframeSDK();
+    const res = await sdk.apiVersion();
+
+    console.log(res);
     try {
       // Get network provider and web3 instance.
       const web3 = await getWeb3();
