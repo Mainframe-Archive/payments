@@ -39,6 +39,7 @@ class NewTransactionForm extends React.Component {
       handlePay,
       openContacts,
     } = this.props;
+    console.log(currency);
     return (
       <FormContainer>
         <Row size={12}>

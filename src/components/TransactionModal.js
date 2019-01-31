@@ -90,9 +90,10 @@ class TransactionModal extends React.Component {
   };
 
   payContact = () => {
+    console.log(this.state.currency);
     this.props.mainframe.payments.payContact(
       this.state.contact.id,
-      this.props.currency,
+      this.state.currency,
       this.props.amount,
     );
   };
