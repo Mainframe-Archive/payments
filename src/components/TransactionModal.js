@@ -91,11 +91,11 @@ class TransactionModal extends React.Component {
 
   payContact = () => {
     console.log(this.state.currency);
-    this.props.mainframe.payments.payContact(
-      this.state.contact.id,
-      this.state.currency,
-      this.props.amount,
-    );
+    this.props.mainframe.payments.payContact({
+      contactID: this.state.contact.id,
+      currency: this.state.currency,
+      value: this.props.amount,
+    });
   };
 
   whichScreen = (toggleCongratsScreen, loading) => {
