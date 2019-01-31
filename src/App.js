@@ -47,6 +47,7 @@ const Root = screenSize(styled.View`
 
 class App extends Component {
   state = {
+    mainframe: null,
     web3: null,
     accounts: null,
     network: null,
@@ -57,13 +58,13 @@ class App extends Component {
   };
 
   componentDidMount = async () => {
+    // const sdk = new MainframeSDK();
+    // const res = await sdk.apiVersion();
     const sdk = new MainframeSDK();
-    const res = await sdk.apiVersion();
-
-    console.log(res);
+    this.setState({ mainframe: sdk });
     try {
       // Get network provider and web3 instance.
-      const web3 = await getWeb3();
+      const web3 = await getWeb3(sdk);
 
       // Set web3 to the state
       this.setState({ web3 });

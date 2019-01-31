@@ -5,6 +5,7 @@ const colors = {
   darkGray: '#818181',
   borderGray: '#F1F0F0',
   textGray: '232323',
+  mediumGray: '#B5B5B5',
   black: '#000',
 };
 
@@ -40,9 +41,9 @@ export default {
       borderColor: 'transparent',
 
       borderHoverColor: 'transparent',
-      titleHoverColor: colors.black,
+      titleHoverColor: colors.mediumGray,
       backgroundHoverColor: 'transparent',
-      iconHoverColor: colors.black,
+      iconHoverColor: colors.mediumGray,
     },
     borderlessMobile: {
       iconHoverColor: colors.paymentGreen,

@@ -1,6 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import screenSize from '../hocs/ScreenSize';
+import applyContext from '../hocs/Context';
+
 import { Column, Row, TextField, DropDown, Button } from '@morpheus-ui/core';
 import styled, { css } from 'styled-components/native';
 
@@ -35,6 +37,7 @@ class NewTransactionForm extends React.Component {
       handleChange,
       handleClose,
       handlePay,
+      openContacts,
     } = this.props;
     return (
       <FormContainer>
@@ -52,7 +55,7 @@ class NewTransactionForm extends React.Component {
             <TextField
               label={to ? '' : 'To'}
               name="to"
-              onChange={handleChange('to')}
+              onFocus={openContacts}
               value={to}
               variant={['outlined', 'filled', 'disabledLabel']}
               required
@@ -121,4 +124,4 @@ NewTransactionForm.propTypes = {
   handleChange: PropTypes.func.isRequired,
 };
 
-export default NewTransactionForm;
+export default applyContext(NewTransactionForm);

@@ -54,7 +54,8 @@ class TransactionModal extends React.Component {
     amount: '',
     to: '',
     for: '',
-    currency: 'MFT',
+    contact: null,
+    currency: 'ETH',
   };
 
   handleChange = prop => value => {
@@ -65,18 +66,35 @@ class TransactionModal extends React.Component {
     this.props.handleCloseTransactionModal();
   };
 
-  handlePay = () => {
-    this.props.sendTransaction(
-      this.state.to,
-      this.state.for,
-      this.state.amount,
-      this.state.currency,
-    );
-  };
+  // handlePay = () => {
+  //   this.props.sendTransaction(
+  //     this.state.to,
+  //     this.state.for,
+  //     this.state.amount,
+  //     this.state.currency,
+  //   );
+  // };
 
   closeModalAndReset = () => {
-    this.setState({ to: '', for: '', amount: '', currency: 'MFT' });
+    this.setState({ to: '', for: '', amount: '', currency: 'ETH' });
     this.props.handleCloseTransactionModal();
+  };
+
+  openContacts = async () => {
+    const contact = await this.props.mainframe.contacts.selectContact();
+    if (contact && !contact.data.profile.ethAddress) {
+      throw new Error(`No eth address found for contact: ${contact.id}`);
+    } else if (contact) {
+      this.setState({ to: contact.data.profile.name, contact: contact });
+    }
+  };
+
+  payContact = () => {
+    this.props.mainframe.payments.payContact(
+      this.state.contact.id,
+      this.props.currency,
+      this.props.amount,
+    );
   };
 
   whichScreen = (toggleCongratsScreen, loading) => {
@@ -108,7 +126,8 @@ class TransactionModal extends React.Component {
               account={this.props.accounts && this.props.accounts[0]}
               handleChange={this.handleChange}
               handleClose={this.handleClose}
-              handlePay={this.handlePay}
+              handlePay={this.payContact}
+              openContacts={this.openContacts}
               to={this.state.to}
               note={this.state.for}
               amount={this.state.amount}
