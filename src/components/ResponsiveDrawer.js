@@ -240,7 +240,6 @@ ResponsiveDrawer.propTypes = {
   transactionModalOpen: PropTypes.bool.isRequired,
   handleCloseTransactionModal: PropTypes.func.isRequired,
   handleOpenTransactionModal: PropTypes.func.isRequired,
-  sendTransaction: PropTypes.func.isRequired,
 };
 
 export default applyContext(ResponsiveDrawer);

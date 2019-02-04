@@ -101,98 +101,89 @@ class App extends Component {
     }
   };
 
-  receiptWasMined = receipt => {
-    console.log('The receipt has been mined! ', receipt);
-    // will be fired once the receipt is mined
+  sendPayment = async (contactID, to, comment, amount, currency, timestamp) => {
+    const recipient = this.state.web3.utils.toChecksumAddress(to);
 
-    this.state.web3.eth.getBlock(receipt.blockNumber).then(block => {
-      console.log(
-        `account_transactions/${this.state.accounts[0]}/${this.state.network}/${
-          this.state.transactionHash
-        }`,
-      );
-      const simpleReceipt = {
-        to: receipt.to,
-        from: receipt.from,
-      };
+    const simpleReceipt = {
+      to: to,
+      from: this.state.accounts[0],
+    };
 
-      const transactionData = {
-        comment: this.state.comment,
-        value: this.state.weiAmount,
-        timestamp: block.timestamp,
-        receipt: simpleReceipt,
-      };
+    const transactionData = {
+      comment: comment,
+      value: amount,
+      timestamp: timestamp,
+      receipt: simpleReceipt,
+    };
 
-      base
-        .post(
-          `account_transactions/${this.state.accounts[0]}/${
-            this.state.network
-          }/${this.state.transactionHash}`,
-          { data: transactionData },
-        )
-        .catch(err => {
-          console.error('ERROR: ', err);
-        });
+    const paymentParams = {
+      contactID: contactID,
+      currency: currency,
+      value: amount,
+    };
 
-      // add transaction data to recipient's history
-      const recipient = this.state.web3.utils.toChecksumAddress(
-        this.state.recipient,
-      );
-      base
-        .post(
-          `account_transactions/${recipient}/${this.state.network}/${
-            this.state.transactionHash
-          }`,
-          { data: transactionData },
-        )
-        .catch(err => {
-          console.error('ERROR: ', err);
-        });
-    });
-
-    // trigger congrats screen & stop loading screen
-    this.setState({ toggleCongratsScreen: true, loading: false });
-  };
-
-  sendTransaction = (recipient, comment, amount, currency) => {
-    console.log('this.state: ', this.state);
     if (this.state.network !== 'ropsten') {
       alert(`Please connect to ropsten testnet to use this dApp.`);
       return;
     }
+
     if (!this.state.web3.utils.isAddress(recipient)) {
       alert(
         `Recipient was not a valid Ethereum address. Please try creating your transaction again.`,
       );
       return;
     }
+
     this.state.web3.eth.getBalance(this.state.accounts[0]).then(resolved => {
       if (this.state.web3.utils.fromWei(resolved, 'ether') < amount) {
         this.setState({ loading: false });
         alert('Insufficient balance');
+        return;
       } else {
-        const weiAmount = this.state.web3.utils.toWei(amount);
-        this.setState({
-          recipient: recipient,
-          comment: comment,
-          transactionAmount: amount,
-          weiAmount,
-          loading: true,
-        });
-
-        this.state.web3.eth
-          .sendTransaction({
-            from: `${this.state.accounts[0]}`,
-            to: `${recipient}`,
-            value: weiAmount,
-          })
-          .once('transactionHash', this.printTransactionHash)
-          .once('receipt', this.printReceipt)
-          .on('confirmation', this.printConfNumber)
-          .on('error', this.logError)
-          .then(this.receiptWasMined);
+        this.handlePayment(transactionData, paymentParams, recipient);
       }
     });
+  };
+
+  handlePayment = async (transactionData, paymentParams, recipient) => {
+    const res = await this.state.mainframe.payments.payContact(paymentParams);
+    res
+      .on('hash', hash => {
+        this.setState({ transactionHash: hash, loading: true });
+      })
+      .on('confirmed', () => {
+        this.writeToFirebase(transactionData, recipient);
+      })
+      .on('error', this.logError);
+  };
+
+  writeToFirebase = (transactionData, recipient) => {
+    base
+      .post(
+        `account_transactions/${this.state.accounts[0]}/${this.state.network}/${
+          this.state.transactionHash
+        }`,
+        { data: transactionData },
+      )
+      .catch(err => {
+        console.error('ERROR: ', err);
+      });
+
+    // add transaction data to recipient's history
+    base
+      .post(
+        `account_transactions/${recipient}/${this.state.network}/${
+          this.state.transactionHash
+        }`,
+        {
+          data: transactionData,
+        },
+      )
+      .catch(err => {
+        console.error('ERROR: ', err);
+      });
+
+    this.setState({ toggleCongratsScreen: true, loading: false });
   };
 
   handleOpenTransactionModal = () => {
@@ -216,14 +207,6 @@ class App extends Component {
     this.setState({ initialState: false });
   };
 
-  printReceipt(receipt) {
-    console.log('receipt: ', receipt);
-  }
-
-  printConfNumber(confNumber, receipt) {
-    console.log('confNumber: ', confNumber, receipt);
-  }
-
   logError(error) {
     console.error('ERROR: ', error);
   }
@@ -237,7 +220,7 @@ class App extends Component {
             setInitialStateTrue: this.setInitialStateTrue,
             setInitialStateFalse: this.setInitialStateFalse,
             getBlockchainData: this.getBlockchainData,
-            sendTransaction: this.sendTransaction,
+            sendPayment: this.sendPayment,
             handleOpenTransactionModal: this.handleOpenTransactionModal,
             handleCloseTransactionModal: this.handleCloseTransactionModal,
           }}

@@ -39,7 +39,7 @@ class NewTransactionForm extends React.Component {
       handlePay,
       openContacts,
     } = this.props;
-    console.log(currency);
+
     return (
       <FormContainer>
         <Row size={12}>
@@ -56,7 +56,7 @@ class NewTransactionForm extends React.Component {
             <TextField
               label={to ? '' : 'To'}
               name="to"
-              onFocus={openContacts}
+              onChange={openContacts}
               value={to}
               variant={['outlined', 'filled', 'disabledLabel']}
               required
@@ -76,7 +76,7 @@ class NewTransactionForm extends React.Component {
             <TextField
               label={amount ? '' : 'Amount'}
               name="amount"
-              value={amount}
+              value={amount === 0 ? null : amount}
               onChange={handleChange('amount')}
               variant={['outlined', 'filled', 'disabledLabel']}
               required

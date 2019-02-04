@@ -51,7 +51,7 @@ const LoadingContainer = styled.View`
 
 class TransactionModal extends React.Component {
   state = {
-    amount: '',
+    amount: 0,
     to: '',
     for: '',
     contact: null,
@@ -66,15 +66,6 @@ class TransactionModal extends React.Component {
     this.props.handleCloseTransactionModal();
   };
 
-  // handlePay = () => {
-  //   this.props.sendTransaction(
-  //     this.state.to,
-  //     this.state.for,
-  //     this.state.amount,
-  //     this.state.currency,
-  //   );
-  // };
-
   closeModalAndReset = () => {
     this.setState({ to: '', for: '', amount: '', currency: 'ETH' });
     this.props.handleCloseTransactionModal();
@@ -83,19 +74,25 @@ class TransactionModal extends React.Component {
   openContacts = async () => {
     const contact = await this.props.mainframe.contacts.selectContact();
     if (contact && !contact.data.profile.ethAddress) {
-      throw new Error(`No eth address found for contact: ${contact.id}`);
+      alert(`No eth address found for contact: ${contact.id}`);
     } else if (contact) {
       this.setState({ to: contact.data.profile.name, contact: contact });
     }
   };
 
   payContact = () => {
-    console.log(this.state.currency);
-    this.props.mainframe.payments.payContact({
-      contactID: this.state.contact.id,
-      currency: this.state.currency,
-      value: this.props.amount,
-    });
+    try {
+      this.props.sendPayment(
+        this.state.contact.id,
+        this.state.contact.data.profile.ethAddress,
+        this.state.for,
+        this.state.amount,
+        this.state.currency,
+        new Date().getTime() / 1000,
+      );
+    } catch (e) {
+      alert('Missing field');
+    }
   };
 
   whichScreen = (toggleCongratsScreen, loading) => {
@@ -122,7 +119,7 @@ class TransactionModal extends React.Component {
     else {
       return (
         <>
-          <Form onSubmit={this.handlePay}>
+          <Form onSubmit={this.payContact}>
             <NewTransactionForm
               account={this.props.accounts && this.props.accounts[0]}
               handleChange={this.handleChange}
@@ -175,6 +172,7 @@ TransactionModal.propTypes = {
   transactionModalOpen: PropTypes.bool.isRequired,
   toggleCongratsScreen: PropTypes.bool.isRequired,
   loading: PropTypes.bool.isRequired,
+  sendPayment: PropTypes.func.isRequired,
 };
 
 export default applyContext(TransactionModal);

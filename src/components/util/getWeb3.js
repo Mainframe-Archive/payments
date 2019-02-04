@@ -5,7 +5,7 @@ const getWeb3 = MainframeSDKInstance =>
     // Wait for loading completion to avoid race conditions with web3 injection timing.
     window.addEventListener('load', async () => {
       if (MainframeSDKInstance) {
-        const web3 = new Web3(MainframeSDKInstance.blockchain.web3Provider);
+        const web3 = new Web3(MainframeSDKInstance.ethereum.web3Provider);
         resolve(web3);
       }
     });

@@ -73,7 +73,6 @@ class SimpleTable extends React.Component {
         console.log(
           `account_transactions/${this.props.account}/${this.props.network}`,
         );
-        console.log(base);
         base.listenTo(
           `account_transactions/${this.props.account}/${this.props.network}`,
           {
@@ -91,9 +90,7 @@ class SimpleTable extends React.Component {
                 });
                 let rows = {};
                 transactionData.forEach((transaction, index) => {
-                  const ethAmount = this.props.web3.utils.fromWei(
-                    transaction.value,
-                  );
+                  const ethAmount = transaction.value;
                   const date = this.formattedDate(transaction.timestamp * 1000);
                   const time = this.formattedTime(transaction.timestamp * 1000);
                   const transactionData = createData(
