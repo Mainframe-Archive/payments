@@ -60,7 +60,7 @@ export default {
     },
     cancel: {
       borderColor: 'transparent',
-      titleColor: colors.darkGray,
+      titleColor: colors.mediumGray,
 
       borderHoverColor: 'transparent',
       titleHoverColor: colors.black,
@@ -80,7 +80,7 @@ export default {
       borderHoverColor: colors.darkGreen,
       iconHoverColor: colors.gray,
     },
-    size190: {
+    size150: {
       minWidth: 150,
       iconWidth: '14px',
       iconHeight: '14px',
@@ -88,6 +88,10 @@ export default {
     },
     size100: {
       minWidth: 96,
+      fontSize: '11px',
+    },
+    disabled: {
+      borderDisabledColor: 'transparent',
     },
   },
   Text: {
@@ -102,7 +106,7 @@ export default {
       lineHeight: '25px',
       letterSpacing: 'inherit',
     },
-    h2Welcome: {
+    h2Poppins: {
       fontFamily: 'Poppins',
       fontWeight: 600,
       fontSize: '25px',
@@ -150,6 +154,10 @@ export default {
       borderColor: colors.gray,
       menuItemSelectedTextColor: colors.textGray,
       menuItemTextColor: colors.darkGray,
+    },
+    disabled: {
+      backgroundDisabledColor: colors.gray,
+      borderDisabledColor: colors.gray,
     },
   },
 

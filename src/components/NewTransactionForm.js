@@ -29,7 +29,7 @@ const FormContainer = screenSize(styled.View`
 
 const ButtonContainer = screenSize(styled.View`
   margin: 0 auto;
-  min-width: 250px;
+  min-width: 200px;
   ${props =>
     props.screenWidth <= 350 &&
     css`
@@ -46,7 +46,7 @@ const LoadingContainer = styled.View`
   margin: 0 auto;
   max-width: 96px;
   max-height: 26px;
-  margin-top: 6px;
+  margin-top: 9px;
 `;
 
 const styles = theme => ({
@@ -74,8 +74,8 @@ class NewTransactionForm extends React.Component {
     } = this.props;
 
     return (
-      <Form onSubmit={this.payContact}>
-        <FormContainer>
+      <FormContainer>
+        <Form>
           <Row size={12}>
             <Column size={12}>
               <TextField
@@ -93,7 +93,12 @@ class NewTransactionForm extends React.Component {
                 onChange={openContacts}
                 value={to}
                 disabled={loading}
-                variant={['outlined', 'filled', 'disabledLabel']}
+                variant={[
+                  'outlined',
+                  'filled',
+                  loading ? 'disabled' : '',
+                  'disabledLabel',
+                ]}
                 required
               />
             </Column>
@@ -106,7 +111,7 @@ class NewTransactionForm extends React.Component {
                   errorMessage="Invalid ETH address"
                   onChange={handleChange('currency')}
                   disabled={loading}
-                  variant={['filled']}
+                  variant={['filled', 'disabled']}
                 />
               </DropDownContainer>
             </Column>
@@ -116,7 +121,12 @@ class NewTransactionForm extends React.Component {
                 name="amount"
                 value={amount === 0 ? null : amount}
                 onChange={handleChange('amount')}
-                variant={['outlined', 'filled', 'disabledLabel']}
+                variant={[
+                  'outlined',
+                  'filled',
+                  loading ? 'disabled' : '',
+                  'disabledLabel',
+                ]}
                 disabled={loading}
                 required
               />
@@ -127,7 +137,12 @@ class NewTransactionForm extends React.Component {
                 name="notes"
                 value={note}
                 onChange={handleChange('for')}
-                variant={['outlined', 'filled', 'disabledLabel']}
+                variant={[
+                  'outlined',
+                  'filled',
+                  loading ? 'disabled' : '',
+                  'disabledLabel',
+                ]}
                 disabled={loading}
               />
             </Column>
@@ -138,7 +153,8 @@ class NewTransactionForm extends React.Component {
                 <Button
                   onPress={handleClose}
                   title="CANCEL"
-                  variant={['cancel', 'size100']}
+                  variant={['cancel', loading ? 'disabled' : '', 'size100']}
+                  disabled={loading}
                 />
               </Column>
               <Column size={6}>
@@ -157,8 +173,8 @@ class NewTransactionForm extends React.Component {
               </Column>
             </Row>
           </ButtonContainer>
-        </FormContainer>
-      </Form>
+        </Form>
+      </FormContainer>
     );
   }
 }

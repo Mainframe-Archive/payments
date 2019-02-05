@@ -31,7 +31,7 @@ class InitialState extends React.Component {
   render() {
     return (
       <Container>
-        <Text variant={['h2', 'h2Welcome']}>{'Welcome to Payments'}</Text>
+        <Text variant={['h2', 'h2Poppins']}>{'Welcome to Payments'}</Text>
         <Description>
           <Text variant="welcome">
             {

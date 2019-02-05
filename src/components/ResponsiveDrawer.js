@@ -203,7 +203,7 @@ class ResponsiveDrawer extends React.Component {
         <ButtonContainer open={this.state.mobileOpen}>
           <Button
             onPress={handleOpenTransactionModal}
-            variant={['green', 'hover-shadow', 'size190']}
+            variant={['green', 'hover-shadow', 'size150']}
             title="NEW TRANSFER"
             Icon={PlusSymbolSm}
           />

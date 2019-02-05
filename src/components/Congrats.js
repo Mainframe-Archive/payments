@@ -19,13 +19,13 @@ const Container = screenSize(styled.View`
 
 const TextContainer = screenSize(styled.View`
   margin: 0 auto;
-  text-align: left;
+  text-align: center;
   padding-top: ${props => props.theme.spacing};
 `);
 
 const ButtonContainer = screenSize(styled.View`
   margin: 0 auto;
-  padding: 50px 0;
+  padding-top: 35vh;
 `);
 
 class CongratsScreen extends React.Component {
@@ -33,21 +33,21 @@ class CongratsScreen extends React.Component {
     const { to, amount, currency, closeTransactionModal } = this.props;
     return (
       <Container>
-        <Text variant="h1">{'Congrats!'}</Text>
+        <Text variant={['h2', 'h2Poppins']}>{'Payment Complete!'}</Text>
         <TextContainer>
           <Text>
-            {'Woo hoo! This message confirms that you just sent ' +
+            {"You've sent " +
+              to +
               amount +
               ' ' +
               currency +
-              ' to ' +
-              to}
+              '. Go to Activity to review all of your completed transfers.'}
           </Text>
         </TextContainer>
         <ButtonContainer>
           <Button
-            title="close"
-            variant="green"
+            title="CLOSE"
+            variant={['green', 'size100']}
             onPress={closeTransactionModal}
           />
         </ButtonContainer>
