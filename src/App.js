@@ -18,17 +18,13 @@ const temptheme = createMuiTheme({
   },
   palette: {
     primary: {
-      main: '#0bb634',
+      main: '#8EDA11',
       contrastText: '#fff',
-      titleText: '#00c730',
+      titleText: '#fff',
     },
     complementary: {
       main: '#15d642',
       contrastText: '#fff',
-    },
-    secondary: {
-      main: '#f44336',
-      contrastText: '#999',
     },
   },
 });
@@ -102,6 +98,7 @@ class App extends Component {
   };
 
   sendPayment = async (contactID, to, comment, amount, currency, timestamp) => {
+    console.log('sendPayment');
     const recipient = this.state.web3.utils.toChecksumAddress(to);
 
     const simpleReceipt = {
@@ -146,9 +143,12 @@ class App extends Component {
   };
 
   handlePayment = async (transactionData, paymentParams, recipient) => {
+    console.log('handlePayment');
+
     const res = await this.state.mainframe.payments.payContact(paymentParams);
     res
       .on('hash', hash => {
+        console.log(hash);
         this.setState({ transactionHash: hash, loading: true });
       })
       .on('confirmed', () => {
@@ -158,6 +158,8 @@ class App extends Component {
   };
 
   writeToFirebase = (transactionData, recipient) => {
+    console.log('writeToFirebase');
+
     base
       .post(
         `account_transactions/${this.state.accounts[0]}/${this.state.network}/${

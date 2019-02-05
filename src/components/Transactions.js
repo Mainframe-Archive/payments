@@ -50,13 +50,6 @@ function createData(receipt, avatar, comment, date, time, value) {
   return { rowId, receipt, avatar, comment, date, time, value };
 }
 
-function condenseAddress(address) {
-  const len = 4;
-  return (
-    address.slice(0, len + 2) + '...' + address.slice(-len, address.length)
-  );
-}
-
 class SimpleTable extends React.Component {
   state = {
     rows: [],
@@ -118,6 +111,16 @@ class SimpleTable extends React.Component {
       }
     }
   };
+
+  condenseAddress(address) {
+    const len = 4;
+    const ensureChecksumAddr = this.props.web3.utils.toChecksumAddress(address);
+    return (
+      ensureChecksumAddr.slice(0, len + 2) +
+      '...' +
+      ensureChecksumAddr.slice(-len, ensureChecksumAddr.length)
+    );
+  }
 
   formattedDate(timestamp) {
     const today = new Date(timestamp).toLocaleDateString(undefined, {
@@ -196,7 +199,7 @@ class SimpleTable extends React.Component {
                       <Column lg={2} md={3} sm={6}>
                         <CopyToClipboard text={otherAddress}>
                           <Button
-                            title={condenseAddress(otherAddress)}
+                            title={this.condenseAddress(otherAddress)}
                             variant={['no-border', 'textLike']}
                             onPress={() => this.onAddressCopy(row.rowId)}
                           />

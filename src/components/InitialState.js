@@ -31,11 +31,11 @@ class InitialState extends React.Component {
   render() {
     return (
       <Container>
-        <Text variant="h2">{'Welcome!'}</Text>
+        <Text variant={['h2', 'h2Welcome']}>{'Welcome to Payments'}</Text>
         <Description>
-          <Text>
+          <Text variant="welcome">
             {
-              'Make your first transfer to start using the Mainframe Payments app. Lorem ipsum dolor sit amet, consectetur.'
+              'Start a new transfer and easily send funds to your contacts on Mainframe OS.'
             }
           </Text>
         </Description>

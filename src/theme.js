@@ -2,6 +2,7 @@ const colors = {
   white: '#fff',
   gray: '#F9F9F9',
   paymentGreen: '#8EDA11',
+  darkGreen: '#74A720',
   darkGray: '#818181',
   borderGray: '#F1F0F0',
   textGray: '232323',
@@ -35,15 +36,23 @@ export default {
     close: {
       iconColor: colors.darkGray,
       iconHoverColor: colors.black,
+      iconHeight: '12px',
+      iconWidth: '12px',
       backgroundHoverColor: 'transparent',
     },
     borderless: {
       borderColor: 'transparent',
+      iconHeight: '24px',
+      iconWidth: '24px',
+
+      fontSize: 12,
+      fontFamily: 'Muli',
+      fontWeight: 'bold',
 
       borderHoverColor: 'transparent',
-      titleHoverColor: colors.mediumGray,
       backgroundHoverColor: 'transparent',
-      iconHoverColor: colors.mediumGray,
+      iconHoverColor: colors.darkGreen,
+      titleHoverColor: colors.darkGreen,
     },
     borderlessMobile: {
       iconHoverColor: colors.paymentGreen,
@@ -63,21 +72,40 @@ export default {
       iconColor: colors.gray,
       backgroundColor: colors.paymentGreen,
 
-      titleHoverColor: colors.gray,
-      iconHoverColor: colors.gray,
+      fontFamily: 'Muli',
       fontWeight: 'normal',
+
+      titleHoverColor: colors.gray,
+      backgroundHoverColor: colors.darkGreen,
+      borderHoverColor: colors.darkGreen,
+      iconHoverColor: colors.gray,
     },
     size190: {
-      minWidth: 190,
+      minWidth: 150,
+      iconWidth: '14px',
+      iconHeight: '14px',
+      fontSize: '12px',
     },
     size100: {
-      minWidth: 100,
+      minWidth: 96,
     },
   },
   Text: {
     default: {
       color: colors.black,
       fontFamily: 'Muli',
+    },
+    welcome: {
+      fontFamily: 'Muli',
+      fontWeight: 'regular',
+      fontSize: '16px',
+      lineHeight: '25px',
+      letterSpacing: 'inherit',
+    },
+    h2Welcome: {
+      fontFamily: 'Poppins',
+      fontWeight: 600,
+      fontSize: '25px',
     },
     h3: {
       fontSize: 16,
@@ -92,7 +120,8 @@ export default {
       fontSize: 11,
     },
     modalTitle: {
-      fontSize: 18,
+      fontSize: 13,
+      letterSpacing: 2,
     },
   },
   TextField: {
@@ -110,6 +139,7 @@ export default {
     },
     disabledLabel: {
       textDisabledColor: colors.darkGray,
+      labelActiveColor: colors.darkGray,
       labelWithContentColor: colors.darkGray,
       labelDisabledWithContentColor: colors.darkGray,
     },

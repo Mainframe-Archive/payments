@@ -18,6 +18,7 @@ const Container = screenSize(styled.View`
 `);
 
 const TextContainer = screenSize(styled.View`
+  margin: 0 auto;
   text-align: left;
   padding-top: ${props => props.theme.spacing};
 `);

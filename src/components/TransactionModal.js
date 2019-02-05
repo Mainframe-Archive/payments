@@ -5,10 +5,8 @@ import NewTransactionForm from './NewTransactionForm';
 import CongratsScreen from './Congrats';
 
 import Modal from '@material-ui/core/Modal';
-import CircularProgress from '@material-ui/core/CircularProgress';
 import { Row, Text, Button } from '@morpheus-ui/core';
 import { Close } from '@morpheus-ui/icons';
-import { Form } from '@morpheus-ui/forms';
 import styled from 'styled-components/native';
 
 const ModalContainer = styled.View`
@@ -21,11 +19,10 @@ const ModalContainer = styled.View`
   position: relative;
   margin: 0 auto;
   background-color: ${props => props.theme.white};
-  padding: ${props => props.theme.spacing};
 `;
 
 const TitleContainer = styled.View`
-  padding-bottom: 30px;
+  padding: 20px 0;
   margin-bottom: 30px;
   border-bottom: 2px solid ${props => props.theme.borderGray};
   position: relative;
@@ -33,20 +30,12 @@ const TitleContainer = styled.View`
 
 const CloseButtonContainer = styled.View`
   position: absolute;
-  right: 0;
+  right: 35px;
+  top: 28px;
 `;
 
 const CenterText = styled.View`
   margin: 0 auto;
-`;
-
-const LoadingContainer = styled.View`
-  margin: 0 auto;
-  position: absolute;
-  top: 50%;
-  margin-top: -25px;
-  left: 50%;
-  margin-left: -25px;
 `;
 
 class TransactionModal extends React.Component {
@@ -81,7 +70,12 @@ class TransactionModal extends React.Component {
   };
 
   payContact = () => {
-    try {
+    if (
+      this.state.contact &&
+      this.state.contact.id &&
+      this.state.contact.data.profile.ethAddress &&
+      this.state.amount !== 0
+    ) {
       this.props.sendPayment(
         this.state.contact.id,
         this.state.contact.data.profile.ethAddress,
@@ -90,12 +84,12 @@ class TransactionModal extends React.Component {
         this.state.currency,
         new Date().getTime() / 1000,
       );
-    } catch (e) {
-      alert('Missing field');
+    } else {
+      alert('Missing field(s)');
     }
   };
 
-  whichScreen = (toggleCongratsScreen, loading) => {
+  whichScreen = toggleCongratsScreen => {
     // if congrats screen should display
     if (toggleCongratsScreen === true) {
       return (
@@ -107,38 +101,28 @@ class TransactionModal extends React.Component {
         />
       );
     }
-    // if loading screen should display
-    else if (loading === true) {
-      return (
-        <LoadingContainer>
-          <CircularProgress />
-        </LoadingContainer>
-      );
-    }
     // otherwise, display new transaction form
     else {
       return (
         <>
-          <Form onSubmit={this.payContact}>
-            <NewTransactionForm
-              account={this.props.accounts && this.props.accounts[0]}
-              handleChange={this.handleChange}
-              handleClose={this.handleClose}
-              handlePay={this.payContact}
-              openContacts={this.openContacts}
-              to={this.state.to}
-              note={this.state.for}
-              amount={this.state.amount}
-              currency={this.state.currency}
-            />
-          </Form>
+          <NewTransactionForm
+            account={this.props.accounts && this.props.accounts[0]}
+            handleChange={this.handleChange}
+            handleClose={this.handleClose}
+            handlePay={this.payContact}
+            openContacts={this.openContacts}
+            to={this.state.to}
+            note={this.state.for}
+            amount={this.state.amount}
+            currency={this.state.currency}
+          />
         </>
       );
     }
   };
 
   render() {
-    const { transactionModalOpen, toggleCongratsScreen, loading } = this.props;
+    const { transactionModalOpen, toggleCongratsScreen } = this.props;
     return (
       <Modal
         aria-labelledby="simple-modal-title"
@@ -161,7 +145,7 @@ class TransactionModal extends React.Component {
               />
             </CloseButtonContainer>
           </TitleContainer>
-          {this.whichScreen(toggleCongratsScreen, loading)}
+          {this.whichScreen(toggleCongratsScreen)}
         </ModalContainer>
       </Modal>
     );

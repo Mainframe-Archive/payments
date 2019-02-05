@@ -4,7 +4,8 @@ import TransactionModal from './TransactionModal';
 
 import styled, { css } from 'styled-components/native';
 import { Button, Text } from '@morpheus-ui/core';
-import { PlusSymbol } from '@morpheus-ui/icons';
+import { Image } from 'react-native-web';
+import { PlusSymbol, PlusSymbolSm } from '@morpheus-ui/icons';
 import screenSize from '../hocs/ScreenSize';
 import applyContext from '../hocs/Context';
 
@@ -13,7 +14,7 @@ const PositionContainer = styled.View`
 `;
 
 const Container = screenSize(styled.View`
-  width: 250px;
+  width: 220px;
   height: 100%;
   background-color: ${props => props.theme.gray};
   display: flex;
@@ -28,6 +29,7 @@ const Container = screenSize(styled.View`
       top: 0;
       left: 0;
       right: 0;
+      bottom: 0;
       ${props =>
         props.open &&
         css`
@@ -49,12 +51,12 @@ const SidebarContainer = screenSize(styled.View`
     props.screenWidth <= 900 &&
     props.open &&
     css`
-      position: fixed;
       left: 0;
       top: 0;
       width: 100%;
       height: 100%;
       margin-top: 90px;
+      overflow: hidden;
     `};
 `);
 
@@ -147,6 +149,33 @@ const MobileTransferButton = screenSize(styled.View`
     `};
 `);
 
+const TestNet = screenSize(styled.View`
+  display: flex;
+  flex-direction: row;
+  position: absolute;
+  bottom: 10px;
+  left: 10px;
+  width: 120px;
+  ${props =>
+    props.screenWidth <= 900 &&
+    props.open &&
+    css`
+      left: 0;
+      right: 0;
+      margin: 0 auto;
+    `};
+  ${props =>
+    props.screenWidth <= 900 &&
+    !props.open &&
+    css`
+      display: none;
+    `};
+`);
+
+const TestNetText = screenSize(styled.View`
+  margin-left: 7px;
+`);
+
 class ResponsiveDrawer extends React.Component {
   state = {
     mobileOpen: false,
@@ -176,7 +205,7 @@ class ResponsiveDrawer extends React.Component {
             onPress={handleOpenTransactionModal}
             variant={['green', 'hover-shadow', 'size190']}
             title="NEW TRANSFER"
-            Icon={PlusSymbol}
+            Icon={PlusSymbolSm}
           />
         </ButtonContainer>
         <NavItem>
@@ -229,6 +258,15 @@ class ResponsiveDrawer extends React.Component {
           <SidebarContainer open={this.state.mobileOpen}>
             {drawer}
           </SidebarContainer>
+          <TestNet open={this.state.mobileOpen}>
+            <Image
+              source={require('../img/testnet.svg')}
+              style={{ width: 14, height: 14 }}
+            />
+            <TestNetText>
+              <Text variant={['faded']}>{'running on Testnet'}</Text>
+            </TestNetText>
+          </TestNet>
         </Container>
       </PositionContainer>
     );
