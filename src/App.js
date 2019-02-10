@@ -7,9 +7,8 @@ import LoginModal from './components/LoginModal';
 import getWeb3 from './components/util/getWeb3';
 import { ThemeProvider } from '@morpheus-ui/core';
 import { Provider } from './hocs/Context';
-import screenSize from './hocs/ScreenSize';
 import theme from './theme';
-import styled, { css } from 'styled-components/native';
+import styled from 'styled-components/native';
 import base from './base';
 
 const temptheme = createMuiTheme({
@@ -29,17 +28,12 @@ const temptheme = createMuiTheme({
   },
 });
 
-const Root = screenSize(styled.View`
+const Root = styled.View`
   width: 100vw;
   height: 100vh;
   flex: 1;
   flex-direction: row;
-  ${props =>
-    props.screenWidth <= 900 &&
-    css`
-      flex-direction: column;
-    `};
-`);
+`;
 
 class App extends Component {
   state = {
@@ -47,7 +41,7 @@ class App extends Component {
     web3: null,
     accounts: null,
     network: null,
-    transactionModalOpen: false,
+    transactionModalOpen: true,
     loading: false,
     toggleCongratsScreen: false,
     initialState: false,
@@ -97,8 +91,7 @@ class App extends Component {
     }
   };
 
-  sendPayment = async (contactID, to, comment, amount, currency, timestamp) => {
-    console.log('sendPayment');
+  sendPayment = async (contactID, to, comment, amount, currency) => {
     const recipient = this.state.web3.utils.toChecksumAddress(to);
 
     const simpleReceipt = {
@@ -109,7 +102,6 @@ class App extends Component {
     const transactionData = {
       comment: comment,
       value: amount,
-      timestamp: timestamp,
       receipt: simpleReceipt,
     };
 
@@ -131,61 +123,63 @@ class App extends Component {
       return;
     }
 
-    this.state.web3.eth.getBalance(this.state.accounts[0]).then(resolved => {
-      if (this.state.web3.utils.fromWei(resolved, 'ether') < amount) {
-        this.setState({ loading: false });
-        alert('Insufficient balance');
-        return;
-      } else {
-        this.handlePayment(transactionData, paymentParams, recipient);
-      }
-    });
+    this.handlePayment(transactionData, paymentParams, recipient);
   };
 
   handlePayment = async (transactionData, paymentParams, recipient) => {
-    console.log('handlePayment');
-
     const res = await this.state.mainframe.payments.payContact(paymentParams);
     res
       .on('hash', hash => {
-        console.log(hash);
-        this.setState({ transactionHash: hash, loading: true });
+        this.setState({
+          transactionHash: hash,
+          loading: true,
+        });
       })
       .on('confirmed', () => {
-        this.writeToFirebase(transactionData, recipient);
+        this.state.web3.eth
+          .getTransactionReceipt(this.state.transactionHash)
+          .then(receipt => {
+            this.writeToFirebase(
+              transactionData,
+              recipient,
+              receipt.blockNumber,
+            );
+          });
       })
       .on('error', this.logError);
   };
 
-  writeToFirebase = (transactionData, recipient) => {
-    console.log('writeToFirebase');
+  writeToFirebase = (transactionData, recipient, blockNumber) => {
+    // get timestamp
+    this.state.web3.eth.getBlock(blockNumber).then(block => {
+      transactionData.timestamp = block.timestamp;
+      base
+        .post(
+          `account_transactions/${this.state.accounts[0]}/${
+            this.state.network
+          }/${this.state.transactionHash}`,
+          { data: transactionData },
+        )
+        .catch(err => {
+          console.error('ERROR: ', err);
+        });
 
-    base
-      .post(
-        `account_transactions/${this.state.accounts[0]}/${this.state.network}/${
-          this.state.transactionHash
-        }`,
-        { data: transactionData },
-      )
-      .catch(err => {
-        console.error('ERROR: ', err);
-      });
+      // add transaction data to recipient's history
+      base
+        .post(
+          `account_transactions/${recipient}/${this.state.network}/${
+            this.state.transactionHash
+          }`,
+          {
+            data: transactionData,
+          },
+        )
+        .catch(err => {
+          console.error('ERROR: ', err);
+        });
 
-    // add transaction data to recipient's history
-    base
-      .post(
-        `account_transactions/${recipient}/${this.state.network}/${
-          this.state.transactionHash
-        }`,
-        {
-          data: transactionData,
-        },
-      )
-      .catch(err => {
-        console.error('ERROR: ', err);
-      });
-
-    this.setState({ toggleCongratsScreen: true, loading: false });
+      this.setState({ toggleCongratsScreen: true, loading: false });
+    });
   };
 
   handleOpenTransactionModal = () => {

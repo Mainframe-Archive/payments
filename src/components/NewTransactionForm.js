@@ -1,35 +1,53 @@
 import React from 'react';
-import { StyleSheet } from 'react-native';
 import PropTypes from 'prop-types';
 import screenSize from '../hocs/ScreenSize';
 import applyContext from '../hocs/Context';
 import { withStyles } from '@material-ui/core/styles';
-import { Form } from '@morpheus-ui/forms';
 import CircularProgress from '@material-ui/core/CircularProgress';
 
-import { Column, Row, TextField, DropDown, Button } from '@morpheus-ui/core';
+import {
+  Column,
+  Row,
+  TextField,
+  DropDown,
+  Button,
+  Text,
+} from '@morpheus-ui/core';
 import styled, { css } from 'styled-components/native';
 
+const PositionContainer = styled.View`
+  position: relative;
+  height: 100%;
+`;
+
 const FormContainer = screenSize(styled.View`
-  margin: 0 auto;
-  width: 38%;
-  min-width: 350px;
-  max-width: 1200px;
-  ${props =>
-    props.screenWidth <= 900 &&
-    css`
-      min-width: 80%;
-    `};
+  position: absolute;
+  height: 360px;
+  width: 450px;
+  top: 50%;
+  left: 50%;
+  margin-left: -225px;
+  margin-top: -250px;
+
   ${props =>
     props.screenWidth <= 700 &&
     css`
-      min-width: 95%;
+      width: 90%;
+      margin-left: -45%;
+    `};
+
+  ${props =>
+    props.screenHeight >= 1100 &&
+    css`
+      top: 0;
+      margin-top: 200px;
     `};
 `);
 
 const ButtonContainer = screenSize(styled.View`
   margin: 0 auto;
   min-width: 200px;
+  margin-top: 70px;
   ${props =>
     props.screenWidth <= 350 &&
     css`
@@ -67,15 +85,17 @@ class NewTransactionForm extends React.Component {
       currency,
       handleChange,
       handleClose,
-      handlePay,
       openContacts,
       loading,
       classes,
+      amountValidation,
+      accountValidation,
+      validEthAddress,
     } = this.props;
 
     return (
-      <FormContainer>
-        <Form>
+      <PositionContainer>
+        <FormContainer>
           <Row size={12}>
             <Column size={12}>
               <TextField
@@ -99,6 +119,7 @@ class NewTransactionForm extends React.Component {
                   loading ? 'disabled' : '',
                   'disabledLabel',
                 ]}
+                validation={accountValidation}
                 required
               />
             </Column>
@@ -129,6 +150,7 @@ class NewTransactionForm extends React.Component {
                 ]}
                 disabled={loading}
                 required
+                validation={amountValidation}
               />
             </Column>
             <Column size={12}>
@@ -165,16 +187,20 @@ class NewTransactionForm extends React.Component {
                 ) : (
                   <Button
                     submit
-                    onPress={handlePay}
                     title="PAY"
                     variant={['filled', 'green', 'hover-shadow', 'size100']}
                   />
                 )}
               </Column>
             </Row>
+            {loading && (
+              <Text variant={['faded', 'small']}>
+                {'This may take a few minutes. We appreciate your patience.'}
+              </Text>
+            )}
           </ButtonContainer>
-        </Form>
-      </FormContainer>
+        </FormContainer>
+      </PositionContainer>
     );
   }
 }

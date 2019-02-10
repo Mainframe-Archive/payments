@@ -8,6 +8,7 @@ const colors = {
   textGray: '232323',
   mediumGray: '#B5B5B5',
   black: '#000',
+  error: '#E51111',
 };
 
 export default {
@@ -28,6 +29,7 @@ export default {
     textLike: {
       borderColor: colors.paymentGreen,
       titleColor: colors.black,
+      fontWeight: 'normal',
       titlePadding: 0,
       borderHoverColor: colors.paymentGreen,
       titleHoverColor: colors.paymentGreen,
@@ -45,9 +47,10 @@ export default {
       iconHeight: '24px',
       iconWidth: '24px',
 
-      fontSize: 12,
+      fontSize: 11,
       fontFamily: 'Muli',
       fontWeight: 'bold',
+      letterSpacing: 1.1,
 
       borderHoverColor: 'transparent',
       backgroundHoverColor: 'transparent',
@@ -61,6 +64,7 @@ export default {
     cancel: {
       borderColor: 'transparent',
       titleColor: colors.mediumGray,
+      letterSpacing: 1,
 
       borderHoverColor: 'transparent',
       titleHoverColor: colors.black,
@@ -74,6 +78,7 @@ export default {
 
       fontFamily: 'Muli',
       fontWeight: 'normal',
+      letterSpacing: 1,
 
       titleHoverColor: colors.gray,
       backgroundHoverColor: colors.darkGreen,
@@ -84,7 +89,7 @@ export default {
       minWidth: 150,
       iconWidth: '14px',
       iconHeight: '14px',
-      fontSize: '12px',
+      fontSize: '10px',
     },
     size100: {
       minWidth: 96,
@@ -102,17 +107,17 @@ export default {
     welcome: {
       fontFamily: 'Muli',
       fontWeight: 'regular',
-      fontSize: '16px',
-      lineHeight: '25px',
+      fontSize: '13px',
+      lineHeight: '21px',
       letterSpacing: 'inherit',
     },
     h2Poppins: {
       fontFamily: 'Poppins',
       fontWeight: 600,
-      fontSize: '25px',
+      fontSize: '20px',
     },
     h3: {
-      fontSize: 16,
+      fontSize: 13,
       color: colors.black,
       fontWeight: 700,
     },
@@ -127,11 +132,24 @@ export default {
       fontSize: 13,
       letterSpacing: 2,
     },
+    dateTime: {
+      fontSize: 12,
+      color: colors.mediumGray,
+    },
+    congrats: {
+      fontSize: '13px',
+    },
+    error: {
+      fontSize: '10px',
+      color: colors.error,
+    },
   },
   TextField: {
     filled: {
       backgroundColor: colors.gray,
       backgroundActiveColor: colors.white,
+      textColor: colors.black,
+      textActiveColor: colors.black,
 
       borderColor: colors.gray,
       borderActiveColor: colors.gray,

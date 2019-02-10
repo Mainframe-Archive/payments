@@ -7,6 +7,7 @@ import styled, { css } from 'styled-components/native';
 const Container = screenSize(styled.View`
   margin: 0 auto;
   width: 300px;
+  padding-top: 12vh;
   text-align: center;
   position: relative;
   height: 100%;
@@ -20,12 +21,18 @@ const Container = screenSize(styled.View`
 const TextContainer = screenSize(styled.View`
   margin: 0 auto;
   text-align: center;
-  padding-top: ${props => props.theme.spacing};
+  padding-top: 15px;
+  max-width: 293px;
 `);
 
 const ButtonContainer = screenSize(styled.View`
   margin: 0 auto;
-  padding-top: 35vh;
+  padding-top: 150px;
+  ${props =>
+    props.screenHeight <= 500 &&
+    css`
+      padding-top: 75px;
+    `};
 `);
 
 class CongratsScreen extends React.Component {
@@ -35,9 +42,10 @@ class CongratsScreen extends React.Component {
       <Container>
         <Text variant={['h2', 'h2Poppins']}>{'Payment Complete!'}</Text>
         <TextContainer>
-          <Text>
+          <Text variant="congrats">
             {"You've sent " +
               to +
+              ' ' +
               amount +
               ' ' +
               currency +

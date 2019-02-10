@@ -6,6 +6,8 @@ import CongratsScreen from './Congrats';
 
 import Modal from '@material-ui/core/Modal';
 import { Row, Text, Button } from '@morpheus-ui/core';
+import { Form } from '@morpheus-ui/forms';
+
 import { Close } from '@morpheus-ui/icons';
 import styled from 'styled-components/native';
 
@@ -45,6 +47,8 @@ class TransactionModal extends React.Component {
     for: '',
     contact: null,
     currency: 'ETH',
+    sufficientBalance: false,
+    validEthAddress: true,
   };
 
   handleChange = prop => value => {
@@ -63,29 +67,58 @@ class TransactionModal extends React.Component {
   openContacts = async () => {
     const contact = await this.props.mainframe.contacts.selectContact();
     if (contact && !contact.data.profile.ethAddress) {
-      alert(`No eth address found for contact: ${contact.id}`);
+      this.setState({ validEthAddress: false, to: '' });
     } else if (contact) {
       this.setState({ to: contact.data.profile.name, contact: contact });
+    } else {
+      this.setState({ to: '' });
     }
   };
 
-  payContact = () => {
-    if (
-      this.state.contact &&
-      this.state.contact.id &&
-      this.state.contact.data.profile.ethAddress &&
-      this.state.amount !== 0
-    ) {
+  amountValidation = amount => {
+    const val = amount.value;
+    this.checkSufficientBalance(val);
+
+    if (isNaN(val)) {
+      return 'Amount must be a number';
+    } else if (!this.state.sufficientBalance) {
+      return 'Insufficient balance';
+    } else if (val <= 0) {
+      return 'Amount must be greater than zero';
+    } else {
+      return '';
+    }
+  };
+
+  accountValidation = () => {
+    if (!this.state.validEthAddress) {
+      return 'Invalid Contact: No ETH Address';
+    } else {
+      return '';
+    }
+  };
+
+  checkSufficientBalance = async amount => {
+    this.props.accounts &&
+      this.props.web3.eth.getBalance(this.props.accounts[0]).then(resolved => {
+        const balance = this.props.web3.utils.fromWei(resolved, 'ether');
+        if (balance < amount) {
+          this.setState({ sufficientBalance: false });
+        } else {
+          this.setState({ sufficientBalance: true });
+        }
+      });
+  };
+
+  payContact = payload => {
+    if (payload.valid) {
       this.props.sendPayment(
         this.state.contact.id,
         this.state.contact.data.profile.ethAddress,
         this.state.for,
         this.state.amount,
         this.state.currency,
-        new Date().getTime() / 1000,
       );
-    } else {
-      alert('Missing field(s)');
     }
   };
 
@@ -104,19 +137,21 @@ class TransactionModal extends React.Component {
     // otherwise, display new transaction form
     else {
       return (
-        <>
+        <Form onSubmit={this.payContact}>
           <NewTransactionForm
+            amountValidation={this.amountValidation}
+            accountValidation={this.accountValidation}
+            validEthAddress={this.state.validEthAddress}
             account={this.props.accounts && this.props.accounts[0]}
             handleChange={this.handleChange}
             handleClose={this.handleClose}
-            handlePay={this.payContact}
             openContacts={this.openContacts}
             to={this.state.to}
             note={this.state.for}
             amount={this.state.amount}
             currency={this.state.currency}
           />
-        </>
+        </Form>
       );
     }
   };
