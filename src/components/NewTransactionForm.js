@@ -55,11 +55,6 @@ const ButtonContainer = screenSize(styled.View`
     `};
 `);
 
-const DropDownContainer = styled.View`
-  z-index: 10000;
-  position: relative;
-`;
-
 const LoadingContainer = styled.View`
   margin: 0 auto;
   max-width: 96px;
@@ -90,7 +85,6 @@ class NewTransactionForm extends React.Component {
       classes,
       amountValidation,
       accountValidation,
-      validEthAddress,
     } = this.props;
 
     return (
@@ -124,17 +118,15 @@ class NewTransactionForm extends React.Component {
               />
             </Column>
             <Column lg={3} md={3} sm={3}>
-              <DropDownContainer>
-                <DropDown
-                  options={['MFT', 'ETH']}
-                  checkedLabel={currency}
-                  defaultValue={currency}
-                  errorMessage="Invalid ETH address"
-                  onChange={handleChange('currency')}
-                  disabled={loading}
-                  variant={['filled', 'disabled']}
-                />
-              </DropDownContainer>
+              <DropDown
+                options={['MFT', 'ETH']}
+                checkedLabel={currency}
+                defaultValue={currency}
+                errorMessage="Invalid ETH address"
+                onChange={handleChange('currency')}
+                disabled={loading}
+                variant={['filled', 'disabled']}
+              />
             </Column>
             <Column lg={9} md={9} sm={9}>
               <TextField

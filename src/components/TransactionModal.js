@@ -66,12 +66,20 @@ class TransactionModal extends React.Component {
 
   openContacts = async () => {
     const contact = await this.props.mainframe.contacts.selectContact();
-    if (contact && !contact.data.profile.ethAddress) {
-      this.setState({ validEthAddress: false, to: '' });
+    if (
+      contact &&
+      (!contact.data.profile.ethAddress ||
+        !this.props.web3.utils.isAddress(contact.data.profile.ethAddress))
+    ) {
+      this.setState({ validEthAddress: false, to: '', contact: null });
     } else if (contact) {
-      this.setState({ to: contact.data.profile.name, contact: contact });
+      this.setState({
+        validEthAddress: true,
+        to: contact.data.profile.name,
+        contact: contact,
+      });
     } else {
-      this.setState({ to: '' });
+      this.setState({ to: '', contact: null });
     }
   };
 
@@ -141,7 +149,6 @@ class TransactionModal extends React.Component {
           <NewTransactionForm
             amountValidation={this.amountValidation}
             accountValidation={this.accountValidation}
-            validEthAddress={this.state.validEthAddress}
             account={this.props.accounts && this.props.accounts[0]}
             handleChange={this.handleChange}
             handleClose={this.handleClose}

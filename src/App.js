@@ -41,15 +41,13 @@ class App extends Component {
     web3: null,
     accounts: null,
     network: null,
-    transactionModalOpen: true,
+    transactionModalOpen: false,
     loading: false,
     toggleCongratsScreen: false,
     initialState: false,
   };
 
   componentDidMount = async () => {
-    // const sdk = new MainframeSDK();
-    // const res = await sdk.apiVersion();
     const sdk = new MainframeSDK();
     this.setState({ mainframe: sdk });
     try {
@@ -102,7 +100,7 @@ class App extends Component {
     const recipient = this.state.web3.utils.toChecksumAddress(to);
 
     const simpleReceipt = {
-      to: to,
+      to: recipient,
       from: this.state.accounts[0],
     };
 
@@ -158,35 +156,38 @@ class App extends Component {
 
   writeToFirebase = (transactionData, recipient, blockNumber) => {
     // get timestamp
-    this.state.web3.eth.getBlock(blockNumber).then(block => {
-      transactionData.timestamp = block.timestamp;
-      base
-        .post(
-          `account_transactions/${this.state.accounts[0]}/${
-            this.state.network
-          }/${this.state.transactionHash}`,
-          { data: transactionData },
-        )
-        .catch(err => {
-          console.error('ERROR: ', err);
-        });
+    this.state.web3.eth
+      .getBlock(blockNumber)
+      .then(block => {
+        transactionData.timestamp = block.timestamp;
+        base
+          .post(
+            `account_transactions/${this.state.accounts[0]}/${
+              this.state.network
+            }/${this.state.transactionHash}`,
+            { data: transactionData },
+          )
+          .catch(err => {
+            alert('ERROR: ', err);
+          });
 
-      // add transaction data to recipient's history
-      base
-        .post(
-          `account_transactions/${recipient}/${this.state.network}/${
-            this.state.transactionHash
-          }`,
-          {
-            data: transactionData,
-          },
-        )
-        .catch(err => {
-          console.error('ERROR: ', err);
-        });
+        // add transaction data to recipient's history
+        base
+          .post(
+            `account_transactions/${recipient}/${this.state.network}/${
+              this.state.transactionHash
+            }`,
+            {
+              data: transactionData,
+            },
+          )
+          .catch(err => {
+            alert('ERROR: ', err);
+          });
 
-      this.setState({ toggleCongratsScreen: true, loading: false });
-    });
+        this.setState({ toggleCongratsScreen: true, loading: false });
+      })
+      .catch(err => alert('ERROR: ', err));
   };
 
   handleOpenTransactionModal = () => {
@@ -211,11 +212,15 @@ class App extends Component {
   };
 
   logError(error) {
-    console.error('ERROR: ', error);
+    alert('ERROR: ', error);
+    this.setState({
+      loading: false,
+      transactionModalOpen: false,
+      toggleCongratsScreen: false,
+    });
   }
 
   render() {
-    console.log(this.state.accounts);
     return (
       <ThemeProvider theme={theme}>
         <Provider
