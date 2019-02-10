@@ -58,6 +58,9 @@ class App extends Component {
 
       // Set web3 to the state
       this.setState({ web3 });
+
+      // check for account updates
+      this.interval = setInterval(() => this.getBlockchainData(), 10000);
     } catch (error) {
       // Catch any errors for any of the above operations.
       alert(
@@ -66,6 +69,10 @@ class App extends Component {
       console.log(error);
     }
   };
+
+  componentWillUnmount() {
+    clearInterval(this.interval);
+  }
 
   getBlockchainData = async () => {
     try {
@@ -208,6 +215,7 @@ class App extends Component {
   }
 
   render() {
+    console.log(this.state.accounts);
     return (
       <ThemeProvider theme={theme}>
         <Provider
