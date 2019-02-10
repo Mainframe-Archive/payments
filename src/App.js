@@ -62,7 +62,7 @@ class App extends Component {
     } catch (error) {
       // Catch any errors for any of the above operations.
       alert(
-        `Failed to load web3 or accounts. Check that metamask is unlocked and that paymo is approved, or alternatively take a look at the console for details. You might also be trying to use MainframeOS which this app is not optimized for.`,
+        `Failed to load web3 or accounts. Check that paymo is approved, or the console for more details.`,
       );
       console.log(error);
     }
@@ -89,9 +89,7 @@ class App extends Component {
       }
     } catch (error) {
       // Catch any errors for any of the above operations.
-      alert(
-        `Failed to load web3 or accounts. Check that metamask is unlocked or console for details.`,
-      );
+      alert(`Failed to load web3 or accounts. Check console for details.`);
       console.log(error);
     }
   };
@@ -168,7 +166,7 @@ class App extends Component {
             { data: transactionData },
           )
           .catch(err => {
-            alert('ERROR: ', err);
+            alert('Failed to write to Firebase. ERROR: ', err);
           });
 
         // add transaction data to recipient's history
@@ -182,12 +180,12 @@ class App extends Component {
             },
           )
           .catch(err => {
-            alert('ERROR: ', err);
+            alert('Failed to write to Firebase. ERROR: ', err);
           });
 
         this.setState({ toggleCongratsScreen: true, loading: false });
       })
-      .catch(err => alert('ERROR: ', err));
+      .catch(err => alert('Could not get block. ERROR: ', err));
   };
 
   handleOpenTransactionModal = () => {
@@ -212,7 +210,7 @@ class App extends Component {
   };
 
   logError(error) {
-    alert('ERROR: ', error);
+    alert('Contact payment failed. ERROR: ', error);
     this.setState({
       loading: false,
       transactionModalOpen: false,

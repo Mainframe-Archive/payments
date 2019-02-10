@@ -108,14 +108,17 @@ class TransactionModal extends React.Component {
 
   checkSufficientBalance = async amount => {
     this.props.accounts &&
-      this.props.web3.eth.getBalance(this.props.accounts[0]).then(resolved => {
-        const balance = this.props.web3.utils.fromWei(resolved, 'ether');
-        if (balance < amount) {
-          this.setState({ sufficientBalance: false });
-        } else {
-          this.setState({ sufficientBalance: true });
-        }
-      });
+      this.props.web3.eth
+        .getBalance(this.props.accounts[0])
+        .then(resolved => {
+          const balance = this.props.web3.utils.fromWei(resolved, 'ether');
+          if (balance < amount) {
+            this.setState({ sufficientBalance: false });
+          } else {
+            this.setState({ sufficientBalance: true });
+          }
+        })
+        .catch(err => alert('Could not get balance. ERROR: ', err));
   };
 
   payContact = payload => {
