@@ -146,7 +146,7 @@ class App extends Component {
 
   writeToFirebase = (transactionData, recipient) => {
     // generate timestamp
-    const timestamp = new Date.now();
+    const timestamp = Date.now() / 1000;
     transactionData.timestamp = timestamp;
     base
       .post(
@@ -197,14 +197,14 @@ class App extends Component {
     this.setState({ initialState: false });
   };
 
-  logError(error) {
-    alert('Contact payment failed. ERROR: ', error);
+  logError = error => {
+    alert('Contact payment failed. ERROR ', error);
     this.setState({
       loading: false,
       transactionModalOpen: false,
       toggleCongratsScreen: false,
     });
-  }
+  };
 
   render() {
     return (
