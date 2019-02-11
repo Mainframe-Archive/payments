@@ -139,53 +139,41 @@ class App extends Component {
         });
       })
       .on('confirmed', () => {
-        this.state.web3.eth
-          .getTransactionReceipt(this.state.transactionHash)
-          .then(receipt => {
-            this.writeToFirebase(
-              transactionData,
-              recipient,
-              receipt.blockNumber,
-            );
-          });
+        this.writeToFirebase(transactionData, recipient);
       })
       .on('error', this.logError);
   };
 
-  writeToFirebase = (transactionData, recipient, blockNumber) => {
-    // get timestamp
-    this.state.web3.eth
-      .getBlock(blockNumber)
-      .then(block => {
-        transactionData.timestamp = block.timestamp;
-        base
-          .post(
-            `account_transactions/${this.state.accounts[0]}/${
-              this.state.network
-            }/${this.state.transactionHash}`,
-            { data: transactionData },
-          )
-          .catch(err => {
-            alert('Failed to write to Firebase. ERROR: ', err);
-          });
+  writeToFirebase = (transactionData, recipient) => {
+    // generate timestamp
+    const timestamp = new Date.now();
+    transactionData.timestamp = timestamp;
+    base
+      .post(
+        `account_transactions/${this.state.accounts[0]}/${this.state.network}/${
+          this.state.transactionHash
+        }`,
+        { data: transactionData },
+      )
+      .catch(err => {
+        alert('Failed to write to Firebase. ERROR: ', err);
+      });
 
-        // add transaction data to recipient's history
-        base
-          .post(
-            `account_transactions/${recipient}/${this.state.network}/${
-              this.state.transactionHash
-            }`,
-            {
-              data: transactionData,
-            },
-          )
-          .catch(err => {
-            alert('Failed to write to Firebase. ERROR: ', err);
-          });
+    // add transaction data to recipient's history
+    base
+      .post(
+        `account_transactions/${recipient}/${this.state.network}/${
+          this.state.transactionHash
+        }`,
+        {
+          data: transactionData,
+        },
+      )
+      .catch(err => {
+        alert('Failed to write to Firebase. ERROR: ', err);
+      });
 
-        this.setState({ toggleCongratsScreen: true, loading: false });
-      })
-      .catch(err => alert('Could not get block. ERROR: ', err));
+    this.setState({ toggleCongratsScreen: true, loading: false });
   };
 
   handleOpenTransactionModal = () => {

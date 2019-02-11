@@ -120,7 +120,7 @@ class ResponsiveDrawer extends React.Component {
             </Text>
           </NavTextContainer>
         </NavItem>
-        <NavItem>
+        {/*<NavItem>
           <Triangle active={this.state.activeNav === 'settings'} />
           <NavTextContainer onPress={() => this.updateActiveNav('settings')}>
             <Text
@@ -131,7 +131,7 @@ class ResponsiveDrawer extends React.Component {
               {'Settings'}
             </Text>
           </NavTextContainer>
-        </NavItem>
+        </NavItem>*/}
         <TransactionModal />
       </>
     );
