@@ -85,10 +85,10 @@ class TransactionModal extends React.Component {
   amountValidation = amount => {
     const val = amount.value;
     this.checkSufficientBalance(val);
+
     if (isNaN(val)) {
       return 'Amount must be a number';
     } else if (!this.state.sufficientBalance) {
-      console.log('should b insuff bal');
       return 'Insufficient balance';
     } else if (val <= 0) {
       return 'Amount must be greater than zero';
@@ -111,9 +111,6 @@ class TransactionModal extends React.Component {
         .getBalance(this.props.accounts[0])
         .then(resolved => {
           const balance = this.props.web3.utils.fromWei(resolved, 'ether');
-          console.log(balance);
-          console.log(amount);
-          console.log(balance < amount);
           if (balance < amount) {
             this.setState({ sufficientBalance: false });
           } else {
