@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import MainframeSDK from '@mainframe/sdk';
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 import ResponsiveDrawer from './components/ResponsiveDrawer';
 import MainContainer from './components/MainContainer';
@@ -6,9 +7,8 @@ import LoginModal from './components/LoginModal';
 import getWeb3 from './components/util/getWeb3';
 import { ThemeProvider } from '@morpheus-ui/core';
 import { Provider } from './hocs/Context';
-import screenSize from './hocs/ScreenSize';
 import theme from './theme';
-import styled, { css } from 'styled-components/native';
+import styled from 'styled-components/native';
 import base from './base';
 
 const temptheme = createMuiTheme({
@@ -17,35 +17,27 @@ const temptheme = createMuiTheme({
   },
   palette: {
     primary: {
-      main: '#0bb634',
+      main: '#8EDA11',
       contrastText: '#fff',
-      titleText: '#00c730',
+      titleText: '#fff',
     },
     complementary: {
       main: '#15d642',
       contrastText: '#fff',
     },
-    secondary: {
-      main: '#f44336',
-      contrastText: '#999',
-    },
   },
 });
 
-const Root = screenSize(styled.View`
+const Root = styled.View`
   width: 100vw;
   height: 100vh;
   flex: 1;
   flex-direction: row;
-  ${props =>
-    props.screenWidth <= 900 &&
-    css`
-      flex-direction: column;
-    `};
-`);
+`;
 
 class App extends Component {
   state = {
+    mainframe: null,
     web3: null,
     accounts: null,
     network: null,
@@ -57,19 +49,28 @@ class App extends Component {
 
   componentDidMount = async () => {
     try {
+      // init Mainframe SDK
+      const sdk = new MainframeSDK();
       // Get network provider and web3 instance.
-      const web3 = await getWeb3();
+      const web3 = await getWeb3(sdk);
 
       // Set web3 to the state
-      this.setState({ web3 });
+      this.setState({ web3: web3, mainframe: sdk });
+
+      // check for account updates
+      this.interval = setInterval(() => this.getBlockchainData(), 10000);
     } catch (error) {
       // Catch any errors for any of the above operations.
       alert(
-        `Failed to load web3 or accounts. Check that metamask is unlocked and that paymo is approved, or alternatively take a look at the console for details. You might also be trying to use MainframeOS which this app is not optimized for.`,
+        `Failed to load web3 or accounts. Check that paymo is approved, or the console for more details.`,
       );
-      console.log(error);
+      console.error(error);
     }
   };
+
+  componentWillUnmount() {
+    clearInterval(this.interval);
+  }
 
   getBlockchainData = async () => {
     try {
@@ -88,105 +89,90 @@ class App extends Component {
       }
     } catch (error) {
       // Catch any errors for any of the above operations.
-      alert(
-        `Failed to load web3 or accounts. Check that metamask is unlocked or console for details.`,
-      );
-      console.log(error);
+      alert(`Failed to load web3 or accounts. Check the console for details.`);
+      console.error(error);
     }
   };
 
-  receiptWasMined = receipt => {
-    console.log('The receipt has been mined! ', receipt);
-    // will be fired once the receipt is mined
+  sendPayment = async (contactID, to, comment, amount, currency) => {
+    const recipient = this.state.web3.utils.toChecksumAddress(to);
 
-    this.state.web3.eth.getBlock(receipt.blockNumber).then(block => {
-      console.log(
-        `account_transactions/${this.state.accounts[0]}/${this.state.network}/${
-          this.state.transactionHash
-        }`,
-      );
-      const simpleReceipt = {
-        to: receipt.to,
-        from: receipt.from,
-      };
+    const simpleReceipt = {
+      to: recipient,
+      from: this.state.accounts[0],
+    };
 
-      const transactionData = {
-        comment: this.state.comment,
-        value: this.state.weiAmount,
-        timestamp: block.timestamp,
-        receipt: simpleReceipt,
-      };
+    const transactionData = {
+      comment: comment,
+      value: amount,
+      receipt: simpleReceipt,
+    };
 
-      base
-        .post(
-          `account_transactions/${this.state.accounts[0]}/${
-            this.state.network
-          }/${this.state.transactionHash}`,
-          { data: transactionData },
-        )
-        .catch(err => {
-          console.error('ERROR: ', err);
-        });
+    const paymentParams = {
+      contactID: contactID,
+      currency: currency,
+      value: amount,
+    };
 
-      // add transaction data to recipient's history
-      const recipient = this.state.web3.utils.toChecksumAddress(
-        this.state.recipient,
-      );
-      base
-        .post(
-          `account_transactions/${recipient}/${this.state.network}/${
-            this.state.transactionHash
-          }`,
-          { data: transactionData },
-        )
-        .catch(err => {
-          console.error('ERROR: ', err);
-        });
-    });
-
-    // trigger congrats screen & stop loading screen
-    this.setState({ toggleCongratsScreen: true, loading: false });
-  };
-
-  sendTransaction = (recipient, comment, amount, currency) => {
-    console.log('this.state: ', this.state);
     if (this.state.network !== 'ropsten') {
       alert(`Please connect to ropsten testnet to use this dApp.`);
       return;
     }
+
     if (!this.state.web3.utils.isAddress(recipient)) {
       alert(
         `Recipient was not a valid Ethereum address. Please try creating your transaction again.`,
       );
       return;
     }
-    this.state.web3.eth.getBalance(this.state.accounts[0]).then(resolved => {
-      if (this.state.web3.utils.fromWei(resolved, 'ether') < amount) {
-        this.setState({ loading: false });
-        alert('Insufficient balance');
-      } else {
-        const weiAmount = this.state.web3.utils.toWei(amount);
+
+    this.handlePayment(transactionData, paymentParams, recipient);
+  };
+
+  handlePayment = async (transactionData, paymentParams, recipient) => {
+    const res = await this.state.mainframe.payments.payContact(paymentParams);
+    res
+      .on('hash', hash => {
         this.setState({
-          recipient: recipient,
-          comment: comment,
-          transactionAmount: amount,
-          weiAmount,
+          transactionHash: hash,
           loading: true,
         });
+      })
+      .on('confirmed', () => {
+        this.writeToFirebase(transactionData, recipient);
+      })
+      .on('error', this.logError);
+  };
 
-        this.state.web3.eth
-          .sendTransaction({
-            from: `${this.state.accounts[0]}`,
-            to: `${recipient}`,
-            value: weiAmount,
-          })
-          .once('transactionHash', this.printTransactionHash)
-          .once('receipt', this.printReceipt)
-          .on('confirmation', this.printConfNumber)
-          .on('error', this.logError)
-          .then(this.receiptWasMined);
-      }
-    });
+  writeToFirebase = (transactionData, recipient) => {
+    const timestamp = Date.now() / 1000;
+    transactionData.timestamp = timestamp;
+    base
+      .post(
+        `account_transactions/${this.state.accounts[0]}/${this.state.network}/${
+          this.state.transactionHash
+        }`,
+        { data: transactionData },
+      )
+      .catch(err => {
+        alert('ERROR. Failed to write to Firebase. ', err);
+      });
+
+    // add transaction data to recipient's history
+    base
+      .post(
+        `account_transactions/${recipient}/${this.state.network}/${
+          this.state.transactionHash
+        }`,
+        {
+          data: transactionData,
+        },
+      )
+      .catch(err => {
+        alert('ERROR. Failed to write to Firebase. ', err);
+      });
+
+    this.setState({ toggleCongratsScreen: true, loading: false });
   };
 
   handleOpenTransactionModal = () => {
@@ -210,17 +196,14 @@ class App extends Component {
     this.setState({ initialState: false });
   };
 
-  printReceipt(receipt) {
-    console.log('receipt: ', receipt);
-  }
-
-  printConfNumber(confNumber, receipt) {
-    console.log('confNumber: ', confNumber, receipt);
-  }
-
-  logError(error) {
-    console.error('ERROR: ', error);
-  }
+  logError = error => {
+    alert('ERROR. Contact payment failed. ', error);
+    this.setState({
+      loading: false,
+      transactionModalOpen: false,
+      toggleCongratsScreen: false,
+    });
+  };
 
   render() {
     return (
@@ -231,7 +214,7 @@ class App extends Component {
             setInitialStateTrue: this.setInitialStateTrue,
             setInitialStateFalse: this.setInitialStateFalse,
             getBlockchainData: this.getBlockchainData,
-            sendTransaction: this.sendTransaction,
+            sendPayment: this.sendPayment,
             handleOpenTransactionModal: this.handleOpenTransactionModal,
             handleCloseTransactionModal: this.handleCloseTransactionModal,
           }}

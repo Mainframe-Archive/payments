@@ -7,6 +7,7 @@ import styled, { css } from 'styled-components/native';
 const Container = screenSize(styled.View`
   margin: 0 auto;
   width: 300px;
+  padding-top: 12vh;
   text-align: center;
   position: relative;
   height: 100%;
@@ -18,13 +19,20 @@ const Container = screenSize(styled.View`
 `);
 
 const TextContainer = screenSize(styled.View`
-  text-align: left;
-  padding-top: ${props => props.theme.spacing};
+  margin: 0 auto;
+  text-align: center;
+  padding-top: 15px;
+  max-width: 293px;
 `);
 
 const ButtonContainer = screenSize(styled.View`
   margin: 0 auto;
-  padding: 50px 0;
+  padding-top: 150px;
+  ${props =>
+    props.screenHeight <= 500 &&
+    css`
+      padding-top: 75px;
+    `};
 `);
 
 class CongratsScreen extends React.Component {
@@ -32,21 +40,22 @@ class CongratsScreen extends React.Component {
     const { to, amount, currency, closeTransactionModal } = this.props;
     return (
       <Container>
-        <Text variant="h1">{'Congrats!'}</Text>
+        <Text variant={['h2', 'h2Poppins']}>{'Payment Complete!'}</Text>
         <TextContainer>
-          <Text>
-            {'Woo hoo! This message confirms that you just sent ' +
+          <Text variant="congrats">
+            {"You've sent " +
+              to +
+              ' ' +
               amount +
               ' ' +
               currency +
-              ' to ' +
-              to}
+              '. Go to Activity to review all of your completed transfers.'}
           </Text>
         </TextContainer>
         <ButtonContainer>
           <Button
-            title="close"
-            variant="green"
+            title="CLOSE"
+            variant={['green', 'size100']}
             onPress={closeTransactionModal}
           />
         </ButtonContainer>

@@ -6,12 +6,23 @@ import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { Image } from 'react-native-web';
 import { Row, Column, Button, Text } from '@morpheus-ui/core';
 import applyContext from '../hocs/Context';
+import screenSize from '../hocs/ScreenSize';
 import styled, { css } from 'styled-components/native';
 
-const TableContainer = styled.View`
+const MainContainer = screenSize(styled.View`
+  ${props =>
+    props.screenWidth <= 750 &&
+    css`
+      position: fixed;
+      width: 100%;
+      height: 100%;
+    `};
+`);
+
+const TableContainer = screenSize(styled.View`
   width: 100%;
   margin-bottom: ${props => props.theme.spacing};
-`;
+`);
 
 const TransactionContainer = styled.View`
   border: 1px solid ${props => props.theme.borderGray};
@@ -37,6 +48,7 @@ const TimeContainer = styled.View`
 
 const DateContainer = styled.View`
   padding-bottom: 8px;
+  padding-top: 10px;
 `;
 
 const MobileFloatCenter = styled.View`
@@ -48,13 +60,6 @@ let rowId = 0;
 function createData(receipt, avatar, comment, date, time, value) {
   rowId += 1;
   return { rowId, receipt, avatar, comment, date, time, value };
-}
-
-function condenseAddress(address) {
-  const len = 4;
-  return (
-    address.slice(0, len + 2) + '...' + address.slice(-len, address.length)
-  );
 }
 
 class SimpleTable extends React.Component {
@@ -73,7 +78,6 @@ class SimpleTable extends React.Component {
         console.log(
           `account_transactions/${this.props.account}/${this.props.network}`,
         );
-
         base.listenTo(
           `account_transactions/${this.props.account}/${this.props.network}`,
           {
@@ -91,9 +95,7 @@ class SimpleTable extends React.Component {
                 });
                 let rows = {};
                 transactionData.forEach((transaction, index) => {
-                  const ethAmount = this.props.web3.utils.fromWei(
-                    transaction.value,
-                  );
+                  const ethAmount = transaction.value;
                   const date = this.formattedDate(transaction.timestamp * 1000);
                   const time = this.formattedTime(transaction.timestamp * 1000);
                   const transactionData = createData(
@@ -117,10 +119,21 @@ class SimpleTable extends React.Component {
         );
       } catch (error) {
         // Catch any errors for any of the above operations.
+        alert('ERROR. Failed to read from Firebase. ', error);
         console.error(error);
       }
     }
   };
+
+  condenseAddress(address) {
+    const len = 4;
+    const ensureChecksumAddr = this.props.web3.utils.toChecksumAddress(address);
+    return (
+      ensureChecksumAddr.slice(0, len + 2) +
+      '...' +
+      ensureChecksumAddr.slice(-len, ensureChecksumAddr.length)
+    );
+  }
 
   formattedDate(timestamp) {
     const today = new Date(timestamp).toLocaleDateString(undefined, {
@@ -155,18 +168,21 @@ class SimpleTable extends React.Component {
 
   render() {
     return (
-      <>
+      <MainContainer>
         {Object.keys(this.state.rows).map(key => {
           const date = key;
           const rows = this.state.rows[key];
           return (
             <TableContainer>
               <DateContainer>
-                <Text>{date}</Text>
+                <Text variant="dateTime">{date}</Text>
               </DateContainer>
               {rows.map((row, index) => {
                 let sent = true;
-                if (this.props.accounts[0].toLowerCase() === row.receipt.to) {
+                if (
+                  this.props.accounts[0].toLowerCase() ===
+                  row.receipt.to.toLowerCase()
+                ) {
                   sent = false;
                 }
                 const otherAddress = sent ? row.receipt.to : row.receipt.from;
@@ -178,7 +194,7 @@ class SimpleTable extends React.Component {
                     lastChild={index === rows.length - 1}
                   >
                     <Row size={12} variant="no-border">
-                      <Column lg={1} md={1} sm={3}>
+                      <Column lg={1} md={1} sm={1}>
                         <MobileFloatCenter>
                           <Image
                             source={
@@ -190,16 +206,16 @@ class SimpleTable extends React.Component {
                           />
                         </MobileFloatCenter>
                       </Column>
-                      <Column lg={1} md={1} sm={3}>
+                      <Column lg={2} md={2} sm={2}>
                         <Text>{sent ? 'Sent' : 'Received'}</Text>
                         <TimeContainer>
-                          <Text variant="faded">{row.time}</Text>
+                          <Text variant="dateTime">{row.time}</Text>
                         </TimeContainer>
                       </Column>
-                      <Column lg={2} md={3} sm={6}>
+                      <Column lg={2} md={3} sm={3}>
                         <CopyToClipboard text={otherAddress}>
                           <Button
-                            title={condenseAddress(otherAddress)}
+                            title={this.condenseAddress(otherAddress)}
                             variant={['no-border', 'textLike']}
                             onPress={() => this.onAddressCopy(row.rowId)}
                           />
@@ -209,16 +225,13 @@ class SimpleTable extends React.Component {
                             'copied to clipboard'}
                         </Text>
                       </Column>
-                      <Column lg={6} md={5} smHidden>
+                      <Column lg={5} md={3} sm={3}>
                         <Text>{row.comment}</Text>
                       </Column>
-                      <Column lg={2} md={2} sm={9} smOffset={3} mdOffset={0}>
+                      <Column lg={2} md={3} sm={3}>
                         <Text variant={sent ? '' : 'green'}>
                           {sent ? '-' + row.value : '+' + row.value} Eth
                         </Text>
-                      </Column>
-                      <Column mdHidden lgHidden sm={9} smOffset={3}>
-                        <Text>{row.comment}</Text>
                       </Column>
                     </Row>
                   </TransactionContainer>
@@ -227,7 +240,7 @@ class SimpleTable extends React.Component {
             </TableContainer>
           );
         })}
-      </>
+      </MainContainer>
     );
   }
 }

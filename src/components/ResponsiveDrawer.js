@@ -4,7 +4,8 @@ import TransactionModal from './TransactionModal';
 
 import styled, { css } from 'styled-components/native';
 import { Button, Text } from '@morpheus-ui/core';
-import { PlusSymbol } from '@morpheus-ui/icons';
+import { Image } from 'react-native-web';
+import { PlusSymbolSm } from '@morpheus-ui/icons';
 import screenSize from '../hocs/ScreenSize';
 import applyContext from '../hocs/Context';
 
@@ -13,49 +14,16 @@ const PositionContainer = styled.View`
 `;
 
 const Container = screenSize(styled.View`
-  width: 250px;
+  width: 207px;
   height: 100%;
   background-color: ${props => props.theme.gray};
   display: flex;
   flex-direction: row;
-
-  ${props =>
-    props.screenWidth <= 900 &&
-    css`
-      width: 100%;
-      height: 70px;
-      display: block;
-      top: 0;
-      left: 0;
-      right: 0;
-      ${props =>
-        props.open &&
-        css`
-          height: 100vh;
-        `};
-    `};
 `);
 
 const SidebarContainer = screenSize(styled.View`
   width: 100%;
   background-color: ${props => props.theme.gray};
-  ${props =>
-    props.screenWidth <= 900 &&
-    !props.open &&
-    css`
-      display: none;
-    `};
-  ${props =>
-    props.screenWidth <= 900 &&
-    props.open &&
-    css`
-      position: fixed;
-      left: 0;
-      top: 0;
-      width: 100%;
-      height: 100%;
-      margin-top: 90px;
-    `};
 `);
 
 const NavItem = screenSize(styled.View`
@@ -64,12 +32,7 @@ const NavItem = screenSize(styled.View`
   flex-direction: row;
   justify-content: flex-start;
   align-items: center;
-  margin: 10px 0;
-  ${props =>
-    props.screenWidth <= 900 &&
-    css`
-      justify-content: center;
-    `}
+  margin: 7px 0;
 `);
 
 const Triangle = screenSize(styled.View`
@@ -84,20 +47,10 @@ const Triangle = screenSize(styled.View`
     css`
       border-left: 12px solid transparent;
     `}
-  ${props =>
-    props.screenWidth <= 900 &&
-    css`
-      display: none;
-    `}
 `);
 
 const NavTextContainer = screenSize(styled.TouchableOpacity`
-  margin-left: 20px;
-  ${props =>
-    props.screenWidth <= 900 &&
-    css`
-      margin-left: 0;
-    `}
+  margin-left: 17px;
 `);
 
 const ButtonContainer = styled.View`
@@ -110,41 +63,17 @@ const ButtonContainer = styled.View`
     `}
 `;
 
-const ResponsiveButton = screenSize(styled.View`
-  display: none;
-  ${props =>
-    props.screenWidth <= 900 &&
-    css`
-      display: block;
-      padding: 16px;
-    `};
+const TestNet = screenSize(styled.View`
+  display: flex;
+  flex-direction: row;
+  position: absolute;
+  bottom: 10px;
+  left: 10px;
+  width: 120px;
 `);
 
-const AbsoluteButton = screenSize(styled.View`
-  display: none;
-  ${props =>
-    props.screenWidth <= 900 &&
-    css`
-      display: block;
-      position: absolute;
-      right: 0;
-      top: 13px;
-    `};
-  ${props =>
-    props.open &&
-    css`
-      transform: rotate(45deg);
-    `};
-`);
-
-const MobileTransferButton = screenSize(styled.View`
-  display: none;
-  ${props =>
-    props.screenWidth <= 900 &&
-    css`
-      display: flex;
-      align-items: center;
-    `};
+const TestNetText = screenSize(styled.View`
+  margin-left: 7px;
 `);
 
 class ResponsiveDrawer extends React.Component {
@@ -171,12 +100,12 @@ class ResponsiveDrawer extends React.Component {
     }
     const drawer = (
       <>
-        <ButtonContainer open={this.state.mobileOpen}>
+        <ButtonContainer>
           <Button
             onPress={handleOpenTransactionModal}
-            variant={['green', 'hover-shadow', 'size190']}
+            variant={['green', 'hover-shadow', 'size150']}
             title="NEW TRANSFER"
-            Icon={PlusSymbol}
+            Icon={PlusSymbolSm}
           />
         </ButtonContainer>
         <NavItem>
@@ -191,7 +120,7 @@ class ResponsiveDrawer extends React.Component {
             </Text>
           </NavTextContainer>
         </NavItem>
-        <NavItem>
+        {/*<NavItem>
           <Triangle active={this.state.activeNav === 'settings'} />
           <NavTextContainer onPress={() => this.updateActiveNav('settings')}>
             <Text
@@ -202,33 +131,28 @@ class ResponsiveDrawer extends React.Component {
               {'Settings'}
             </Text>
           </NavTextContainer>
-        </NavItem>
+        </NavItem>*/}
         <TransactionModal />
       </>
     );
 
     return (
       <PositionContainer>
-        <Container open={this.state.mobileOpen}>
-          <ResponsiveButton>
-            <MobileTransferButton>
-              <Button
-                onPress={handleOpenTransactionModal}
-                variant={['green', 'hover-shadow']}
-                title="NEW TRANSFER"
-              />
-            </MobileTransferButton>
-            <AbsoluteButton open={this.state.mobileOpen}>
-              <Button
-                onPress={this.handleDrawerToggle}
-                variant={['borderless', 'borderlessMobile']}
-                Icon={PlusSymbol}
-              />
-            </AbsoluteButton>
-          </ResponsiveButton>
-          <SidebarContainer open={this.state.mobileOpen}>
-            {drawer}
-          </SidebarContainer>
+        <Container>
+          <SidebarContainer>{drawer}</SidebarContainer>
+          <TestNet>
+            <Image
+              source={require('../img/testnet.svg')}
+              style={{ width: 14, height: 14 }}
+            />
+            <TestNetText>
+              <Text variant={['faded']}>
+                {this.props.network === 'ropsten'
+                  ? 'running on Testnet'
+                  : 'please connect to Testnet'}
+              </Text>
+            </TestNetText>
+          </TestNet>
         </Container>
       </PositionContainer>
     );
@@ -240,7 +164,6 @@ ResponsiveDrawer.propTypes = {
   transactionModalOpen: PropTypes.bool.isRequired,
   handleCloseTransactionModal: PropTypes.func.isRequired,
   handleOpenTransactionModal: PropTypes.func.isRequired,
-  sendTransaction: PropTypes.func.isRequired,
 };
 
 export default applyContext(ResponsiveDrawer);

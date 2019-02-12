@@ -1,28 +1,74 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import screenSize from '../hocs/ScreenSize';
-import { Column, Row, TextField, DropDown, Button } from '@morpheus-ui/core';
+import applyContext from '../hocs/Context';
+import { withStyles } from '@material-ui/core/styles';
+import CircularProgress from '@material-ui/core/CircularProgress';
+
+import {
+  Column,
+  Row,
+  TextField,
+  DropDown,
+  Button,
+  Text,
+} from '@morpheus-ui/core';
 import styled, { css } from 'styled-components/native';
 
+const PositionContainer = styled.View`
+  position: relative;
+  height: 100%;
+`;
+
 const FormContainer = screenSize(styled.View`
-  margin: 0 auto;
-  min-width: 500px;
+  position: absolute;
+  height: 360px;
+  width: 450px;
+  top: 50%;
+  left: 50%;
+  margin-left: -225px;
+  margin-top: -250px;
+
   ${props =>
-    props.screenWidth <= 900 &&
+    props.screenWidth <= 700 &&
     css`
-      min-width: 95%;
+      width: 90%;
+      margin-left: -45%;
+    `};
+
+  ${props =>
+    props.screenHeight >= 1100 &&
+    css`
+      top: 0;
+      margin-top: 200px;
     `};
 `);
 
 const ButtonContainer = screenSize(styled.View`
   margin: 0 auto;
-  min-width: 210px;
+  min-width: 200px;
+  margin-top: 70px;
   ${props =>
     props.screenWidth <= 350 &&
     css`
       min-width: 200px;
     `};
 `);
+
+const LoadingContainer = styled.View`
+  margin: 0 auto;
+  max-width: 96px;
+  max-height: 26px;
+  margin-top: 9px;
+`;
+
+const styles = theme => ({
+  progress: {
+    maxWidth: 14,
+    maxHeight: 14,
+    color: '#8EDA11',
+  },
+});
 
 class NewTransactionForm extends React.Component {
   render() {
@@ -34,80 +80,118 @@ class NewTransactionForm extends React.Component {
       currency,
       handleChange,
       handleClose,
-      handlePay,
+      openContacts,
+      loading,
+      classes,
+      amountValidation,
+      accountValidation,
     } = this.props;
+
     return (
-      <FormContainer>
-        <Row size={12}>
-          <Column size={12}>
-            <TextField
-              label="From"
-              value={account}
-              name="from"
-              disabled
-              variant={['outlined', 'filled', 'disabled']}
-            />
-          </Column>
-          <Column size={12}>
-            <TextField
-              label={to ? '' : 'To'}
-              name="to"
-              onChange={handleChange('to')}
-              value={to}
-              variant={['outlined', 'filled', 'disabledLabel']}
-              required
-            />
-          </Column>
-          <Column lg={2} md={2} sm={3}>
-            <DropDown
-              options={['MFT', 'ETH']}
-              checkedLabel={currency}
-              defaultValue={currency}
-              errorMessage="Invalid ETH address"
-              onChange={handleChange('currency')}
-              variant={['filled', 'disabledLabel']}
-            />
-          </Column>
-          <Column lg={10} md={10} sm={9}>
-            <TextField
-              label={amount ? '' : 'Amount'}
-              name="amount"
-              value={amount}
-              onChange={handleChange('amount')}
-              variant={['outlined', 'filled', 'disabledLabel']}
-              required
-            />
-          </Column>
-          <Column size={12}>
-            <TextField
-              label={note ? '' : 'Notes'}
-              name="notes"
-              value={note}
-              onChange={handleChange('for')}
-              variant={['outlined', 'filled', 'disabledLabel']}
-            />
-          </Column>
-        </Row>
-        <ButtonContainer>
+      <PositionContainer>
+        <FormContainer>
           <Row size={12}>
-            <Column size={6}>
-              <Button
-                onPress={handleClose}
-                title="CANCEL"
-                variant={['cancel', 'size100']}
+            <Column size={12}>
+              <TextField
+                label="From"
+                value={account}
+                name="from"
+                disabled
+                variant={['outlined', 'filled', 'disabled', 'disabledLabel']}
               />
             </Column>
-            <Column size={6}>
-              <Button
-                submit
-                onPress={handlePay}
-                title="PAY"
-                variant={['filled', 'green', 'hover-shadow', 'size100']}
+            <Column size={12}>
+              <TextField
+                label={'To'}
+                name="to"
+                value={to}
+                onChange={openContacts}
+                variant={[
+                  'outlined',
+                  'filled',
+                  loading ? 'disabled' : '',
+                  'disabledLabel',
+                ]}
+                disabled={loading}
+                required
+                validation={accountValidation}
+              />
+            </Column>
+            <Column lg={3} md={3} sm={3}>
+              <DropDown
+                options={['MFT', 'ETH']}
+                checkedLabel={currency}
+                defaultValue={currency}
+                onChange={handleChange('currency')}
+                disabled={loading}
+                variant={['filled', 'disabled']}
+              />
+            </Column>
+            <Column lg={9} md={9} sm={9}>
+              <TextField
+                label={'Amount'}
+                name="amount"
+                value={amount}
+                onChange={handleChange('amount')}
+                variant={[
+                  'outlined',
+                  'filled',
+                  loading ? 'disabled' : '',
+                  'disabledLabel',
+                ]}
+                disabled={loading}
+                required
+                validation={amountValidation}
+              />
+            </Column>
+            <Column size={12}>
+              <TextField
+                label={'Notes (optional)'}
+                name="notes"
+                value={note}
+                onChange={handleChange('for')}
+                variant={[
+                  'outlined',
+                  'filled',
+                  loading ? 'disabled' : '',
+                  'disabledLabel',
+                ]}
+                disabled={loading}
               />
             </Column>
           </Row>
-        </ButtonContainer>
-      </FormContainer>
+          <ButtonContainer>
+            <Row size={12}>
+              <Column size={6}>
+                <Button
+                  onPress={handleClose}
+                  title="CANCEL"
+                  variant={['cancel', loading ? 'disabled' : '', 'size100']}
+                  disabled={loading}
+                />
+              </Column>
+              <Column size={6}>
+                {loading ? (
+                  <LoadingContainer>
+                    <CircularProgress className={classes.progress} />
+                  </LoadingContainer>
+                ) : (
+                  <Button
+                    submit
+                    title="PAY"
+                    variant={['filled', 'green', 'hover-shadow', 'size100']}
+                  />
+                )}
+              </Column>
+            </Row>
+            {loading && (
+              <Text variant={['faded', 'small']}>
+                {'This may take a few minutes. We appreciate your patience.'}
+              </Text>
+            )}
+          </ButtonContainer>
+        </FormContainer>
+      </PositionContainer>
     );
   }
 }
@@ -119,6 +203,7 @@ NewTransactionForm.propTypes = {
   amount: PropTypes.number.isRequired,
   currency: PropTypes.string.isRequired,
   handleChange: PropTypes.func.isRequired,
+  loading: PropTypes.bool.isRequired,
 };
 
-export default NewTransactionForm;
+export default applyContext(withStyles(styles)(NewTransactionForm));

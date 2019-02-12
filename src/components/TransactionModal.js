@@ -5,10 +5,10 @@ import NewTransactionForm from './NewTransactionForm';
 import CongratsScreen from './Congrats';
 
 import Modal from '@material-ui/core/Modal';
-import CircularProgress from '@material-ui/core/CircularProgress';
 import { Row, Text, Button } from '@morpheus-ui/core';
-import { Close } from '@morpheus-ui/icons';
 import { Form } from '@morpheus-ui/forms';
+
+import { Close } from '@morpheus-ui/icons';
 import styled from 'styled-components/native';
 
 const ModalContainer = styled.View`
@@ -21,11 +21,10 @@ const ModalContainer = styled.View`
   position: relative;
   margin: 0 auto;
   background-color: ${props => props.theme.white};
-  padding: ${props => props.theme.spacing};
 `;
 
 const TitleContainer = styled.View`
-  padding-bottom: 30px;
+  padding: 20px 0;
   margin-bottom: 30px;
   border-bottom: 2px solid ${props => props.theme.borderGray};
   position: relative;
@@ -33,28 +32,23 @@ const TitleContainer = styled.View`
 
 const CloseButtonContainer = styled.View`
   position: absolute;
-  right: 0;
+  right: 35px;
+  top: 28px;
 `;
 
 const CenterText = styled.View`
   margin: 0 auto;
 `;
 
-const LoadingContainer = styled.View`
-  margin: 0 auto;
-  position: absolute;
-  top: 50%;
-  margin-top: -25px;
-  left: 50%;
-  margin-left: -25px;
-`;
-
 class TransactionModal extends React.Component {
   state = {
-    amount: '',
+    amount: null,
     to: '',
     for: '',
-    currency: 'MFT',
+    contact: null,
+    currency: 'ETH',
+    sufficientBalance: false,
+    validEthAddress: true,
   };
 
   handleChange = prop => value => {
@@ -65,21 +59,80 @@ class TransactionModal extends React.Component {
     this.props.handleCloseTransactionModal();
   };
 
-  handlePay = () => {
-    this.props.sendTransaction(
-      this.state.to,
-      this.state.for,
-      this.state.amount,
-      this.state.currency,
-    );
-  };
-
   closeModalAndReset = () => {
-    this.setState({ to: '', for: '', amount: '', currency: 'MFT' });
+    this.setState({ to: '', for: '', amount: '', currency: 'ETH' });
     this.props.handleCloseTransactionModal();
   };
 
-  whichScreen = (toggleCongratsScreen, loading) => {
+  openContacts = async () => {
+    const contact = await this.props.mainframe.contacts.selectContact();
+
+    if (
+      contact &&
+      contact.data.profile.ethAddress &&
+      this.props.web3.utils.isAddress(contact.data.profile.ethAddress)
+    ) {
+      this.setState({
+        validEthAddress: true,
+        to: contact.data.profile.name,
+        contact: contact,
+      });
+    } else {
+      this.setState({ validEthAddress: false, to: '', contact: null });
+    }
+  };
+
+  amountValidation = amount => {
+    const val = amount.value;
+    this.checkSufficientBalance(val);
+
+    if (isNaN(val)) {
+      return 'Amount must be a number';
+    } else if (!this.state.sufficientBalance) {
+      return 'Insufficient balance';
+    } else if (val <= 0) {
+      return 'Amount must be greater than zero';
+    } else {
+      return '';
+    }
+  };
+
+  accountValidation = () => {
+    if (!this.state.validEthAddress) {
+      return 'Invalid Contact: No ETH Address';
+    } else {
+      return '';
+    }
+  };
+
+  checkSufficientBalance = async amount => {
+    this.props.accounts &&
+      this.props.web3.eth
+        .getBalance(this.props.accounts[0])
+        .then(resolved => {
+          const balance = this.props.web3.utils.fromWei(resolved, 'ether');
+          if (balance < amount) {
+            this.setState({ sufficientBalance: false });
+          } else {
+            this.setState({ sufficientBalance: true });
+          }
+        })
+        .catch(err => alert('ERROR. Could not get balance. ', err));
+  };
+
+  payContact = payload => {
+    if (this.state.sufficientBalance && payload.valid) {
+      this.props.sendPayment(
+        this.state.contact.id,
+        this.state.contact.data.profile.ethAddress,
+        this.state.for,
+        this.state.amount,
+        this.state.currency,
+      );
+    }
+  };
+
+  whichScreen = toggleCongratsScreen => {
     // if congrats screen should display
     if (toggleCongratsScreen === true) {
       return (
@@ -91,37 +144,29 @@ class TransactionModal extends React.Component {
         />
       );
     }
-    // if loading screen should display
-    else if (loading === true) {
-      return (
-        <LoadingContainer>
-          <CircularProgress />
-        </LoadingContainer>
-      );
-    }
     // otherwise, display new transaction form
     else {
       return (
-        <>
-          <Form onSubmit={this.handlePay}>
-            <NewTransactionForm
-              account={this.props.accounts && this.props.accounts[0]}
-              handleChange={this.handleChange}
-              handleClose={this.handleClose}
-              handlePay={this.handlePay}
-              to={this.state.to}
-              note={this.state.for}
-              amount={this.state.amount}
-              currency={this.state.currency}
-            />
-          </Form>
-        </>
+        <Form onSubmit={this.payContact}>
+          <NewTransactionForm
+            amountValidation={this.amountValidation}
+            accountValidation={this.accountValidation}
+            account={this.props.accounts && this.props.accounts[0]}
+            handleChange={this.handleChange}
+            handleClose={this.handleClose}
+            openContacts={this.openContacts}
+            to={this.state.to}
+            note={this.state.for}
+            amount={this.state.amount}
+            currency={this.state.currency}
+          />
+        </Form>
       );
     }
   };
 
   render() {
-    const { transactionModalOpen, toggleCongratsScreen, loading } = this.props;
+    const { transactionModalOpen, toggleCongratsScreen } = this.props;
     return (
       <Modal
         aria-labelledby="simple-modal-title"
@@ -144,7 +189,7 @@ class TransactionModal extends React.Component {
               />
             </CloseButtonContainer>
           </TitleContainer>
-          {this.whichScreen(toggleCongratsScreen, loading)}
+          {this.whichScreen(toggleCongratsScreen)}
         </ModalContainer>
       </Modal>
     );
@@ -155,6 +200,7 @@ TransactionModal.propTypes = {
   transactionModalOpen: PropTypes.bool.isRequired,
   toggleCongratsScreen: PropTypes.bool.isRequired,
   loading: PropTypes.bool.isRequired,
+  sendPayment: PropTypes.func.isRequired,
 };
 
 export default applyContext(TransactionModal);
