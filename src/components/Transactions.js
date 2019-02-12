@@ -119,6 +119,7 @@ class SimpleTable extends React.Component {
         );
       } catch (error) {
         // Catch any errors for any of the above operations.
+        alert('ERROR. Failed to read from Firebase. ', error);
         console.error(error);
       }
     }

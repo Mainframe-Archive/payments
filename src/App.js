@@ -64,7 +64,7 @@ class App extends Component {
       alert(
         `Failed to load web3 or accounts. Check that paymo is approved, or the console for more details.`,
       );
-      console.log(error);
+      console.error(error);
     }
   };
 
@@ -90,7 +90,7 @@ class App extends Component {
     } catch (error) {
       // Catch any errors for any of the above operations.
       alert(`Failed to load web3 or accounts. Check the console for details.`);
-      console.log(error);
+      console.error(error);
     }
   };
 
@@ -155,7 +155,7 @@ class App extends Component {
         { data: transactionData },
       )
       .catch(err => {
-        alert('Failed to write to Firebase. ERROR: ', err);
+        alert('ERROR. Failed to write to Firebase. ', err);
       });
 
     // add transaction data to recipient's history
@@ -169,7 +169,7 @@ class App extends Component {
         },
       )
       .catch(err => {
-        alert('Failed to write to Firebase. ERROR: ', err);
+        alert('ERROR. Failed to write to Firebase. ', err);
       });
 
     this.setState({ toggleCongratsScreen: true, loading: false });

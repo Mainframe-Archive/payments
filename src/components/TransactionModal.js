@@ -120,7 +120,7 @@ class TransactionModal extends React.Component {
             this.setState({ sufficientBalance: true });
           }
         })
-        .catch(err => alert('Could not get balance. ERROR: ', err));
+        .catch(err => alert('ERROR. Could not get balance. ', err));
   };
 
   payContact = payload => {
