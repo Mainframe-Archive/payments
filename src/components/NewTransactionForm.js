@@ -104,17 +104,17 @@ class NewTransactionForm extends React.Component {
               <TextField
                 label={'To'}
                 name="to"
-                onChange={openContacts}
                 value={to}
-                disabled={loading}
+                onChange={openContacts}
                 variant={[
                   'outlined',
                   'filled',
                   loading ? 'disabled' : '',
                   'disabledLabel',
                 ]}
-                validation={accountValidation}
+                disabled={loading}
                 required
+                validation={accountValidation}
               />
             </Column>
             <Column lg={3} md={3} sm={3}>
@@ -122,7 +122,6 @@ class NewTransactionForm extends React.Component {
                 options={['MFT', 'ETH']}
                 checkedLabel={currency}
                 defaultValue={currency}
-                errorMessage="Invalid ETH address"
                 onChange={handleChange('currency')}
                 disabled={loading}
                 variant={['filled', 'disabled']}
@@ -132,7 +131,7 @@ class NewTransactionForm extends React.Component {
               <TextField
                 label={'Amount'}
                 name="amount"
-                value={amount === 0 ? null : amount}
+                value={amount}
                 onChange={handleChange('amount')}
                 variant={[
                   'outlined',

@@ -146,7 +146,11 @@ class ResponsiveDrawer extends React.Component {
               style={{ width: 14, height: 14 }}
             />
             <TestNetText>
-              <Text variant={['faded']}>{'running on Testnet'}</Text>
+              {this.props.network === 'ropsten' ? (
+                <Text variant={['faded']}>{'running on Testnet'}</Text>
+              ) : (
+                <Text variant={['faded']}>{'Please connect to Testnet'}</Text>
+              )}
             </TestNetText>
           </TestNet>
         </Container>

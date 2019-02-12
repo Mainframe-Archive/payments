@@ -48,14 +48,14 @@ class App extends Component {
   };
 
   componentDidMount = async () => {
-    const sdk = new MainframeSDK();
-    this.setState({ mainframe: sdk });
     try {
+      // init Mainframe SDK
+      const sdk = new MainframeSDK();
       // Get network provider and web3 instance.
       const web3 = await getWeb3(sdk);
 
       // Set web3 to the state
-      this.setState({ web3 });
+      this.setState({ web3: web3, mainframe: sdk });
 
       // check for account updates
       this.interval = setInterval(() => this.getBlockchainData(), 10000);
@@ -89,7 +89,7 @@ class App extends Component {
       }
     } catch (error) {
       // Catch any errors for any of the above operations.
-      alert(`Failed to load web3 or accounts. Check console for details.`);
+      alert(`Failed to load web3 or accounts. Check the console for details.`);
       console.log(error);
     }
   };
@@ -145,7 +145,6 @@ class App extends Component {
   };
 
   writeToFirebase = (transactionData, recipient) => {
-    // generate timestamp
     const timestamp = Date.now() / 1000;
     transactionData.timestamp = timestamp;
     base
@@ -198,7 +197,7 @@ class App extends Component {
   };
 
   logError = error => {
-    alert('Contact payment failed. ERROR ', error);
+    alert('ERROR. Contact payment failed. ', error);
     this.setState({
       loading: false,
       transactionModalOpen: false,
