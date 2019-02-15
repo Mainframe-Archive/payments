@@ -41,8 +41,8 @@ class App extends Component {
     web3: null,
     accounts: null,
     network: null,
-    transactionModalOpen: true,
-    loading: true,
+    transactionModalOpen: false,
+    loading: false,
     toggleCongratsScreen: false,
     initialState: false,
   };
