@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { Image } from 'react-native-web';
 import screenSize from '../hocs/ScreenSize';
 import applyContext from '../hocs/Context';
 import { withStyles } from '@material-ui/core/styles';
@@ -46,13 +47,8 @@ const FormContainer = screenSize(styled.View`
 
 const ButtonContainer = screenSize(styled.View`
   margin: 0 auto;
-  min-width: 200px;
+  width: 200px;
   margin-top: 70px;
-  ${props =>
-    props.screenWidth <= 350 &&
-    css`
-      min-width: 200px;
-    `};
 `);
 
 const LoadingContainer = styled.View`
@@ -60,6 +56,19 @@ const LoadingContainer = styled.View`
   max-width: 96px;
   max-height: 26px;
   margin-top: 9px;
+`;
+
+const LoadingTextContainer = styled.View`
+  margin: 0 auto;
+  width: 328px;
+`;
+
+const InfoContainer = styled.View`
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  width: 326px;
 `;
 
 const styles = theme => ({
@@ -184,12 +193,20 @@ class NewTransactionForm extends React.Component {
                 )}
               </Column>
             </Row>
-            {loading && (
-              <Text variant={['faded', 'small']}>
-                {'This may take a few minutes. We appreciate your patience.'}
-              </Text>
-            )}
           </ButtonContainer>
+          <LoadingTextContainer>
+            {loading && (
+              <InfoContainer>
+                <Image
+                  source={require('../img/info.svg')}
+                  style={{ width: 18, height: 18 }}
+                />
+                <Text variant={['faded', 'small']}>
+                  {'This may take a few minutes. We appreciate your patience.'}
+                </Text>
+              </InfoContainer>
+            )}
+          </LoadingTextContainer>
         </FormContainer>
       </PositionContainer>
     );
