@@ -58,7 +58,10 @@ class App extends Component {
       this.setState({ web3: web3, mainframe: sdk });
 
       // check for account updates
-      this.interval = setInterval(() => this.getBlockchainData(), 10000);
+
+      this.interval = setInterval(async () => {
+        this.getBlockchainData();
+      }, 3000);
     } catch (error) {
       // Catch any errors for any of the above operations.
       alert(
