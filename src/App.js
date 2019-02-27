@@ -45,6 +45,7 @@ class App extends Component {
     loading: false,
     toggleCongratsScreen: false,
     initialState: false,
+    reloadFirebase: false,
   };
 
   componentDidMount = async () => {
@@ -58,10 +59,9 @@ class App extends Component {
       this.setState({ web3: web3, mainframe: sdk });
 
       // check for account updates
-
-      this.interval = setInterval(async () => {
+      sdk.ethereum.on('accountsChange', accounts => {
         this.getBlockchainData();
-      }, 3000);
+      });
     } catch (error) {
       // Catch any errors for any of the above operations.
       alert(
@@ -175,7 +175,11 @@ class App extends Component {
         alert('ERROR. Failed to write to Firebase. ', err);
       });
 
-    this.setState({ toggleCongratsScreen: true, loading: false });
+    this.setState({
+      toggleCongratsScreen: true,
+      loading: false,
+      reloadFirebase: true,
+    });
   };
 
   handleOpenTransactionModal = () => {
@@ -199,6 +203,10 @@ class App extends Component {
     this.setState({ initialState: false });
   };
 
+  resetReloadFirebase = () => {
+    this.setState({ reloadFirebase: false });
+  };
+
   logError = error => {
     alert('ERROR. Contact payment failed. ', error);
     this.setState({
@@ -220,6 +228,7 @@ class App extends Component {
             sendPayment: this.sendPayment,
             handleOpenTransactionModal: this.handleOpenTransactionModal,
             handleCloseTransactionModal: this.handleCloseTransactionModal,
+            resetReloadFirebase: this.resetReloadFirebase,
           }}
         >
           <MuiThemeProvider theme={temptheme}>
