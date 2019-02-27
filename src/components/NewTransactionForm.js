@@ -114,7 +114,7 @@ class NewTransactionForm extends React.Component {
                 label={'To'}
                 name="to"
                 value={to}
-                onChange={openContacts}
+                onFocus={openContacts}
                 variant={[
                   'outlined',
                   'filled',
