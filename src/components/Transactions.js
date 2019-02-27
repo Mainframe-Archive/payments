@@ -72,7 +72,8 @@ class SimpleTable extends React.Component {
     // Typical usage (don't forget to compare props):
     if (
       this.props.account !== prevProps.account ||
-      this.props.network !== prevProps.network
+      this.props.network !== prevProps.network ||
+      this.props.reloadFirebase
     ) {
       try {
         console.log(
@@ -113,6 +114,7 @@ class SimpleTable extends React.Component {
                   }
                 });
                 this.setState({ rows: rows });
+                this.props.resetReloadFirebase();
               }
             },
           },
