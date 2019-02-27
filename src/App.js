@@ -204,7 +204,6 @@ class App extends Component {
   };
 
   resetReloadFirebase = () => {
-    console.log('yay!');
     this.setState({ reloadFirebase: false });
   };
 
