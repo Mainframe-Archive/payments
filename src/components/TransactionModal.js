@@ -47,24 +47,11 @@ class TransactionModal extends React.Component {
     for: '',
     contact: null,
     currency: 'ETH',
-    staticBalance: null,
     validEthAddress: true,
   };
 
-  componentDidMount = async () => {
-    // reset balance if accounts change
-    this.props.mainframe.ethereum.on('accountsChange', accounts => {
-      this.setState({ staticBalance: null });
-    });
-  };
-
   handleChange = prop => value => {
-    let num = null;
-    // cast amount to number to avoid string comparison later
-    if (prop === 'amount') {
-      num = Number(value);
-    }
-    this.setState({ [prop]: num ? num : value });
+    this.setState({ [prop]: value });
   };
 
   handleClose = () => {
@@ -100,8 +87,8 @@ class TransactionModal extends React.Component {
     } else if (val <= 0) {
       return 'Amount must be greater than zero';
     } else if (
-      this.state.staticBalance !== null &&
-      this.state.staticBalance <= this.state.amount
+      this.props.staticBalance !== null &&
+      Number(this.props.staticBalance) <= Number(this.state.amount)
     ) {
       return 'Insufficient funds';
     } else {
@@ -122,7 +109,7 @@ class TransactionModal extends React.Component {
       .getBalance(this.props.accounts[0])
       .then(resolved => {
         const balance = this.props.web3.utils.fromWei(resolved, 'ether');
-        if (balance > this.state.amount && payload.valid) {
+        if (Number(balance) > Number(this.state.amount) && payload.valid) {
           this.props.sendPayment(
             this.state.contact.id,
             this.state.contact.data.profile.ethAddress,
@@ -130,8 +117,8 @@ class TransactionModal extends React.Component {
             this.state.amount,
             this.state.currency,
           );
-        } else if (balance <= this.state.amount) {
-          this.setState({ staticBalance: balance });
+        } else if (Number(balance) <= Number(this.state.amount)) {
+          this.props.setStaticBalance(balance);
           alert('ERROR: Insufficient funds');
         } else {
           alert('ERROR: Check entered values');

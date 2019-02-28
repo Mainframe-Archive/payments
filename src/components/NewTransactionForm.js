@@ -148,7 +148,7 @@ class NewTransactionForm extends React.Component {
               <TextField
                 label={'Amount'}
                 name="amount"
-                value={amount}
+                value={amount ? amount : ''}
                 onChange={handleChange('amount')}
                 variant={[
                   'outlined',
