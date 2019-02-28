@@ -114,16 +114,24 @@ class NewTransactionForm extends React.Component {
                 label={'To'}
                 name="to"
                 value={to}
-                onFocus={openContacts}
                 variant={[
                   'outlined',
                   'filled',
                   loading ? 'disabled' : '',
                   'disabledLabel',
                 ]}
+                disableEdit
                 disabled={loading}
                 required
                 validation={accountValidation}
+                onPressIcon={openContacts}
+                IconRight={() => (
+                  <Button
+                    variant={['small', 'completeOnboarding']}
+                    title="SELECT"
+                    onPress={openContacts}
+                  />
+                )}
               />
             </Column>
             <Column lg={3} md={3} sm={3}>

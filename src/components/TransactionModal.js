@@ -47,7 +47,6 @@ class TransactionModal extends React.Component {
     for: '',
     contact: null,
     currency: 'ETH',
-    sufficientBalance: false,
     validEthAddress: true,
   };
 
@@ -83,14 +82,15 @@ class TransactionModal extends React.Component {
 
   amountValidation = amount => {
     const val = amount.value;
-    this.checkSufficientBalance(val);
-
     if (isNaN(val)) {
       return 'Amount must be a number';
-    } else if (!this.state.sufficientBalance) {
-      return 'Insufficient balance';
     } else if (val <= 0) {
       return 'Amount must be greater than zero';
+    } else if (
+      this.props.staticBalance !== null &&
+      Number(this.props.staticBalance) <= Number(this.state.amount)
+    ) {
+      return 'Insufficient funds';
     } else {
       return '';
     }
@@ -104,31 +104,27 @@ class TransactionModal extends React.Component {
     }
   };
 
-  checkSufficientBalance = async amount => {
-    this.props.accounts &&
-      this.props.web3.eth
-        .getBalance(this.props.accounts[0])
-        .then(resolved => {
-          const balance = this.props.web3.utils.fromWei(resolved, 'ether');
-          if (balance < amount) {
-            this.setState({ sufficientBalance: false });
-          } else {
-            this.setState({ sufficientBalance: true });
-          }
-        })
-        .catch(err => alert('ERROR. Could not get balance. ', err));
-  };
-
-  payContact = payload => {
-    if (this.state.sufficientBalance && payload.valid) {
-      this.props.sendPayment(
-        this.state.contact.id,
-        this.state.contact.data.profile.ethAddress,
-        this.state.for,
-        this.state.amount,
-        this.state.currency,
-      );
-    }
+  payContact = async payload => {
+    this.props.web3.eth
+      .getBalance(this.props.accounts[0])
+      .then(resolved => {
+        const balance = this.props.web3.utils.fromWei(resolved, 'ether');
+        if (Number(balance) > Number(this.state.amount) && payload.valid) {
+          this.props.sendPayment(
+            this.state.contact.id,
+            this.state.contact.data.profile.ethAddress,
+            this.state.for,
+            this.state.amount,
+            this.state.currency,
+          );
+        } else if (Number(balance) <= Number(this.state.amount)) {
+          this.props.setStaticBalance(balance);
+          alert('ERROR: Insufficient funds');
+        } else {
+          alert('ERROR: Check entered values');
+        }
+      })
+      .catch(err => alert('ERROR. Could not get balance. ', err));
   };
 
   whichScreen = toggleCongratsScreen => {

@@ -46,6 +46,7 @@ class App extends Component {
     toggleCongratsScreen: false,
     initialState: false,
     reloadFirebase: false,
+    staticBalance: null,
   };
 
   componentDidMount = async () => {
@@ -88,7 +89,7 @@ class App extends Component {
         this.state.accounts[0] !== accounts[0] ||
         this.state.network !== network
       ) {
-        this.setState({ accounts, network });
+        this.setState({ accounts, network, staticBalance: null });
       }
     } catch (error) {
       // Catch any errors for any of the above operations.
@@ -207,6 +208,10 @@ class App extends Component {
     this.setState({ reloadFirebase: false });
   };
 
+  setStaticBalance = bal => {
+    this.setState({ staticBalance: bal });
+  };
+
   logError = error => {
     alert('ERROR. Contact payment failed. ', error);
     this.setState({
@@ -229,6 +234,7 @@ class App extends Component {
             handleOpenTransactionModal: this.handleOpenTransactionModal,
             handleCloseTransactionModal: this.handleCloseTransactionModal,
             resetReloadFirebase: this.resetReloadFirebase,
+            setStaticBalance: this.setStaticBalance,
           }}
         >
           <MuiThemeProvider theme={temptheme}>

@@ -98,6 +98,19 @@ export default {
     disabled: {
       borderDisabledColor: 'transparent',
     },
+    small: {
+      titlePadding: '5px 10px',
+      fontSize: 9,
+    },
+    completeOnboarding: {
+      fontWeight: 'normal',
+      titleColor: colors.darkGray,
+      borderColor: colors.darkGray,
+      borderHoverColor: 'transparent',
+      backgroundHoverColor: 'transparent',
+      titleHoverColor: colors.paymentGreen,
+      hoverShadow: true,
+    },
   },
   Text: {
     default: {
