@@ -150,7 +150,6 @@ class NewTransactionForm extends React.Component {
                 name="amount"
                 value={amount}
                 onChange={handleChange('amount')}
-                validation={amountValidation}
                 variant={[
                   'outlined',
                   'filled',
@@ -159,6 +158,7 @@ class NewTransactionForm extends React.Component {
                 ]}
                 disabled={loading}
                 required
+                validation={amountValidation}
               />
             </Column>
             <Column size={12}>

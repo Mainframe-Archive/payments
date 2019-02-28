@@ -122,8 +122,6 @@ class TransactionModal extends React.Component {
       .getBalance(this.props.accounts[0])
       .then(resolved => {
         const balance = this.props.web3.utils.fromWei(resolved, 'ether');
-        console.log(balance);
-        console.log(this.state.amount);
         if (balance > this.state.amount && payload.valid) {
           this.props.sendPayment(
             this.state.contact.id,
