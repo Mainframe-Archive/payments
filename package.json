@@ -9,6 +9,7 @@
     "@material-ui/core": "3.9.1",
     "@material-ui/icons": "3.0.2",
     "@morpheus-ui/core": "^0.0.26",
+    "@morpheus-ui/fonts": "^0.0.1",
     "@morpheus-ui/icons": "^0.0.12",
     "aphrodite": "^2.2.3",
     "color": "^0.11.0",
