@@ -130,6 +130,7 @@ class NewTransactionForm extends React.Component {
                     variant={['small', 'completeOnboarding']}
                     title="SELECT"
                     onPress={openContacts}
+                    disabled={loading}
                   />
                 )}
               />
