@@ -88,7 +88,7 @@ class TransactionModal extends React.Component {
       return 'Amount must be greater than zero';
     } else if (
       this.props.staticBalance !== null &&
-      Number(this.props.staticBalance) <= Number(this.state.amount)
+      !this.sufficientFunds(this.props.staticBalance, this.state.amount)
     ) {
       return 'Insufficient funds';
     } else {
@@ -109,7 +109,7 @@ class TransactionModal extends React.Component {
       .getBalance(this.props.accounts[0])
       .then(resolved => {
         const balance = this.props.web3.utils.fromWei(resolved, 'ether');
-        if (Number(balance) > Number(this.state.amount) && payload.valid) {
+        if (this.sufficientFunds(balance, this.state.amount) && payload.valid) {
           this.props.sendPayment(
             this.state.contact.id,
             this.state.contact.data.profile.ethAddress,
@@ -117,7 +117,7 @@ class TransactionModal extends React.Component {
             this.state.amount,
             this.state.currency,
           );
-        } else if (Number(balance) <= Number(this.state.amount)) {
+        } else if (!this.sufficientFunds(balance, this.state.amount)) {
           this.props.setStaticBalance(balance);
           alert('ERROR: Insufficient funds');
         } else {
@@ -125,6 +125,12 @@ class TransactionModal extends React.Component {
         }
       })
       .catch(err => alert('ERROR. Could not get balance. ', err));
+  };
+
+  sufficientFunds = (balance, amountToCompare) => {
+    // cast to Number here to avoid string comparison
+    if (Number(balance) > Number(amountToCompare)) return true;
+    else return false;
   };
 
   whichScreen = toggleCongratsScreen => {
