@@ -106,7 +106,7 @@ class TransactionModal extends React.Component {
 
   payContact = async payload => {
     this.props.web3.eth
-      .getBalance(this.props.accounts[0])
+      .getBalance(this.props.account)
       .then(resolved => {
         const balance = this.props.web3.utils.fromWei(resolved, 'ether');
         if (this.sufficientFunds(balance, this.state.amount) && payload.valid) {
@@ -119,9 +119,6 @@ class TransactionModal extends React.Component {
           );
         } else if (!this.sufficientFunds(balance, this.state.amount)) {
           this.props.setStaticBalance(balance);
-          alert('ERROR: Insufficient funds');
-        } else {
-          alert('ERROR: Check entered values');
         }
       })
       .catch(err => alert('ERROR. Could not get balance. ', err));
@@ -152,7 +149,7 @@ class TransactionModal extends React.Component {
           <NewTransactionForm
             amountValidation={this.amountValidation}
             accountValidation={this.accountValidation}
-            account={this.props.accounts && this.props.accounts[0]}
+            account={this.props.account}
             handleChange={this.handleChange}
             handleClose={this.handleClose}
             openContacts={this.openContacts}

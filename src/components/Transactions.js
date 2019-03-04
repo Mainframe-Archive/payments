@@ -71,54 +71,55 @@ class SimpleTable extends React.Component {
   componentDidUpdate = async prevProps => {
     // Typical usage (don't forget to compare props):
     if (
-      this.props.account !== prevProps.account ||
-      this.props.network !== prevProps.network ||
-      this.props.reloadFirebase
+      this.props.account &&
+      this.props.network &&
+      (this.props.account !== prevProps.account ||
+        this.props.network !== prevProps.network ||
+        this.props.reloadFirebase)
     ) {
       try {
-        console.log(
-          `account_transactions/${this.props.account}/${this.props.network}`,
+        const network = this.props.network === '3' ? 'ropsten' : 'other';
+        const account = this.props.web3.utils.toChecksumAddress(
+          this.props.account,
         );
-        base.listenTo(
-          `account_transactions/${this.props.account}/${this.props.network}`,
-          {
-            context: this,
-            asArray: true,
-            then(transactionData) {
-              if (transactionData.length === 0) {
-                this.props.setInitialStateTrue();
-              } else {
-                this.props.setInitialStateFalse();
-                transactionData.sort((a, b) => {
-                  if (a.timestamp > b.timestamp) return -1;
-                  else if (b.timestamp > a.timestamp) return 1;
-                  else return 0;
-                });
-                let rows = {};
-                transactionData.forEach((transaction, index) => {
-                  const ethAmount = transaction.value;
-                  const date = this.formattedDate(transaction.timestamp * 1000);
-                  const time = this.formattedTime(transaction.timestamp * 1000);
-                  const transactionData = createData(
-                    transaction.receipt,
-                    '',
-                    transaction.comment,
-                    date,
-                    time,
-                    ethAmount,
-                  );
-                  if (rows[date]) {
-                    rows[date] = [...rows[date], transactionData];
-                  } else {
-                    rows[date] = [transactionData];
-                  }
-                });
-                this.setState({ rows: rows });
-                this.props.resetReloadFirebase();
-              }
-            },
+        console.log(`account_transactions/${account}/${network}`);
+        base.listenTo(`account_transactions/${account}/${network}`, {
+          context: this,
+          asArray: true,
+          then(transactionData) {
+            if (transactionData.length === 0) {
+              this.props.setInitialStateTrue();
+            } else {
+              this.props.setInitialStateFalse();
+              transactionData.sort((a, b) => {
+                if (a.timestamp > b.timestamp) return -1;
+                else if (b.timestamp > a.timestamp) return 1;
+                else return 0;
+              });
+              let rows = {};
+              transactionData.forEach((transaction, index) => {
+                const ethAmount = transaction.value;
+                const date = this.formattedDate(transaction.timestamp * 1000);
+                const time = this.formattedTime(transaction.timestamp * 1000);
+                const transactionData = createData(
+                  transaction.receipt,
+                  '',
+                  transaction.comment,
+                  date,
+                  time,
+                  ethAmount,
+                );
+                if (rows[date]) {
+                  rows[date] = [...rows[date], transactionData];
+                } else {
+                  rows[date] = [transactionData];
+                }
+              });
+              this.setState({ rows: rows });
+              this.props.resetReloadFirebase();
+            }
           },
-        );
+        });
       } catch (error) {
         // Catch any errors for any of the above operations.
         alert('ERROR. Failed to read from Firebase. ', error);
@@ -182,7 +183,7 @@ class SimpleTable extends React.Component {
               {rows.map((row, index) => {
                 let sent = true;
                 if (
-                  this.props.accounts[0].toLowerCase() ===
+                  this.props.account.toLowerCase() ===
                   row.receipt.to.toLowerCase()
                 ) {
                   sent = false;
@@ -248,7 +249,7 @@ class SimpleTable extends React.Component {
 }
 
 SimpleTable.propTypes = {
-  accounts: PropTypes.arrayOf(PropTypes.string),
+  account: PropTypes.string,
   network: PropTypes.string,
 };
 

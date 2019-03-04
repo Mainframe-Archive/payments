@@ -23,13 +23,7 @@ class MainContainer extends React.Component {
     return (
       <Container>
         <TransactionsContainer>
-          {this.props.initialState ? (
-            <InitialState />
-          ) : (
-            <Transactions
-              account={this.props.accounts && this.props.accounts[0]}
-            />
-          )}
+          {this.props.initialState ? <InitialState /> : <Transactions />}
         </TransactionsContainer>
       </Container>
     );

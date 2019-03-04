@@ -39,7 +39,7 @@ class App extends Component {
   state = {
     mainframe: null,
     web3: null,
-    accounts: null,
+    account: null,
     network: null,
     transactionModalOpen: false,
     loading: false,
@@ -59,8 +59,14 @@ class App extends Component {
       // Set web3 to the state
       this.setState({ web3: web3, mainframe: sdk });
 
-      // check for account updates
+      // initial fetch of blockchain data
+      this.getBlockchainData();
+
+      // even listener for account & network updates
       sdk.ethereum.on('accountsChange', accounts => {
+        this.getBlockchainData();
+      });
+      sdk.ethereum.on('networkChange', network => {
         this.getBlockchainData();
       });
     } catch (error) {
@@ -72,24 +78,22 @@ class App extends Component {
     }
   };
 
-  componentWillUnmount() {
-    clearInterval(this.interval);
-  }
-
   getBlockchainData = async () => {
     try {
       // Use web3 to get the user's accounts.
-      const accounts = await this.state.web3.eth.getAccounts();
-      const network = await this.state.web3.eth.net.getNetworkType();
+      const account = this.state.mainframe.ethereum.selectedAccount;
+      const network = this.state.mainframe.ethereum.networkVersion;
 
       // Set accounts and network to the state
       if (
-        !this.state.accounts ||
-        !this.state.network ||
-        this.state.accounts[0] !== accounts[0] ||
-        this.state.network !== network
+        account !== undefined &&
+        network !== undefined &&
+        (!this.state.account ||
+          !this.state.network ||
+          this.state.account !== account ||
+          this.state.network !== network)
       ) {
-        this.setState({ accounts, network, staticBalance: null });
+        this.setState({ account, network, staticBalance: null });
       }
     } catch (error) {
       // Catch any errors for any of the above operations.
@@ -103,7 +107,7 @@ class App extends Component {
 
     const simpleReceipt = {
       to: recipient,
-      from: this.state.accounts[0],
+      from: this.state.account,
     };
 
     const transactionData = {
@@ -118,7 +122,7 @@ class App extends Component {
       value: amount,
     };
 
-    if (this.state.network !== 'ropsten') {
+    if (this.state.network !== '3') {
       alert(`Please connect to ropsten testnet to use this dApp.`);
       return;
     }
@@ -151,9 +155,10 @@ class App extends Component {
   writeToFirebase = (transactionData, recipient) => {
     const timestamp = Date.now() / 1000;
     transactionData.timestamp = timestamp;
+    const network = this.state.network === '3' ? 'ropsten' : 'other';
     base
       .post(
-        `account_transactions/${this.state.accounts[0]}/${this.state.network}/${
+        `account_transactions/${this.state.account}/${network}/${
           this.state.transactionHash
         }`,
         { data: transactionData },
@@ -165,7 +170,7 @@ class App extends Component {
     // add transaction data to recipient's history
     base
       .post(
-        `account_transactions/${recipient}/${this.state.network}/${
+        `account_transactions/${recipient}/${network}/${
           this.state.transactionHash
         }`,
         {
