@@ -155,9 +155,10 @@ class App extends Component {
   writeToFirebase = (transactionData, recipient) => {
     const timestamp = Date.now() / 1000;
     transactionData.timestamp = timestamp;
+    const network = this.state.network === '3' ? 'ropsten' : 'other';
     base
       .post(
-        `account_transactions/${this.state.account}/${this.state.network}/${
+        `account_transactions/${this.state.account}/${network}/${
           this.state.transactionHash
         }`,
         { data: transactionData },
@@ -169,7 +170,7 @@ class App extends Component {
     // add transaction data to recipient's history
     base
       .post(
-        `account_transactions/${recipient}/${this.state.network}/${
+        `account_transactions/${recipient}/${network}/${
           this.state.transactionHash
         }`,
         {
