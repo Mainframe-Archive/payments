@@ -8,7 +8,7 @@ export type PaymentsContext = {
 };
 
 const DEFAULT_CONTEXT = {
-  account: '',
+  account: null,
   network: null,
 };
 

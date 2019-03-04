@@ -65,7 +65,6 @@ class TransactionModal extends React.Component {
 
   openContacts = async () => {
     const contact = await this.props.mainframe.contacts.selectContact();
-    console.log(contact);
     if (
       contact &&
       contact.data.profile.ethAddress &&
