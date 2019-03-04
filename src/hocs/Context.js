@@ -3,12 +3,12 @@
 import React, { createContext } from 'react';
 
 export type PaymentsContext = {
-  accounts: ?Array<string>,
+  account: ?String,
   network: ?String,
 };
 
 const DEFAULT_CONTEXT = {
-  accounts: [],
+  account: '',
   network: null,
 };
 
