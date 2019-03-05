@@ -82,7 +82,6 @@ class SimpleTable extends React.Component {
         const account = this.props.web3.utils.toChecksumAddress(
           this.props.account,
         );
-        console.log(account)
         console.log(`account_transactions/${account}/${network}`);
         base.listenTo(`account_transactions/${account}/${network}`, {
           context: this,
