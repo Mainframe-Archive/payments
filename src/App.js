@@ -63,10 +63,10 @@ class App extends Component {
       this.getBlockchainData();
 
       // even listener for account & network updates
-      sdk.ethereum.on('accountsChange', accounts => {
+      sdk.ethereum.on('accountsChanged', accounts => {
         this.getBlockchainData();
       });
-      sdk.ethereum.on('networkChange', network => {
+      sdk.ethereum.on('networkChanged', network => {
         this.getBlockchainData();
       });
     } catch (error) {

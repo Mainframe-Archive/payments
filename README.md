@@ -12,7 +12,7 @@ It showcases several aspects of Mainframe OS integration including:
 
 Clone this repo, install dependencies, and build the project
 
-    $ git clone git@github.com:MainframeHQ/payments.git
+    $ git clone https://github.com/MainframeHQ/payments.git
     $ cd payments
     $ yarn
     $ yarn build
@@ -72,7 +72,7 @@ Users can change the currently selected wallet address using the wallet drop-dow
 In app.js:
 
     // check for account updates
-    sdk.ethereum.on('accountsChange', accounts => {
+    sdk.ethereum.on('accountsChanged', accounts => {
         this.getBlockchainData();
     });
 
@@ -84,7 +84,7 @@ The currently selected network is displayed in the Trusted UI at the top of the 
 In app.js:
 
     // check for network updates
-    sdk.ethereum.on('networkChange', network => {
+    sdk.ethereum.on('networkChanged', network => {
         this.getBlockchainData();
     });
 
