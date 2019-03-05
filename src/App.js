@@ -156,9 +156,11 @@ class App extends Component {
     const timestamp = Date.now() / 1000;
     transactionData.timestamp = timestamp;
     const network = this.state.network === '3' ? 'ropsten' : 'other';
+    const account = this.state.web3.utils.toChecksumAddress(this.state.account)
+    console.log(account, recipient)
     base
       .post(
-        `account_transactions/${this.state.account}/${network}/${
+        `account_transactions/${account}/${network}/${
           this.state.transactionHash
         }`,
         { data: transactionData },
