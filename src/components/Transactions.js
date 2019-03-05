@@ -79,11 +79,8 @@ class SimpleTable extends React.Component {
     ) {
       try {
         const network = this.props.network === '3' ? 'ropsten' : 'other';
-        const account = this.props.web3.utils.toChecksumAddress(
-          this.props.account,
-        );
-        console.log(`account_transactions/${account}/${network}`);
-        base.listenTo(`account_transactions/${account}/${network}`, {
+        console.log(`account_transactions/${this.props.account}/${network}`);
+        base.listenTo(`account_transactions/${this.props.account}/${network}`, {
           context: this,
           asArray: true,
           then(transactionData) {
