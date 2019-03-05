@@ -72,7 +72,7 @@ Users can change the currently selected wallet address using the wallet drop-dow
 In app.js:
 
     // check for account updates
-    sdk.ethereum.on('accountsChange', accounts => {
+    sdk.ethereum.on('accountsChanged', accounts => {
         this.getBlockchainData();
     });
 
@@ -84,7 +84,7 @@ The currently selected network is displayed in the Trusted UI at the top of the 
 In app.js:
 
     // check for network updates
-    sdk.ethereum.on('networkChange', network => {
+    sdk.ethereum.on('networkChanged', network => {
         this.getBlockchainData();
     });
 
