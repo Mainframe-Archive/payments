@@ -14,8 +14,8 @@ Clone this repo, install dependencies, and build the project
 
     $ git clone git@github.com:MainframeHQ/payments.git
     $ cd payments
-    $ npm install
-    $ npm run build
+    $ yarn
+    $ yarn build
 
 ## Install and Run Dapp in Mainframe OS
 
@@ -35,7 +35,7 @@ Follow [instructions](http://docs.mainframe.com) to install and run Mainframe OS
 - Click `Open` to run the dapp inside Mainframe OS. This loads the version from the referenced `build` folder.
 
 ## Debugging Dapp in Mainframe OS
-- Serve the dapp locally using `$ npm run start`
+- Serve the dapp locally using `$ yarn start`
 - In Mainframe OS App window, change the Content Path to `http://localhost:3000`
 - Make changes to App.js and see them reflected in App window
 - Use built-in Chromium developer tools to view source and debug
@@ -44,7 +44,7 @@ Follow [instructions](http://docs.mainframe.com) to install and run Mainframe OS
 ## Mainframe SDK integration
 See [Mainframe SDK Documentation](https://docs.mainframe.com/docs/sdk) for full description of available APIs.
 
-Mainframe SDK is already included in `package.json`, and therefore was installed with `npm install` above.
+Mainframe SDK is already included in `package.json`, and therefore was installed with `yarn` above.
 
 #### Instantiate new MainframeSDK object
 In App.js:
