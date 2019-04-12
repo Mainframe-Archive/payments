@@ -81,7 +81,8 @@ class App extends Component {
   getBlockchainData = async () => {
     try {
       // Use web3 to get the user's accounts.
-      const account = this.state.mainframe.ethereum.selectedAccount;
+      const accounts = await this.state.mainframe.ethereum.getAccounts()
+      const account = accounts && accounts.length && accounts[0]
       const network = this.state.mainframe.ethereum.networkVersion;
 
       // Set accounts and network to the state
