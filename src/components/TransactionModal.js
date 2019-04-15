@@ -87,8 +87,11 @@ class TransactionModal extends React.Component {
     } else if (val <= 0) {
       return 'Amount must be greater than zero';
     } else if (
-      this.props.staticBalance !== null &&
-      !this.sufficientFunds(this.props.staticBalance, this.state.amount)
+      this.props.staticBalance[this.state.currency] !== 0 &&
+      !this.sufficientFunds(
+        this.props.staticBalance[this.state.currency],
+        this.state.amount,
+      )
     ) {
       return 'Insufficient funds';
     } else {
@@ -105,23 +108,53 @@ class TransactionModal extends React.Component {
   };
 
   payContact = async payload => {
-    this.props.web3.eth
-      .getBalance(this.props.account)
-      .then(resolved => {
-        const balance = this.props.web3.utils.fromWei(resolved, 'ether');
-        if (this.sufficientFunds(balance, this.state.amount) && payload.valid) {
-          this.props.sendPayment(
-            this.state.contact.id,
-            this.state.contact.data.profile.ethAddress,
-            this.state.for,
-            this.state.amount,
-            this.state.currency,
-          );
-        } else if (!this.sufficientFunds(balance, this.state.amount)) {
-          this.props.setStaticBalance(balance);
-        }
-      })
-      .catch(err => alert('ERROR. Could not get balance. ', err));
+    if (this.state.currency === 'ETH') {
+      this.props.web3.eth
+        .getBalance(this.props.account)
+        .then(resolved => {
+          const balance = this.props.web3.utils.fromWei(resolved, 'ether');
+          if (
+            this.sufficientFunds(balance, this.state.amount) &&
+            payload.valid
+          ) {
+            this.props.sendPayment(
+              this.state.contact.id,
+              this.state.contact.data.profile.ethAddress,
+              this.state.for,
+              this.state.amount,
+              this.state.currency,
+            );
+          } else if (!this.sufficientFunds(balance, this.state.amount)) {
+            this.props.setStaticBalance(balance, this.state.currency);
+          }
+        })
+        .catch(err => alert('ERROR. Could not get balance. ', err));
+    } else if (this.state.currency === 'MFT') {
+      this.props.mftContract.methods
+        .balanceOf(this.props.account)
+        .call()
+        .then(resolved => {
+          const balance = resolved / Math.pow(10, 18);
+          if (
+            this.sufficientFunds(balance, this.state.amount) &&
+            payload.valid
+          ) {
+            this.props.sendPayment(
+              this.state.contact.id,
+              this.state.contact.data.profile.ethAddress,
+              this.state.for,
+              this.state.amount,
+              this.state.currency,
+            );
+          } else if (!this.sufficientFunds(balance, this.state.amount)) {
+            this.props.setStaticBalance(
+              balance.toString(),
+              this.state.currency,
+            );
+          }
+        })
+        .catch(err => alert('ERROR. Could not get balance. ', err));
+    }
   };
 
   sufficientFunds = (balance, amountToCompare) => {
@@ -165,6 +198,7 @@ class TransactionModal extends React.Component {
 
   render() {
     const { transactionModalOpen, toggleCongratsScreen } = this.props;
+
     return (
       <Modal
         aria-labelledby="simple-modal-title"

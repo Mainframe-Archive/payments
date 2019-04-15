@@ -5,6 +5,7 @@ import ResponsiveDrawer from './components/ResponsiveDrawer';
 import MainContainer from './components/MainContainer';
 import LoginModal from './components/LoginModal';
 import getWeb3 from './components/util/getWeb3';
+import { mftABI } from './mft-abi';
 import { ThemeProvider } from '@morpheus-ui/core';
 import { Provider } from './hocs/Context';
 import theme from './theme';
@@ -43,10 +44,11 @@ class App extends Component {
     network: null,
     transactionModalOpen: false,
     loading: false,
+    mftContract: {},
     toggleCongratsScreen: false,
     initialState: false,
     reloadFirebase: false,
-    staticBalance: null,
+    staticBalance: { ETH: '0', MFT: '0' },
   };
 
   componentDidMount = async () => {
@@ -81,8 +83,8 @@ class App extends Component {
   getBlockchainData = async () => {
     try {
       // Use web3 to get the user's accounts.
-      const accounts = await this.state.mainframe.ethereum.getAccounts()
-      const account = accounts && accounts.length && accounts[0]
+      const accounts = await this.state.mainframe.ethereum.getAccounts();
+      const account = accounts && accounts.length && accounts[0];
       const network = this.state.mainframe.ethereum.networkVersion;
 
       // Set accounts and network to the state
@@ -94,7 +96,18 @@ class App extends Component {
           this.state.account !== account ||
           this.state.network !== network)
       ) {
-        this.setState({ account, network, staticBalance: null });
+        const contract = new this.state.web3.eth.Contract(
+          mftABI,
+          '0xA46f1563984209fe47f8236f8B01a03f03F957E4',
+        );
+
+        // contract.methods.balanceOf(account).call().then(balance => console.log(balance));
+
+        this.setState({
+          account,
+          network,
+          mftContract: contract,
+        });
       }
     } catch (error) {
       // Catch any errors for any of the above operations.
@@ -157,7 +170,7 @@ class App extends Component {
     const timestamp = Date.now() / 1000;
     transactionData.timestamp = timestamp;
     const network = this.state.network === '3' ? 'ropsten' : 'other';
-    const account = this.state.web3.utils.toChecksumAddress(this.state.account)
+    const account = this.state.web3.utils.toChecksumAddress(this.state.account);
     base
       .post(
         `account_transactions/${account}/${network}/${
@@ -215,8 +228,12 @@ class App extends Component {
     this.setState({ reloadFirebase: false });
   };
 
-  setStaticBalance = bal => {
-    this.setState({ staticBalance: bal });
+  setStaticBalance = (bal, currency) => {
+    this.setState(prevState => {
+      const staticBalance = prevState.staticBalance;
+      staticBalance[currency] = bal;
+      return { staticBalance };
+    });
   };
 
   logError = error => {
