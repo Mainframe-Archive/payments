@@ -1,8 +1,8 @@
 const config = {
-  apiKey: "<your-firebase-api-key>",
-  authDomain: "<your-firebase-project>.firebaseapp.com",
-  databaseURL: "https://<your-firebase-project>.firebaseio.com",
-  projectId: "<your-firebase-project>"
+  apiKey: 'AIzaSyC224XiP2sJtN9AzmMQZJjQppGg5i69KG0',
+  authDomain: 'mainframe-paymo.firebaseapp.com',
+  databaseURL: 'https://mainframe-paymo.firebaseio.com',
+  projectId: 'mainframe-paymo',
 };
 
 export default config;

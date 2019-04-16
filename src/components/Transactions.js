@@ -75,7 +75,8 @@ class SimpleTable extends React.Component {
       this.props.network &&
       (this.props.account !== prevProps.account ||
         this.props.network !== prevProps.network ||
-        this.props.reloadFirebase)
+        this.props.reloadFirebase) &&
+      this.props.network === '3'
     ) {
       try {
         const network = this.props.network === '3' ? 'ropsten' : 'other';
