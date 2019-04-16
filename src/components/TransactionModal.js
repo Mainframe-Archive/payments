@@ -87,7 +87,7 @@ class TransactionModal extends React.Component {
     } else if (val <= 0) {
       return 'Amount must be greater than zero';
     } else if (
-      this.props.staticBalance[this.state.currency] !== 0 &&
+      this.props.staticBalance[this.state.currency] !== '0' &&
       !this.sufficientFunds(
         this.props.staticBalance[this.state.currency],
         this.state.amount,
