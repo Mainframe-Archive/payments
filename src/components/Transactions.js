@@ -21,6 +21,7 @@ const MainContainer = screenSize(styled.View`
 
 const TableContainer = screenSize(styled.View`
   width: 100%;
+  padding: 0 10px;
   margin-bottom: ${props => props.theme.spacing};
 `);
 
