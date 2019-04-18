@@ -234,7 +234,7 @@ class SimpleTable extends React.Component {
                       </Column>
                       <Column lg={2} md={3} sm={3}>
                         <Text variant={sent ? '' : 'green'}>
-                          {sent ? '-' + row.value : '+' + row.value} Eth
+                          {sent ? '-' + row.value : '+' + row.value}
                         </Text>
                       </Column>
                     </Row>

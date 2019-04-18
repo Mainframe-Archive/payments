@@ -126,7 +126,7 @@ class App extends Component {
 
     const transactionData = {
       comment: comment,
-      value: amount,
+      value: amount + ' ' + currency,
       receipt: simpleReceipt,
     };
 
