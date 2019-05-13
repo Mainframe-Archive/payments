@@ -10,7 +10,22 @@ import { ThemeProvider } from '@morpheus-ui/core';
 import { Provider } from './hocs/Context';
 import theme from './theme';
 import styled from 'styled-components/native';
-import base from './base';
+import { getData, writeTransaction } from './firebase';
+
+const MFT_CONTRACT = {
+  1: '0xDF2C7238198Ad8B389666574f2d8bc411A4b7428',
+  3: '0xA46f1563984209fe47f8236f8B01a03f03F957E4',
+}
+
+export const NETWORKS = {
+  '1': 'mainnet',
+  '2': 'morden',
+  '3': 'ropsten',
+  '4': 'rinkeby',
+  '5': 'goerli',
+  '42': 'kovan',
+  ganache: 'ganache',
+}
 
 const temptheme = createMuiTheme({
   typography: {
@@ -42,14 +57,18 @@ class App extends Component {
     web3: null,
     account: null,
     network: null,
+    transactions: null,
     transactionModalOpen: false,
     loading: false,
     mftContract: {},
     toggleCongratsScreen: false,
     initialState: false,
-    reloadFirebase: false,
     staticBalance: { ETH: '0', MFT: '0' },
   };
+
+  componentWillUnmount() {
+    this.unsubscribe()
+  }
 
   componentDidMount = async () => {
     try {
@@ -98,10 +117,15 @@ class App extends Component {
       ) {
         const contract = new this.state.web3.eth.Contract(
           mftABI,
-          '0xA46f1563984209fe47f8236f8B01a03f03F957E4',
+          MFT_CONTRACT[network],
         );
 
-        // contract.methods.balanceOf(account).call().then(balance => console.log(balance));
+        if (account && network && (this.state.account !== account || this.state.network !== network)) {
+          this.unsubscribeData()
+          this.dataListener = getData(account, NETWORKS[network], (data) => {
+            this.setState({transactions: data})
+          })
+        }
 
         this.setState({
           account,
@@ -109,12 +133,17 @@ class App extends Component {
           mftContract: contract,
         });
       }
+
     } catch (error) {
       // Catch any errors for any of the above operations.
       alert(`Failed to load web3 or accounts. Check the console for details.`);
       console.error(error);
     }
   };
+
+  unsubscribeData = () => {
+    this.dataListener && this.dataListener()
+  }
 
   sendPayment = async (contactID, to, comment, amount, currency) => {
     const recipient = this.state.web3.utils.toChecksumAddress(to);
@@ -136,11 +165,6 @@ class App extends Component {
       value: amount,
     };
 
-    if (this.state.network !== '3') {
-      alert(`Please connect to ropsten testnet to use this dApp.`);
-      return;
-    }
-
     if (!this.state.web3.utils.isAddress(recipient)) {
       alert(
         `Recipient was not a valid Ethereum address. Please try creating your transaction again.`,
@@ -153,54 +177,28 @@ class App extends Component {
 
   handlePayment = async (transactionData, paymentParams, recipient) => {
     const res = await this.state.mainframe.payments.payContact(paymentParams);
+    let hash
     res
-      .on('hash', hash => {
+      .on('hash', transactionHash => {
+        hash = transactionHash
         this.setState({
-          transactionHash: hash,
+          transactionHash,
           loading: true,
         });
       })
       .on('confirmed', () => {
-        this.writeToFirebase(transactionData, recipient);
+        writeTransaction(this.state.account, NETWORKS[this.state.network], hash, transactionData, recipient)
+        .then(() => {
+           this.setState({
+              toggleCongratsScreen: true,
+              loading: false,
+            });
+        })
+        .catch(err => {
+          alert('ERROR. Failed to write to Firebase. ', err);
+        });
       })
       .on('error', this.logError);
-  };
-
-  writeToFirebase = (transactionData, recipient) => {
-    const timestamp = Date.now() / 1000;
-    transactionData.timestamp = timestamp;
-    const network = this.state.network === '3' ? 'ropsten' : 'other';
-    const account = this.state.web3.utils.toChecksumAddress(this.state.account);
-    base
-      .post(
-        `account_transactions/${account}/${network}/${
-          this.state.transactionHash
-        }`,
-        { data: transactionData },
-      )
-      .catch(err => {
-        alert('ERROR. Failed to write to Firebase. ', err);
-      });
-
-    // add transaction data to recipient's history
-    base
-      .post(
-        `account_transactions/${recipient}/${network}/${
-          this.state.transactionHash
-        }`,
-        {
-          data: transactionData,
-        },
-      )
-      .catch(err => {
-        alert('ERROR. Failed to write to Firebase. ', err);
-      });
-
-    this.setState({
-      toggleCongratsScreen: true,
-      loading: false,
-      reloadFirebase: true,
-    });
   };
 
   handleOpenTransactionModal = () => {
@@ -212,7 +210,6 @@ class App extends Component {
   };
 
   printTransactionHash = transactionHash => {
-    console.log('transactionHash: ', transactionHash);
     this.setState({ transactionHash });
   };
 
@@ -222,10 +219,6 @@ class App extends Component {
 
   setInitialStateFalse = () => {
     this.setState({ initialState: false });
-  };
-
-  resetReloadFirebase = () => {
-    this.setState({ reloadFirebase: false });
   };
 
   setStaticBalance = (bal, currency) => {
@@ -257,7 +250,6 @@ class App extends Component {
             sendPayment: this.sendPayment,
             handleOpenTransactionModal: this.handleOpenTransactionModal,
             handleCloseTransactionModal: this.handleCloseTransactionModal,
-            resetReloadFirebase: this.resetReloadFirebase,
             setStaticBalance: this.setStaticBalance,
           }}
         >

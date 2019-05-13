@@ -46,7 +46,7 @@ class TransactionModal extends React.Component {
     to: '',
     for: '',
     contact: null,
-    currency: 'ETH',
+    currency: 'MFT',
     validEthAddress: true,
   };
 
@@ -159,7 +159,7 @@ class TransactionModal extends React.Component {
 
   sufficientFunds = (balance, amountToCompare) => {
     // cast to Number here to avoid string comparison
-    if (Number(balance) > Number(amountToCompare)) return true;
+    if (Number(balance) >= Number(amountToCompare)) return true;
     else return false;
   };
 
