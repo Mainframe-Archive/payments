@@ -3,6 +3,6 @@ const config = {
   authDomain: 'mainframe-paymo.firebaseapp.com',
   databaseURL: 'https://mainframe-paymo.firebaseio.com',
   projectId: 'mainframe-paymo',
-};
+}
 
-export default config;
+export default config

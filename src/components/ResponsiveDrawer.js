@@ -1,17 +1,17 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import TransactionModal from './TransactionModal';
+import React from 'react'
+import PropTypes from 'prop-types'
 
-import styled, { css } from 'styled-components/native';
-import { Button, Text } from '@morpheus-ui/core';
-import { Image } from 'react-native-web';
-import { PlusSymbolSm } from '@morpheus-ui/icons';
-import screenSize from '../hocs/ScreenSize';
-import applyContext from '../hocs/Context';
+import styled, { css } from 'styled-components/native'
+import { Button, Text } from '@morpheus-ui/core'
+import { Image } from 'react-native-web'
+import { PlusSymbolSm } from '@morpheus-ui/icons'
+import screenSize from '../hocs/ScreenSize'
+import applyContext from '../hocs/Context'
+import TransactionModal from './TransactionModal'
 
 const PositionContainer = styled.View`
   position: relative;
-`;
+`
 
 const Container = screenSize(styled.View`
   width: 207px;
@@ -19,12 +19,12 @@ const Container = screenSize(styled.View`
   background-color: ${props => props.theme.gray};
   display: flex;
   flex-direction: row;
-`);
+`)
 
 const SidebarContainer = screenSize(styled.View`
   width: 100%;
   background-color: ${props => props.theme.gray};
-`);
+`)
 
 const NavItem = screenSize(styled.View`
   width: 100%;
@@ -33,7 +33,7 @@ const NavItem = screenSize(styled.View`
   justify-content: flex-start;
   align-items: center;
   margin: 7px 0;
-`);
+`)
 
 const Triangle = screenSize(styled.View`
   width: 0;
@@ -47,11 +47,11 @@ const Triangle = screenSize(styled.View`
     css`
       border-left: 12px solid transparent;
     `}
-`);
+`)
 
 const NavTextContainer = screenSize(styled.TouchableOpacity`
   margin-left: 17px;
-`);
+`)
 
 const ButtonContainer = styled.View`
   padding: ${props => props.theme.spacing};
@@ -61,7 +61,7 @@ const ButtonContainer = styled.View`
     css`
       display: none;
     `}
-`;
+`
 
 const TestNet = screenSize(styled.View`
   display: flex;
@@ -70,33 +70,33 @@ const TestNet = screenSize(styled.View`
   bottom: 10px;
   left: 10px;
   width: 120px;
-`);
+`)
 
 const TestNetText = screenSize(styled.View`
   margin-left: 7px;
-`);
+`)
 
 class ResponsiveDrawer extends React.Component {
   state = {
     mobileOpen: false,
     activeNav: 'activity',
-  };
+  }
 
   handleDrawerToggle = () => {
-    this.setState(state => ({ mobileOpen: !state.mobileOpen }));
-  };
+    this.setState(state => ({ mobileOpen: !state.mobileOpen }))
+  }
 
   updateActiveNav = whichNav => {
-    this.setState({ activeNav: whichNav });
-  };
+    this.setState({ activeNav: whichNav })
+  }
 
   render() {
-    const { web3, getBlockchainData, handleOpenTransactionModal } = this.props;
+    const { web3, getBlockchainData, handleOpenTransactionModal } = this.props
 
     if (web3) {
-      getBlockchainData();
+      getBlockchainData()
     } else {
-      return null;
+      return null
     }
     const drawer = (
       <>
@@ -114,8 +114,7 @@ class ResponsiveDrawer extends React.Component {
             <Text
               variant={
                 this.state.activeNav === 'activity' ? 'h3' : ['h3', 'faded']
-              }
-            >
+              }>
               {'Activity'}
             </Text>
           </NavTextContainer>
@@ -134,7 +133,7 @@ class ResponsiveDrawer extends React.Component {
         </NavItem>*/}
         <TransactionModal />
       </>
-    );
+    )
 
     return (
       <PositionContainer>
@@ -143,7 +142,7 @@ class ResponsiveDrawer extends React.Component {
           <TestNet>
             <Image
               source={require('../img/testnet.svg')}
-              style={{ width: 14, height: 14 }}
+              style={IMAGE_STYLES}
             />
             <TestNetText>
               <Text variant={['faded']}>
@@ -155,7 +154,7 @@ class ResponsiveDrawer extends React.Component {
           </TestNet>
         </Container>
       </PositionContainer>
-    );
+    )
   }
 }
 
@@ -164,6 +163,10 @@ ResponsiveDrawer.propTypes = {
   transactionModalOpen: PropTypes.bool.isRequired,
   handleCloseTransactionModal: PropTypes.func.isRequired,
   handleOpenTransactionModal: PropTypes.func.isRequired,
-};
+  web3: PropTypes.object,
+  network: PropTypes.string,
+}
 
-export default applyContext(ResponsiveDrawer);
+const IMAGE_STYLES = { width: 14, height: 14 }
+
+export default applyContext(ResponsiveDrawer)

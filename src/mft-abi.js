@@ -247,4 +247,4 @@ export const mftABI = [
     name: 'Transfer',
     type: 'event',
   },
-];
+]

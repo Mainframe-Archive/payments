@@ -9,7 +9,7 @@ const colors = {
   mediumGray: '#B5B5B5',
   black: '#000',
   error: '#E51111',
-};
+}
 
 export default {
   Button: {
@@ -197,4 +197,4 @@ export default {
     ...colors,
     spacing: '20px',
   },
-};
+}

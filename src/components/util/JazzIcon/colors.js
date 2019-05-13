@@ -9,4 +9,4 @@ export default [
   '#1598f2', // lightning blue
   '#2465e1', // sail blue
   '#f19e02', // gold
-];
+]

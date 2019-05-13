@@ -1,0 +1,14 @@
+[ignore]
+.*/node_modules/config-chain/test/.*
+.*/node_modules/react-native/.*
+
+[include]
+
+[libs]
+
+[lints]
+
+[options]
+module.name_mapper='^react-native$' -> 'react-native-web'
+
+[strict]
