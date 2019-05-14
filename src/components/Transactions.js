@@ -1,13 +1,14 @@
 // import Avatar from '@material-ui/core/Avatar';
 import React from 'react';
 import PropTypes from 'prop-types';
-import base from '../base';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { Image } from 'react-native-web';
 import { Row, Column, Button, Text } from '@morpheus-ui/core';
 import applyContext from '../hocs/Context';
 import screenSize from '../hocs/ScreenSize';
 import styled, { css } from 'styled-components/native';
+import memoize from 'memoize-one';
+import { toArray, orderBy, groupBy } from 'lodash';
 
 const MainContainer = screenSize(styled.View`
   ${props =>
@@ -57,10 +58,22 @@ const MobileFloatCenter = styled.View`
   margin: 0 auto;
 `;
 
-let rowId = 0;
-function createData(receipt, avatar, comment, date, time, value) {
-  rowId += 1;
-  return { rowId, receipt, avatar, comment, date, time, value };
+const formattedDate = (timestamp) => {
+  const today = new Date(timestamp * 1000).toLocaleDateString(undefined, {
+    weekday: 'long',
+    day: 'numeric',
+    month: 'short',
+  });
+  return today;
+}
+
+const formattedTime = (timestamp) => {
+  const time = new Date(timestamp * 1000).toLocaleTimeString(undefined, {
+    hour12: false,
+    hour: 'numeric',
+    minute: 'numeric',
+  });
+  return time;
 }
 
 class SimpleTable extends React.Component {
@@ -69,66 +82,14 @@ class SimpleTable extends React.Component {
     copied: '',
   };
 
-  componentDidUpdate = async prevProps => {
-    // Typical usage (don't forget to compare props):
-    if (
-      this.props.account &&
-      this.props.network &&
-      (this.props.account !== prevProps.account ||
-        this.props.network !== prevProps.network ||
-        this.props.reloadFirebase) &&
-      this.props.network === '3'
-    ) {
-      try {
-        const network = this.props.network === '3' ? 'ropsten' : 'other';
-        const account = this.props.web3.utils.toChecksumAddress(
-          this.props.account,
-        );
-        console.log(`account_transactions/${account}/${network}`);
-        base.listenTo(`account_transactions/${account}/${network}`, {
-          context: this,
-          asArray: true,
-          then(transactionData) {
-            if (transactionData.length === 0) {
-              this.props.setInitialStateTrue();
-            } else {
-              this.props.setInitialStateFalse();
-              transactionData.sort((a, b) => {
-                if (a.timestamp > b.timestamp) return -1;
-                else if (b.timestamp > a.timestamp) return 1;
-                else return 0;
-              });
-              let rows = {};
-              transactionData.forEach((transaction, index) => {
-                const ethAmount = transaction.value;
-                const date = this.formattedDate(transaction.timestamp * 1000);
-                const time = this.formattedTime(transaction.timestamp * 1000);
-                const transactionData = createData(
-                  transaction.receipt,
-                  '',
-                  transaction.comment,
-                  date,
-                  time,
-                  ethAmount,
-                );
-                if (rows[date]) {
-                  rows[date] = [...rows[date], transactionData];
-                } else {
-                  rows[date] = [transactionData];
-                }
-              });
-              this.setState({ rows: rows });
-              this.props.resetReloadFirebase();
-            }
-          },
-        });
-      } catch (error) {
-        // Catch any errors for any of the above operations.
-        alert('ERROR. Failed to read from Firebase. ', error);
-        console.error(error);
-      }
-    }
-  };
+  getData = memoize((transactions) => {
+    const transactionsArray = orderBy(toArray(transactions), 'timestamp', 'desc').map(transaction => ({
+      ...transaction,
+      date: formattedDate(transaction.timestamp),
+      time: formattedTime(transaction.timestamp),
+    }))
+    return groupBy(transactionsArray, 'date')
+  })
 
   condenseAddress(address) {
     const len = 4;
@@ -138,24 +99,6 @@ class SimpleTable extends React.Component {
       '...' +
       ensureChecksumAddr.slice(-len, ensureChecksumAddr.length)
     );
-  }
-
-  formattedDate(timestamp) {
-    const today = new Date(timestamp).toLocaleDateString(undefined, {
-      weekday: 'long',
-      day: 'numeric',
-      month: 'short',
-    });
-    return today;
-  }
-
-  formattedTime(timestamp) {
-    const time = new Date(timestamp).toLocaleTimeString(undefined, {
-      hour12: false,
-      hour: 'numeric',
-      minute: 'numeric',
-    });
-    return time;
   }
 
   enterHover = rowId => {
@@ -172,11 +115,12 @@ class SimpleTable extends React.Component {
   };
 
   render() {
+    const transactions = this.getData(this.props.transactions)
     return (
       <MainContainer>
-        {Object.keys(this.state.rows).map(key => {
+        {Object.keys(transactions).map(key => {
           const date = key;
-          const rows = this.state.rows[key];
+          const rows = transactions[key];
           return (
             <TableContainer>
               <DateContainer>
@@ -193,9 +137,9 @@ class SimpleTable extends React.Component {
                 const otherAddress = sent ? row.receipt.to : row.receipt.from;
                 return (
                   <TransactionContainer
-                    onMouseEnter={() => this.enterHover(row.rowId)}
+                    onMouseEnter={() => this.enterHover(row.hash)}
                     onMouseLeave={this.leaveHover}
-                    hover={this.state.hover === row.rowId}
+                    hover={this.state.hover && this.state.hover === row.hash}
                     lastChild={index === rows.length - 1}
                   >
                     <Row size={12} variant="no-border">

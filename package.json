@@ -14,8 +14,8 @@
     "aphrodite": "^2.2.3",
     "color": "^0.11.0",
     "firebase": "5.8.1",
+    "memoize-one": "^5.0.4",
     "mersenne-twister": "^1.1.0",
-    "re-base": "^4.0.0",
     "react": "16.7.0",
     "react-copy-to-clipboard": "^5.0.1",
     "react-dom": "16.7.0",
@@ -27,7 +27,7 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "test": "react-scripts test",
+    "test": "eslint ./src",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
