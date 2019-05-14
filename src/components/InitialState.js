@@ -1,10 +1,11 @@
-import React from 'react';
-import styled, { css } from 'styled-components/native';
+import React from 'react'
+import PropTypes from 'prop-types'
+import styled, { css } from 'styled-components/native'
 
-import applyContext from '../hocs/Context';
-import screenSize from '../hocs/ScreenSize';
-import { Button, Text } from '@morpheus-ui/core';
-import { CircleArrowRight } from '@morpheus-ui/icons';
+import { Button, Text } from '@morpheus-ui/core'
+import { CircleArrowRight } from '@morpheus-ui/icons'
+import applyContext from '../hocs/Context'
+import screenSize from '../hocs/ScreenSize'
 
 const Container = screenSize(styled.View`
   padding: 40px;
@@ -19,13 +20,13 @@ const Container = screenSize(styled.View`
     css`
       width: 100%;
     `};
-`);
+`)
 
 const Description = screenSize(styled.View`
   margin-top: 10px;
   margin-bottom: ${props => props.theme.spacing};
   width: 100%;
-`);
+`)
 
 class InitialState extends React.Component {
   render() {
@@ -46,8 +47,12 @@ class InitialState extends React.Component {
           onPress={this.props.handleOpenTransactionModal}
         />
       </Container>
-    );
+    )
   }
 }
 
-export default applyContext(InitialState);
+InitialState.propTypes = {
+  handleOpenTransactionModal: PropTypes.func,
+}
+
+export default applyContext(InitialState)

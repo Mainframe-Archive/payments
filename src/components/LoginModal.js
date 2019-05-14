@@ -1,11 +1,10 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { withStyles } from '@material-ui/core/styles';
-import Typography from '@material-ui/core/Typography';
-import Modal from '@material-ui/core/Modal';
-import Grid from '@material-ui/core/Grid';
-import Paper from '@material-ui/core/Paper';
-
+import React from 'react'
+import PropTypes from 'prop-types'
+import { withStyles } from '@material-ui/core/styles'
+import Typography from '@material-ui/core/Typography'
+import Modal from '@material-ui/core/Modal'
+import Grid from '@material-ui/core/Grid'
+import Paper from '@material-ui/core/Paper'
 
 const styles = theme => ({
   root: {
@@ -32,7 +31,6 @@ const styles = theme => ({
   button: {
     backgroundColor: theme.palette.complementary.main,
     color: theme.palette.complementary.contrastText,
-
   },
   modalButton: {
     margin: theme.spacing.unit,
@@ -44,39 +42,37 @@ const styles = theme => ({
     width: '50%',
   },
   modalTitle: {
-    color:  theme.palette.primary.titleText,
+    color: theme.palette.primary.titleText,
   },
   innerButton: {
     margin: theme.spacing.unit,
     backgroundColor: theme.palette.complementary.main,
     color: theme.palette.complementary.contrastText,
   },
-});
+})
 
 class SimpleModal extends React.Component {
-
   state = {
     open: this.props.active,
-  };
+  }
 
   handleChange = prop => event => {
-    this.setState({ [prop]: event.target.value });
-  };
+    this.setState({ [prop]: event.target.value })
+  }
 
   handleClose = () => {
-    this.setState({ open: false });
-  };
+    this.setState({ open: false })
+  }
 
   render() {
-    const { classes } = this.props;
+    const { classes } = this.props
     return (
       <div>
         <Modal
           aria-labelledby="simple-modal-title"
           aria-describedby="simple-modal-description"
           open={this.props.active}
-          onClose={this.handleClose}
-        >
+          onClose={this.handleClose}>
           <div className={classes.paper}>
             <div className={classes.root}>
               <div className={classes.wrapper}>
@@ -87,9 +83,10 @@ class SimpleModal extends React.Component {
                         No ETH Account Available
                       </Typography>
                       <Typography component="p">
-                        It seems that you don&apos;t have an ETH account selected. If using
-                        MetaMask, please make sure that your wallet is unlocked and that
-                        you have at least one account in your accounts list.
+                        It seems that you don&apos;t have an ETH account
+                        selected. If using MetaMask, please make sure that your
+                        wallet is unlocked and that you have at least one
+                        account in your accounts list.
                       </Typography>
                     </Grid>
                   </Grid>
@@ -99,16 +96,16 @@ class SimpleModal extends React.Component {
           </div>
         </Modal>
       </div>
-    );
+    )
   }
 }
 
 SimpleModal.propTypes = {
   classes: PropTypes.object.isRequired,
   active: PropTypes.bool.isRequired,
-};
+}
 
 // We need an intermediary variable for handling the recursive nesting.
-const TransactionModal = withStyles(styles)(SimpleModal);
+const TransactionModal = withStyles(styles)(SimpleModal)
 
-export default TransactionModal;
+export default TransactionModal

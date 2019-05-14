@@ -1,10 +1,8 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { Image } from 'react-native-web';
-import screenSize from '../hocs/ScreenSize';
-import applyContext from '../hocs/Context';
-import { withStyles } from '@material-ui/core/styles';
-import CircularProgress from '@material-ui/core/CircularProgress';
+import React from 'react'
+import PropTypes from 'prop-types'
+import { Image } from 'react-native-web'
+import { withStyles } from '@material-ui/core/styles'
+import CircularProgress from '@material-ui/core/CircularProgress'
 
 import {
   Column,
@@ -13,13 +11,15 @@ import {
   DropDown,
   Button,
   Text,
-} from '@morpheus-ui/core';
-import styled, { css } from 'styled-components/native';
+} from '@morpheus-ui/core'
+import styled, { css } from 'styled-components/native'
+import applyContext from '../hocs/Context'
+import screenSize from '../hocs/ScreenSize'
 
 const PositionContainer = styled.View`
   position: relative;
   height: 100%;
-`;
+`
 
 const FormContainer = screenSize(styled.View`
   position: absolute;
@@ -43,25 +43,25 @@ const FormContainer = screenSize(styled.View`
       top: 0;
       margin-top: 200px;
     `};
-`);
+`)
 
 const ButtonContainer = screenSize(styled.View`
   margin: 0 auto;
   width: 200px;
   margin-top: 70px;
-`);
+`)
 
 const LoadingContainer = styled.View`
   margin: 0 auto;
   max-width: 96px;
   max-height: 26px;
   margin-top: 9px;
-`;
+`
 
 const LoadingTextContainer = styled.View`
   margin: 0 auto;
   width: 328px;
-`;
+`
 
 const InfoContainer = styled.View`
   display: flex;
@@ -69,15 +69,7 @@ const InfoContainer = styled.View`
   justify-content: space-between;
   align-items: center;
   width: 326px;
-`;
-
-const styles = theme => ({
-  progress: {
-    maxWidth: 14,
-    maxHeight: 14,
-    color: '#8EDA11',
-  },
-});
+`
 
 class NewTransactionForm extends React.Component {
   render() {
@@ -94,7 +86,7 @@ class NewTransactionForm extends React.Component {
       classes,
       amountValidation,
       accountValidation,
-    } = this.props;
+    } = this.props
 
     return (
       <PositionContainer>
@@ -208,7 +200,7 @@ class NewTransactionForm extends React.Component {
               <InfoContainer>
                 <Image
                   source={require('../img/info.svg')}
-                  style={{ width: 18, height: 18 }}
+                  style={IMAGE_STYLES}
                 />
                 <Text variant={['faded', 'small']}>
                   {'This may take a few minutes. We appreciate your patience.'}
@@ -218,7 +210,7 @@ class NewTransactionForm extends React.Component {
           </LoadingTextContainer>
         </FormContainer>
       </PositionContainer>
-    );
+    )
   }
 }
 
@@ -230,6 +222,21 @@ NewTransactionForm.propTypes = {
   currency: PropTypes.string.isRequired,
   handleChange: PropTypes.func.isRequired,
   loading: PropTypes.bool.isRequired,
-};
+  handleClose: PropTypes.func.isRequired,
+  openContacts: PropTypes.func.isRequired,
+  classes: PropTypes.object,
+  amountValidation: PropTypes.func.isRequired,
+  accountValidation: PropTypes.func.isRequired,
+}
 
-export default applyContext(withStyles(styles)(NewTransactionForm));
+const IMAGE_STYLES = { width: 18, height: 18 }
+
+const styles = () => ({
+  progress: {
+    maxWidth: 14,
+    maxHeight: 14,
+    color: '#8EDA11',
+  },
+})
+
+export default applyContext(withStyles(styles)(NewTransactionForm))

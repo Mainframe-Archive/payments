@@ -1,8 +1,8 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import screenSize from '../hocs/ScreenSize';
-import { Text, Button } from '@morpheus-ui/core';
-import styled, { css } from 'styled-components/native';
+import React from 'react'
+import PropTypes from 'prop-types'
+import { Text, Button } from '@morpheus-ui/core'
+import styled, { css } from 'styled-components/native'
+import screenSize from '../hocs/ScreenSize'
 
 const Container = screenSize(styled.View`
   margin: 0 auto;
@@ -16,14 +16,14 @@ const Container = screenSize(styled.View`
     css`
       width: 95%;
     `};
-`);
+`)
 
 const TextContainer = screenSize(styled.View`
   margin: 0 auto;
   text-align: center;
   padding-top: 15px;
   max-width: 293px;
-`);
+`)
 
 const ButtonContainer = screenSize(styled.View`
   margin: 0 auto;
@@ -33,11 +33,11 @@ const ButtonContainer = screenSize(styled.View`
     css`
       padding-top: 75px;
     `};
-`);
+`)
 
 class CongratsScreen extends React.Component {
   render() {
-    const { to, amount, currency, closeTransactionModal } = this.props;
+    const { to, amount, currency, closeTransactionModal } = this.props
     return (
       <Container>
         <Text variant={['h2', 'h2Poppins']}>{'Payment Complete!'}</Text>
@@ -60,7 +60,7 @@ class CongratsScreen extends React.Component {
           />
         </ButtonContainer>
       </Container>
-    );
+    )
   }
 }
 
@@ -69,6 +69,6 @@ CongratsScreen.propTypes = {
   amount: PropTypes.number.isRequired,
   currency: PropTypes.string.isRequired,
   closeTransactionModal: PropTypes.bool.isRequired,
-};
+}
 
-export default CongratsScreen;
+export default CongratsScreen

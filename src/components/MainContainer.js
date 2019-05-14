@@ -1,9 +1,9 @@
-import React from 'react';
-import styled from 'styled-components/native';
-import Transactions from './Transactions';
-import InitialState from './InitialState';
-
-import applyContext from '../hocs/Context';
+import React from 'react'
+import PropTypes from 'prop-types'
+import styled from 'styled-components/native'
+import applyContext from '../hocs/Context'
+import Transactions from './Transactions'
+import InitialState from './InitialState'
 
 const Container = styled.View`
   flex: 1;
@@ -11,12 +11,12 @@ const Container = styled.View`
   display: flex;
   flex-direction: row;
   padding: ${props => props.theme.spacing};
-`;
+`
 
 const TransactionsContainer = styled.View`
   width: 100%;
   overflow: scroll;
-`;
+`
 
 class MainContainer extends React.Component {
   render() {
@@ -26,8 +26,12 @@ class MainContainer extends React.Component {
           {this.props.initialState ? <InitialState /> : <Transactions />}
         </TransactionsContainer>
       </Container>
-    );
+    )
   }
 }
 
-export default applyContext(MainContainer);
+MainContainer.propTypes = {
+  initialState: PropTypes.object,
+}
+
+export default applyContext(MainContainer)

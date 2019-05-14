@@ -1,5 +1,5 @@
-import React from 'react';
-import PropTypes from 'prop-types';
+import React from 'react'
+import PropTypes from 'prop-types'
 
 const styles = {
   borderRadius: '50px',
@@ -7,7 +7,7 @@ const styles = {
   margin: 0,
   overflow: 'hidden',
   padding: 0,
-};
+}
 
 const Paper = ({ children, color, diameter, style: styleOverrides }) => (
   <div
@@ -18,16 +18,16 @@ const Paper = ({ children, color, diameter, style: styleOverrides }) => (
       height: diameter,
       width: diameter,
       ...styleOverrides,
-    }}
-  >
+    }}>
     {children}
   </div>
-);
+)
 
 Paper.propTypes = {
   color: PropTypes.string,
   diameter: PropTypes.number,
   style: PropTypes.object,
-};
+  children: PropTypes.node,
+}
 
-export default Paper;
+export default Paper
