@@ -7,6 +7,7 @@ import { Image } from 'react-native-web'
 import { PlusSymbolSm } from '@morpheus-ui/icons'
 import screenSize from '../hocs/ScreenSize'
 import applyContext from '../hocs/Context'
+import { NETWORKS } from '../App'
 import TransactionModal from './TransactionModal'
 
 const PositionContainer = styled.View`
@@ -146,9 +147,7 @@ class ResponsiveDrawer extends React.Component {
             />
             <TestNetText>
               <Text variant={['faded']}>
-                {this.props.network === '3'
-                  ? 'running on Testnet'
-                  : 'running on Mainnet'}
+                {`Running on ${NETWORKS[this.props.network]}`}
               </Text>
             </TestNetText>
           </TestNet>
